@@ -1,0 +1,629 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:pm="http://primefaces.org/mobile"
+	xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml">
+
+	<ui:define name="head">
+		<script type="text/javascript">
+    function autAjustePantalla(idDialog){   	
+        document.getElementById(idDialog).style.height = Math.floor(window.innerHeight * 0.9)+"px";
+        document.getElementById(idDialog).style.top= "75px";                         
+}
+</script>
+	</ui:define>
+
+	<ui:define name="content">
+		<h:form id="formPrincipal">
+			<p:ajaxStatus onstart="PF('statusDialog').show()"
+				onsuccess="PF('statusDialog').hide()" />
+
+			<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+				closable="false" resizable="false" showHeader="false">
+				<p:graphicImage name="/imagenes/barra_ajax.gif" />
+			</p:dialog>
+
+			<p:messages globalOnly="false" id="msjGeneral" showDetail="false"
+				style="font-size:120px" />
+
+			<section class="content-header">
+				<h1>
+					<h:outputLabel style="color:#000000"
+						value="Gestión de Pacientes/Clientes"></h:outputLabel>
+				</h1>
+			</section>
+
+			<section class="container-fluid">
+				<div class="row">
+					<div class="col-lg-9 col-md-9 col-sm-9">
+						<!-- general form elements -->
+						<div class="box box-primary">
+							<p:dataTable var="cli" id="tblCliente"
+								tableStyleClass="table table-hover"
+								emptyMessage="Debe seleccionar criterio de busqueda"
+								value="#{clientesMb.clientes}" reflow="true" rows="20"
+								paginator="true">
+
+
+								<p:column headerText="Tipo de identificación"
+									sortBy="#{cli.tipoDocumento}">
+									<center>
+										<h:outputText value="#{cli.tipoDocumento}" />
+									</center>
+								</p:column>
+
+								<p:column headerText="Número de identificación">
+									<center>
+										<h:outputText value="#{cli.numDocumento}" />
+									</center>
+								</p:column>
+
+								<p:column headerText="Nombre Completo"
+									sortBy="#{cli.nombresCompletos}">
+									<center>
+										<h:outputText value="#{cli.nombresCompletos}" />
+									</center>
+								</p:column>
+
+								<p:column headerText="Estado">
+									<center>
+										<h:outputText value="#{cli.estado}" />
+									</center>
+								</p:column>
+
+								<p:column headerText="Tipo" sortBy="#{cli.isCliente}">
+									<center>
+										<h:outputText
+											value="#{cli.isCliente eq 'S' ? cli.isPaciente eq 'S' ? cli.isEmpleado eq 'S' ? 'EMPLEADO/CLIENTE/PACIENTE' : 'CLIENTE/PACIENTE' : 'CLIENTE' : cli.isPaciente eq 'S' ? 'PACIENTE' : cli.isEmpleado eq 'S' ? 'EMPLEADO' : 'NO DEFINIDO'}" />
+									</center>
+								</p:column>
+
+								<p:column headerText="Acciones" style="width:260px">
+									<div class="ui-g">
+										<div class="ui-g-3">
+											<p:commandButton value="Editar"
+												disabled="#{cli.bloqueaEmpleado}"
+												title="Permite editar los datos del cliente"
+												actionListener="#{clientesMb.seleccionaCliente(cli)}"
+												update="#{p:component('pnlDatosPaci')}" />
+										</div>
+										<div class="ui-g-4">
+											<p:commandButton id="btnBloquear" value="Bloquear"
+												title="Permite realizar la inactivación del cliente"
+												update="@form" disabled="#{cli.bloqueaEmpleado}"
+												actionListener="#{clientesMb.inactivaCliente(cli)}" />
+										</div>
+										<div class="ui-g-4">
+											<p:commandButton id="btnDesbloquear" value="Activar"
+												title="Permite realizar la activación del cliente"
+												update="@form" disabled="#{cli.bloqueaEmpleado}"
+												actionListener="#{clientesMb.activaCliente(cli)}" />
+										</div>
+									</div>
+								</p:column>
+							</p:dataTable>
+						</div>
+					</div>
+					<div class="col-lg-3 col-md-3 col-sm-3">
+						<div class="box box-info">
+							<div class="box-header with-border">
+								<h3 class="box-title">Busqueda por:</h3>
+							</div>
+
+							<div class="box-body">
+								<div class="form-group">
+									<h:outputLabel style="color:#000000"
+										value="Número de Identificación: " />
+									<h:inputText styleClass="form-control"
+										value="#{clientesMb.numDocumento}" />
+								</div>
+								<div class="form-group">
+									<h:outputLabel style="color:#000000" value="- O Por -" />
+								</div>
+								<div class="form-group">
+									<h:outputLabel style="color:#000000" value="Nombres: " />
+									<h:inputText styleClass="form-control"
+										value="#{clientesMb.apellido}" />
+								</div>
+								<h:commandButton id="btnBuscar" value="Buscar"
+									actionListener="#{clientesMb.Buscar()}" class="btn btn-primary"
+									update="#{p:component('tblCliente')}" />
+							</div>
+
+						</div>
+					</div>
+				</div>
+
+			</section>
+		</h:form>
+
+		<h:form id="formUpdate">
+			<p:dialog header="Modificar datos del Paciente/Cliente" draggable="false"
+				id="idDialogDatos" closable="true" widgetVar="dlgDatosModificar"
+				hideEffect="clip" modal="true" showEffect="clip" width="45%"
+				height="75%" onShow="autAjustePantalla('formUpdate:idDialogDatos')"
+				resizable="false" position="center center">
+				<p:scrollPanel mode="native" style="width:100%;height:82%">
+					<p:panel id="pnlDatosPaci">
+						<div class="box box-info">
+							<div class="box-header with-border">
+								<h3 class="box-title">Modificar datos del Paciente/Cliente</h3>
+							</div>
+
+							<div class="box-body">
+								<div class="form-group">
+									<div class="row">
+										<div class="col-lg-4">
+											<h:outputLabel style="color:#000000"
+												value="Tipo de documento: *" />
+											<h:selectOneMenu value="#{clientesMb.cliente.tipoNumCedula}"
+												styleClass="form-control">
+												<f:selectItem itemValue="C" itemLabel="Cédula de Identidad" />
+												<f:selectItem itemValue="R"
+													itemLabel="Registro Unico Contribuyente" />
+												<f:selectItem itemValue="P" itemLabel="Pasaporte" />
+											</h:selectOneMenu>
+										</div>
+										<div class="col-lg-3">
+											<h:outputLabel style="color:#000000" value="Código SAP: *" />
+											<div class="input-group">
+												<h:inputText class="form-control"
+													disabled="#{clientesMb.nombresC}"
+													value="#{clientesMb.cliente.cardCode}" />
+											</div>
+										</div>
+										<div class="col-lg-5">
+											<h:outputLabel style="color:#000000"
+												value="Número de documento: *" />
+											<div class="ui-inputgroup">
+												<p:inputText maxlength="15"
+													disabled="#{clientesMb.clienteFacturado}"
+													title="#{clientesMb.clienteFacturado eq true ? 'El usuario ya se ha realizado consultas' : ''}"
+													value="#{clientesMb.cliente.numDocumento}" />
+												<p:commandButton value="Genera Secuencia"
+													update="#{p:component('pnlDatosPaci')}"
+													actionListener="#{clientesMb.obtieneSecuenciaNumeroIdentificacion('C')}" />
+											</div>
+										</div>
+									</div>
+								</div>
+
+								<div class="form-group">
+									<div class="row">
+										<div class="col-lg-8">
+											<h:outputLabel style="color:#000000"
+												value="#{clientesMb.nombreCompltRzonSocial}" />
+											<p:inputText id="txtNombreCP" class="form-control"
+												disabled="#{clientesMb.nombresCP}"
+												style="text-transform:uppercase;"
+												value="#{clientesMb.cliente.nombresCompletos}" />
+										</div>
+										<div class="col-lg-4">
+											<h:outputLabel style="color:#000000"
+												value="Subtipo Cliente: *" />
+											<h:selectOneMenu value="#{clientesMb.tipoClientePaciente}"
+												styleClass="form-control">
+												<f:selectItem itemValue="A" itemLabel="Cliente/Paciente" />
+												<f:selectItem itemValue="C" itemLabel="Cliente" />
+												<f:selectItem itemValue="P" itemLabel="Paciente" />
+											</h:selectOneMenu>
+										</div>
+									</div>
+								</div>
+
+								<p:panel id="panelNombresPaciente">
+									<div class="row">
+										<div class="form-group">
+											<div class="col-md-6">
+												<h:outputLabel style="color:#000000"
+													value="Apellido Paterno: *" />
+												<h:inputText id="txtApellido" class="form-control"
+													style="text-transform:uppercase;"
+													disabled="#{!clientesMb.nombresCP}"
+													value="#{clientesMb.cliente.apellido}">
+													<p:ajax event="blur"
+														listener="#{clientesMb.obtieneNombresCompletos('C')}"
+														update="#{p:component('txtNombreCP')}" />
+												</h:inputText>
+											</div>
+											<div class="col-md-6">
+												<div class="row">
+													<div class="col-md-5">
+														<h:outputLabel style="color:#000000"
+															value="Apellido Materno:" />
+													</div>
+													<p:selectBooleanCheckbox
+														disabled="#{!clientesMb.nombresCP}"
+														value="#{clientesMb.apellidoObligatorio}">
+													</p:selectBooleanCheckbox>
+													<h:outputLabel style="color:#000000; font-size:12px"
+														value=" N/A" />
+												</div>
+												<p:inputText id="txtApellidoM" class="form-control"
+													style="text-transform:uppercase;"
+													disabled="#{!clientesMb.nombresCP}"
+													value="#{clientesMb.cliente.apellidoMaterno}">
+													<p:ajax event="blur"
+														listener="#{clientesMb.obtieneNombresCompletos('C')}"
+														update="#{p:component('txtNombreCP')}" />
+												</p:inputText>
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="form-group">
+											<div class="col-md-6">
+												<h:outputLabel style="color:#000000"
+													value="Primer Nombre: *"></h:outputLabel>
+												<p:inputText id="txtNombre" class="form-control"
+													style="text-transform:uppercase;"
+													disabled="#{!clientesMb.nombresCP}"
+													value="#{clientesMb.cliente.nombre}">
+													<p:ajax event="blur"
+														listener="#{clientesMb.obtieneNombresCompletos('C')}"
+														update="#{p:component('txtNombreCP')}" />
+												</p:inputText>
+											</div>
+											<div class="col-md-6">
+												<div class="row">
+													<div class="col-md-5">
+														<h:outputLabel style="color:#000000"
+															value="Segundo Nombre:" />
+													</div>
+													<p:selectBooleanCheckbox
+														disabled="#{!clientesMb.nombresCP}"
+														value="#{clientesMb.nombreObligatorio}">
+													</p:selectBooleanCheckbox>
+													<h:outputLabel style="color:#000000; font-size:12px"
+														value=" N/A" />
+												</div>
+												<p:inputText id="txtNombre2" class="form-control"
+													style="text-transform:uppercase;"
+													disabled="#{!clientesMb.nombresCP}"
+													value="#{clientesMb.cliente.nombreSegundo}">
+													<p:ajax event="blur"
+														listener="#{clientesMb.obtieneNombresCompletos('C')}"
+														update="#{p:component('txtNombreCP')}" />
+												</p:inputText>
+											</div>
+										</div>
+									</div>
+								</p:panel>
+
+								<div class="form-group">
+									<h:outputLabel style="color:#000000" value="Dirección: *"></h:outputLabel>
+									<h:inputText id="txtDireccion" styleClass="form-control"
+										style="text-transform:uppercase;"
+										value="#{clientesMb.cliente.direccion}"></h:inputText>
+								</div>
+								<div class="form-group">
+									<div class="row">
+										<div class="col-md-3">
+											<h:outputLabel style="color:#000000"
+												value="Correo electrónico: " />
+										</div>
+										<p:selectBooleanCheckbox
+											value="#{clientesMb.correoObligatorioCli}">
+										</p:selectBooleanCheckbox>
+										<h:outputLabel style="color:#000000; font-size:12px"
+											value=" N/A" />
+									</div>
+									<h:inputText id="txtCorreo" styleClass="form-control"
+										style="text-transform:uppercase;"
+										value="#{clientesMb.cliente.email}"></h:inputText>
+								</div>
+								<div class="form-group">
+									<div class="row">
+										<div class="col-md-3">
+											<h:outputLabel style="color:#000000" id="txtTelefono"
+												value="Número de Teléfono: " />
+										</div>
+										<p:selectBooleanCheckbox
+											value="#{clientesMb.telefonoObligatorioCli}">
+										</p:selectBooleanCheckbox>
+										<h:outputLabel style="color:#000000; font-size:12px"
+											value=" N/A" />
+									</div>
+									<h:inputText styleClass="form-control"
+										onkeypress="if(event.which &lt; 48 || event.which &gt; 57) return false;"
+										value="#{clientesMb.cliente.numTelefono}" />
+								</div>
+								<div class="form-group">
+									<h:outputLabel style="color:#000000" value="Número Celular: "
+										onkeypress="if(event.which &lt; 48 || event.which &gt; 57) return false;" />
+									<h:inputText styleClass="form-control"
+										value="#{clientesMb.cliente.numeroCelular}" />
+								</div>
+								<div class="form-group">
+									<div class="row">
+										<div class="col-lg-6">
+											<div class="row">
+												<div class="col-md-6">
+													<h:outputLabel style="color:#000000"
+														value="&#160;&#160;Fech. de Nacimiento: * " />
+												</div>
+												<p:selectBooleanCheckbox
+													disabled="#{loginMb.activaPaciente}" id="slChFec"
+													value="#{clientesMb.fechaNacObligatorio}">
+												</p:selectBooleanCheckbox>
+												<h:outputLabel style="color:#000000; font-size:12px"
+													value=" N/A" />
+											</div>
+											<p:calendar yearRange="c-100: c"
+												converterMessage="Fecha de Nacimiento ingresada es invalida"
+												value="#{clientesMb.cliente.fechaNacimiento}" locale="es"
+												navigator="true" pattern="dd/MM/yyyy" />
+										</div>
+
+										<div class="col-lg-6">
+													<h:outputLabel style="color:#000000"
+														value="Número de teléfono 2: " />
+											<div class="ui-inputgroup">
+												<p:inputText maxlength="15" size="31"
+													onkeypress="if(event.which &lt; 48 || event.which &gt; 57) return false;"
+													value="#{clientesMb.cliente.numeroTelefono2}">
+													<p:ajax event="blur" listener="#{clientesMb.copiarDatos}" />
+												</p:inputText>												
+													<p:commandButton value="Datos Adicionales"
+														update="#{p:component('pnlDatsAdicional')}"
+														onclick="PF('dlgDatoAdicionalCli').show()" />
+												
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="box-footer">
+									<h:commandButton value="Actualizar" class="btn btn-primary"
+										update="#{p:component('msjGeneral')}, #{p:component('formPrincipal')}"
+										actionListener="#{clientesMb.modificarCliente('v')}"
+										disabled="#{clientesMb.modificar}" />
+								</div>
+							</div>
+						</div>
+					</p:panel>
+				</p:scrollPanel>
+			</p:dialog>
+
+		</h:form>
+
+		<h:form id="formDatoAdiciona">
+			<p:dialog header="Datos Adicionales Pacientes"
+				widgetVar="dlgDatoAdicionalCli" showEffect="fade" width="850"
+				position="center center" height="550">
+				<p:panel id="pnlDatsAdicional">
+					<div class="box box-info">
+						<div class="box-header with-border">
+							<h3 class="box-title">Datos Adicionales Pacientes/Cliente</h3>
+						</div>
+						<div class="box-body">
+							<div class="form-group">
+								<div class="row">
+									<div class="col-sm-2">
+										<h:outputLabel style="color:#000000" value="Sexo: " />
+									</div>
+									<div class="col-sm-3">
+										<div class="form-group">
+											<h:selectOneMenu value="#{clientesMb.cliente.tipoSexo}"
+												styleClass="form-control">
+												<f:selectItems value="#{clientesMb.listaTipoSexo}" />
+											</h:selectOneMenu>
+										</div>
+									</div>
+									<div class="col-sm-1" />
+									<div class="col-sm-2">
+										<h:outputLabel style="color:#000000"
+											value="Límite de Crédito: " />
+									</div>
+									<div class="col-sm-4">
+										<div class="form-group">
+											<h:inputText styleClass="form-control"
+												disabled="#{clientesMb.updatePacienteClient}"
+												value="#{clientesMb.cliente.limiteCredito}">
+												<f:convertNumber pattern="0.00" />
+											</h:inputText>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<div class="row">
+									<div class="col-sm-2">
+										<h:outputLabel style="color:#000000" value="Provincia: "></h:outputLabel>
+									</div>
+									<div class="col-sm-4">
+										<div class="form-group">
+											<h:selectOneMenu value="#{clientesMb.cliente.idProvincia}"
+												id="txtIdProvincia" styleClass="form-control">
+												<f:selectItems value="#{clientesMb.listaProvincias}" />
+												<p:ajax event="blur" update="#{p:component('txtCanton')}"
+													listener="#{clientesMb.actualizaDatosCanton(clientesMb.cliente.idProvincia,'P')}" />
+											</h:selectOneMenu>
+										</div>
+									</div>
+									<div class="col-sm-2">
+										<h:outputLabel style="color:#000000" value="Cantón: " />
+									</div>
+									<div class="col-sm-4">
+										<div class="form-group">
+											<h:selectOneMenu id="txtCanton"
+												value="#{clientesMb.cliente.canton}"
+												styleClass="form-control">
+												<f:selectItems value="#{clientesMb.listaCantones}" />
+											</h:selectOneMenu>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<div class="row">
+									<div class="col-sm-2">
+										<h:outputLabel style="color:#000000"
+											value="Condición de pago: "></h:outputLabel>
+									</div>
+									<div class="col-sm-4">
+										<div class="form-group">
+											<h:selectOneMenu value="#{clientesMb.cliente.condicionPago}"
+												styleClass="form-control"
+												disabled="#{clientesMb.updatePacienteClient}">
+												<f:selectItems value="#{clientesMb.listaCondicionPago}" />
+											</h:selectOneMenu>
+										</div>
+									</div>
+									<div class="col-sm-2">
+									<h:outputLabel style="color:#000000"
+											value="Maneja Contabilidad: " />
+									</div>
+									<div class="col-sm-4">
+									<div class="form-group">
+											<h:selectOneMenu value="#{clientesMb.cliente.manejaContab}"
+												styleClass="form-control"
+												disabled="#{clientesMb.updatePacienteClient}">
+												<f:selectItem itemValue="NO" itemLabel="No" />
+												<f:selectItem itemValue="SI" itemLabel="Si" />
+											</h:selectOneMenu>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<div class="row">
+									<div class="col-sm-2">
+										<h:outputLabel style="color:#000000"
+											value="Parte Relacionada: " />
+									</div>
+									<div class="col-sm-2">
+										<div class="form-group">
+											<h:selectOneMenu
+												disabled="#{clientesMb.updatePacienteClient}"
+												value="#{clientesMb.cliente.parteRelacionada}"
+												styleClass="form-control">
+												<f:selectItem itemValue="NO" itemLabel="No" />
+												<f:selectItem itemValue="SI" itemLabel="Si" />
+											</h:selectOneMenu>
+										</div>
+									</div>
+									<div class="col-sm-2" />
+									<div class="col-sm-2">
+										<h:outputLabel style="color:#000000" value="Clase de Sujeto: " />
+									</div>
+									<div class="col-sm-4">
+										<div class="form-group">
+											<h:selectOneMenu value="#{clientesMb.cliente.claseSujeto}"
+												styleClass="form-control">
+												<f:selectItems value="#{clientesMb.listaTipoClasSujet}" />
+											</h:selectOneMenu>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<div class="row">
+									<div class="col-sm-2">
+										<h:outputLabel style="color:#000000"
+											value="Tipo Contribuyente: " />
+									</div>
+									<div class="col-sm-4">
+										<div class="form-group">
+											<h:selectOneMenu
+												value="#{clientesMb.cliente.tipoContribuyente}"
+												styleClass="form-control">
+												<f:selectItems value="#{clientesMb.listaTipoContrib}" />
+											</h:selectOneMenu>
+										</div>
+									</div>
+									<div class="col-sm-2">
+										<h:outputLabel style="color:#000000" value="Forma de Pago: " />
+									</div>
+									<div class="col-sm-4">
+										<div class="form-group">
+											<h:selectOneMenu value="#{clientesMb.cliente.formaPago}"
+												styleClass="form-control"
+												disabled="#{clientesMb.updatePacienteClient}">
+												<f:selectItems value="#{clientesMb.listaFormaPago}" />
+											</h:selectOneMenu>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<div class="row">
+									<div class="col-sm-2">
+										<h:outputLabel style="color:#000000"
+											value="Afiliado tarjeta: " />
+									</div>
+									<div class="col-sm-2">
+										<div class="form-group">
+											<h:selectOneMenu
+												value="#{clientesMb.cliente.afiliadoTarjeta}"
+												styleClass="form-control">
+												<f:selectItem itemValue="N" itemLabel="No" />
+												<f:selectItem itemValue="Y" itemLabel="Si" />
+											</h:selectOneMenu>
+										</div>
+									</div>
+									<div class="col-sm-2" />
+									<div class="col-sm-2">
+										<h:outputLabel style="color:#000000" value="Calificación  " />
+									</div>
+									<div class="col-sm-4">
+										<div class="form-group">
+											<h:selectOneMenu styleClass="form-control"
+												value="#{clientesMb.cliente.calificacionCliente}"
+												disabled="#{clientesMb.updateCalifacionReg}">
+												<f:selectItem itemValue=" " itemLabel=" " />
+												<f:selectItems value="#{clientesMb.listaCalificacion}" />
+											</h:selectOneMenu>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<div class="row">
+									<div class="col-sm-2">
+										<h:outputLabel style="color:#000000" value="Observación: " />
+									</div>
+									<div class="col-sm-4">
+										<div class="form-group">
+											<h:inputTextarea styleClass="form-control"
+												style="text-transform:uppercase;"
+												value="#{clientesMb.cliente.observacion}" />
+										</div>
+									</div>
+									<div class="col-sm-2" />
+									<div class="col-sm-4">
+										<p:commandButton
+										actionListener="#{clientesMb.cierraDialogCliente(clientesMb.cliente)}"
+										value="Aceptar" id="cmbDlgAceptarPac"
+										update="#{p:component('msjGeneral')}" />
+									</div>
+									
+								</div>
+							</div>
+						</div>
+					</div>
+				</p:panel>
+			</p:dialog>
+
+
+		</h:form>
+
+	
+	<h:form id="formMsjError">
+	<p:dialog header="Mensaje Error" modal="true" resizable="false" draggable="false"
+					showEffect="fade" widgetVar="dlgMsjError">
+					<h:panelGrid columns="1" id="pnlMsjError">
+						<h:outputText styleClass="icon-warning red"
+							value="#{clientesMb.msjError}" />
+					</h:panelGrid>
+				</p:dialog>
+	</h:form>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,150 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:pm="http://primefaces.org/mobile"
+	xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml">
+	<ui:define name="head">
+	</ui:define>
+
+<ui:define name="content">
+<h:form>
+<p:ajaxStatus onstart="PF('statusDialog').show()"
+	onsuccess="PF('statusDialog').hide()" />
+<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+	closable="false" resizable="false" showHeader="false">
+	<p:graphicImage name="/imagenes/barra_ajax.gif" />
+</p:dialog>
+<p:messages globalOnly="false" id="msjGeneral" showDetail="false"/>
+
+
+<section class="content">
+	<div class="row">
+		<div class="col-md-12">
+			<div class="box box-primary">
+				<p:panel id="toggleable" header="Notas de Créditos Autorizadas" rendered="#{ejecutaCreditoMb.pintaFacturas}"
+					toggleable="true" toggleSpeed="500" closeSpeed="500"
+					widgetVar="panel" style="margin-bottom:20px">
+					<div class="box-body">
+						<div class="form-group">
+							<h:selectOneMenu styleClass="form-control" id="selectSucursales"
+								value="#{ejecutaCreditoMb.sucursalLogin}">
+								<f:selectItem itemLabel="Cambiar Sucursal" itemValue="0" />
+								<f:selectItems
+									value="#{loginMb.obtenerListSucursal(loginMb.username)}"/>
+								<p:ajax update="#{p:component('tblCreditosClientes')}"/>
+							</h:selectOneMenu>
+							<p:dataTable var="credcli" id="tblCreditosClientes" reflow="true" rows="10"
+								value="#{ejecutaCreditoMb.obtieneListaNotasCreditos(ejecutaCreditoMb.sucursalLogin,'I')}"
+								paginator="true">
+								<p:column headerText="Valor Credito" class="col-md-3">
+									<h:outputText value="#{credcli.valorTotal}"/>
+								</p:column>
+								<p:column headerText="Fecha N/C" class="col-md-3">
+									<h:outputText value="#{credcli.fechaCreacion}"/>
+								</p:column>
+								<p:column headerText="Cliente" class="col-md-3">
+									<h:outputText value="#{credcli.cardCodeCliente}"/>
+								</p:column>
+								<p:column headerText="Acciones" class="col-md-1">
+									<div class="form-group">
+										<h:commandButton value="Ejecutar" id="btnNuevoPac"
+											styleClass="btn btn-primary"
+											update="@form"
+											action="#{ejecutaCreditoMb.EjecutarNotaCredito(credcli)}"></h:commandButton>
+									</div>
+								</p:column>
+							</p:dataTable>
+						</div>
+					</div>
+				</p:panel>
+				<div class="box-body">
+					<div class="row">
+						<div class="col-md-12">
+							<div class="box box-info">
+								<p:panel  rendered="#{ejecutaCreditoMb.pintaDetalle}">
+									<div class="box-body">
+										<div class="form-group">
+											<div class="row">
+											<div class="col-sm-2">
+												<h:outputLabel style="color:#000000" value="No. Factura:" />
+											</div>
+											<div class="col-sm-3">
+												<h:inputText styleClass="form-control" disabled="true"
+													style="text-align:center"
+													value="#{ejecutaCreditoMb.listaCabeceraFacturas.get(0).getNumFactura()}" />
+											</div>
+											<div class="col-sm-2">
+												<h:outputLabel style="color:#000000" value="Fecha Creación:" />
+											</div>
+											<div class="col-sm-3">
+												<h:inputText styleClass="form-control" disabled="true"
+													style="text-align:center"
+													value="#{ejecutaCreditoMb.listaCabeceraFacturas.get(0).getFechaCreacion()}" />
+											</div>
+											</div>
+											<div class="row">
+											<div class="col-sm-2">
+												<h:outputLabel style="color:#000000" value="Valor Factura:" />
+											</div>
+											<div class="col-sm-3">
+												<h:inputText styleClass="form-control" disabled="true"
+													style="text-align:center"
+													value="#{ejecutaCreditoMb.listaCabeceraFacturas.get(0).getValorTotal()}" />
+											</div>
+											<div class="col-sm-2">
+												<h:outputLabel style="color:#000000" value="Observacion" />
+											</div>
+											<div class="col-sm-3">
+												<h:inputText styleClass="form-control" disabled="true"
+													style="text-align:center"
+													value="#{ejecutaCreditoMb.listaCabeceraFacturas.get(0).getFechaCreacion()}" />
+											</div>
+											</div>
+										</div>
+									</div>
+								</p:panel>
+								<p:dataTable var="detalleFact" id="tblDetallesFactura" reflow="true" rows="10" rendered="#{ejecutaCreditoMb.pintaDetalle}"
+									value="#{ejecutaCreditoMb.listaDetalleCredito}"
+									paginator="true">
+									<p:column headerText="Items" class="col-md-3">
+										<h:outputText value="#{detalleFact.descripcionItems}"/>
+									</p:column>
+									<p:column headerText="Fecha Atención" class="col-md-2">
+										<h:outputText value="#{detalleFact.fechaAtencion}"/>
+									</p:column>
+									<p:column headerText="Cant." class="col-md-1">
+										<h:outputText value="#{detalleFact.cantidad}"/>
+									</p:column>
+									<p:column headerText="P. Unit." class="col-md-1">
+										<h:outputText value="#{detalleFact.precioUnitario}"/>
+									</p:column>
+									<p:column headerText="Valor sin iva" class="col-md-1">
+										<h:outputText value="#{detalleFact.precioSinIva}"/>
+									</p:column>
+									<p:column headerText="Valor con iva" class="col-md-1">
+										<h:outputText value="#{detalleFact.precioConIva}"/>
+									</p:column>
+									<p:column headerText="Valor Credito" class="col-md-1">
+										<p:inputText value="#{detalleFact.valorCredito}"
+										 	id="txtValor" styleClass="form-control"/>
+									</p:column>
+								</p:dataTable>
+								<div class="form-group">
+										<h:commandButton value="Guardar" id="btnNuevoPac" rendered="#{ejecutaCreditoMb.pintaDetalle}"
+											styleClass="btn btn-primary"
+											update="#{p:component('tblDetallesFactura')}"
+											action="#{ejecutaCreditoMb.guardarNotaCredito()}"></h:commandButton>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+</h:form>
+</ui:define>
+</ui:composition>

@@ -1,0 +1,115 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:pm="http://primefaces.org/mobile"
+	xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml">
+
+	<ui:define name="head">
+	</ui:define>
+
+	<ui:define name="content">
+		<h:form>
+			<p:ajaxStatus onstart="PF('statusDialog').show()"
+				onsuccess="PF('statusDialog').hide()" />
+			<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+				closable="false" resizable="false" showHeader="false">
+				<p:graphicImage name="/imagenes/barra_ajax.gif" />
+			</p:dialog>
+			<p:messages globalOnly="false" id="msjGeneral" showDetail="false" />
+
+			<section class="content">
+				<div class="row">
+					<div class="col-md-12">
+						<div class="box box-info">
+							<div class="box-header with-border">
+								<div class="box-header with-border">
+									<h:outputText value="Registro de Parámetros"
+										styleClass="FontBold Fs18 hardblue"></h:outputText>
+								</div>
+								
+								<div class="box-body">
+									<div class="col-md-3">
+										<div class="form-group">
+											<p:outputLabel value="Código:" styleClass="Container20" />
+											<p:inputText value="#{parametrosMb.parametrosg.codigo}" style="text-transform:uppercase;"
+												id="txtCodigo" styleClass="form-control"  disabled="#{parametrosMb.disabledCodigo}"/>
+										</div>
+									</div>
+									<div class="col-md-3">
+										<div class="form-group">
+											<p:outputLabel value="Valor:" styleClass="Container20"/>
+											<p:inputText value="#{parametrosMb.parametrosg.valor}" maxlength="250"
+												id="txtValor" styleClass="form-control" style="text-transform:uppercase;" />
+										</div>
+									</div>
+									<div class="col-md-3">
+										<div class="form-group">
+											<p:outputLabel value="Descripción:" />
+											<p:inputText value="#{parametrosMb.parametrosg.descripcion}"  maxlength="250" id="txtDescripcion" styleClass="form-control" style="text-transform:uppercase;" />
+										</div>
+									</div>
+									<div class="col-md-3">  
+										<div class="col-md-12">
+ 										</div>
+										<div class="col-md-6" align="center">
+											<h:outputText value="&#160;&#160;" /> 
+											<h:commandButton value="Guardar"
+												actionListener="#{parametrosMb.guardarParametro}"
+												title="Opcion para generar nuevos usuarios" update="@form"
+												disabled="#{parametrosMb.crear}"
+												styleClass="btn btn-primary"/>
+										</div>
+										<div class="col-md-6" align="center">  
+											<h:outputText value="&#160;&#160;" /> 
+											<h:commandButton value="Modificar"
+													actionListener="#{parametrosMb.modificarParametro(parametrosMb.parametrosg)}"
+													title="Opcion para modificar usuarios" update="#{p:component('tblParametros')}"
+													disabled="#{parametrosMb.modificar}"
+													styleClass="btn btn-primary"/>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-12">
+						<div class="box box-info">
+							<div class="box-header with-border">
+								<p:panel>
+									<p:dataTable var="paramq" id="tblParametros" widgetVar="tblParametros"
+										value="#{parametrosMb.listaParametros}" reflow="true" rows="8"
+										paginator="true">
+										<p:column headerText="Codigo" filterBy="#{paramq.codigo}"
+											filterMatchMode="contains" filterStyle="width: 200px">
+											<h:outputText value="#{paramq.codigo}" />
+										</p:column>
+										<p:column headerText="Valor">
+											<h:outputText value="#{paramq.valor}" />
+										</p:column>
+										<p:column headerText="Descripción">
+											<h:outputText value="#{paramq.descripcion}" />
+										</p:column>										<p:column headerText="Acciones">
+											<div align="center">
+												<h:commandButton class="btn btn-primary" value="Editar"
+													title="Permite editar los datos del parametro #{paramq.codigo}"
+													update="@form"
+													actionListener="#{parametrosMb.seleccionarParametro(paramq)}"></h:commandButton>
+												<h:outputText value="&#160;&#160;" /> 
+												<h:commandButton class="btn btn-primary" value="Inactivar"
+													title="Permite editar los datos del parametro #{paramq.codigo}"
+													update="@form"
+													actionListener="#{parametrosMb.eliminarParametro(paramq)}"></h:commandButton>
+											</div>
+										</p:column>
+									</p:dataTable>
+								</p:panel>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+		</h:form>
+	</ui:define>
+</ui:composition>

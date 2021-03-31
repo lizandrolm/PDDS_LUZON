@@ -1,0 +1,2638 @@
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+	template="/WEB-INF/template.xhtml">
+	<ui:define name="head">
+		<script type="text/javascript">
+    function autAjustePantalla(idDialog){   	
+        document.getElementById(idDialog).style.height = Math.floor(window.innerHeight * 0.7)+"px";
+        document.getElementById(idDialog).style.top= "104px";                         
+}
+
+    function autAjustePantLog(idDialog){ 
+        document.getElementById(idDialog).style.height = Math.floor(window.innerHeight * 0.5)+"px";
+        document.getElementById(idDialog).style.top= "104px";                        
+}
+</script>
+		<style type="text/css">
+.dlgCss {
+	background-color: #F6FAF1;
+}
+
+td.centerColum {
+	text-align: center;
+}
+
+.ui-row-editor-outline {
+	outline: dotted thin !important;
+	color: blue !important;
+}
+
+.tab1 {
+	background-color: #3c8dbc !important;
+}
+
+.tabInfo {
+	background-color: #COCOCO !important;
+}
+
+.tabInfo1 {
+	color: #c91515 !important;
+}
+
+.ui-tabs-top .ui-tabs-nav {
+	border-bottom: solid 1px #1578c9;
+	border-bottom-right-radius: 0px;
+	border-bottom-left-radius: 0px;
+	border: solid 0px #175787 !important;
+	font-weight: normal;
+	background: #1578c9;
+	background: -moz-linear-gradient(top, #1578c9 0%, #0b66b1 100%);
+	background: -webkit-gradient(left top, left bottom, color-stop(0%, #1578c9),
+		color-stop(100%, #0b66b1));
+	background: -webkit-linear-gradient(top, #f4f4f4 0%, #f4f4f4 100%);
+	background: -o-linear-gradient(top, #1578c9 0%, #0b66b1 100%);
+	background: -ms-linear-gradient(top, #1578c9 0%, #0b66b1 100%);
+	background: linear-gradient(to bottom, #f4f4f4 0%, #fbfcfd 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1578c9',
+		endColorstr='#0b66b1', GradientType=0);
+}
+
+.ui-chkbox .ui-chkbox-box {
+	border: solid 3px #3a3942;
+	border-width: thin;
+	width: 19px;
+	height: 19px;
+}
+</style>
+	</ui:define>
+
+	<ui:define name="content">
+		<h:form id="form">
+			<p:ajaxStatus onstart="PF('statusDialog').show()"
+				onsuccess="PF('statusDialog').hide()" />
+
+			<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+				closable="false" resizable="false" showHeader="false">
+				<p:graphicImage name="/imagenes/barra_ajax.gif" />
+			</p:dialog>
+
+			<p:messages globalOnly="false" id="msjGeneral" showDetail="false" />
+
+			<p:contextMenu style="width: 200px; color: black" id="ctmMenu">
+				<p:menuitem value="Log de modificaciones" id="idLogMod"
+					actionListener="#{facturasMb.consultaLogModificaciones}"
+					update=":formHistFact:tblHistFacturas" icon="ui-icon-newwin"
+					style="color: black">
+				</p:menuitem>
+			</p:contextMenu>
+
+			<section class="content-header">
+				<h1>
+					<h:outputLabel style="color:#000000" value="Gestión de Facturas" />
+				</h1>
+			</section>
+
+			<section class="container-fluid">
+				<div class="box-body">
+					<div class="row">
+						<div class="col-lg-12 col-md-12">
+							<div class="box box-info">
+								<div class="box-header with-border">
+									<h3 class="box-title">Criterios de búsqueda</h3>
+								</div>
+								<h:form id="formBuscarFechas">
+									<div class="box-body">
+										<div class="form-group">
+											<div class="row">
+												<div class="col-lg-4 col-md-6 col-sm-6">
+													<div class="col-lg-3 col-md-3">
+														<h:outputLabel style="color:#000000" value="Fecha Desde: "
+															for="fechDesde" />
+													</div>
+													<div class="col-lg-9 col-md-9">
+														<p:calendar id="fechDesde" showOn="button" mask="true"
+															value="#{facturasMb.fechaDesde}" required="true"
+															requiredMessage="Fecha no debe ser nula" locale="es"
+															pattern="dd/MM/yyyy" />
+													</div>
+												</div>
+												<div class="col-lg-4 col-md-6 col-sm-6">
+													<div class="col-lg-3 col-md-3">
+														<h:outputLabel style="color:#000000" value="Fecha Hasta: "
+															for="fechHasta" />
+													</div>
+													<div class="col-lg-9 col-md-9">
+														<p:calendar id="fechHasta" showOn="button" mask="true"
+															value="#{facturasMb.fechaHasta}" required="true"
+															requiredMessage="Fecha no debe ser nula" locale="es"
+															pattern="dd/MM/yyyy" />
+													</div>
+												</div>
+												<div class="col-lg-4 col-md-5">
+													<div class="col-lg-3">
+														<h:outputLabel style="color:#000000"
+															value="C.I. Paciente: " />
+													</div>
+													<div class="col-lg-8">
+														<p:inputText id="txtNumIDPaciente"
+															value="#{facturasMb.numeroIdPaciente}"
+															styleClass="form-control" />
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="form-group" align="center">
+											<div class="row">
+												<div class="col-lg-4 col-md-5">
+													<div class="col-lg-3">
+														<h:outputLabel style="color:#000000"
+															value="Número Factura: " />
+													</div>
+													<div class="col-lg-8">
+														<p:inputText id="txtNumFact"
+															value="#{facturasMb.numeroFactura}"
+															styleClass="form-control" />
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="box-footer">
+											<h:commandButton id="btnBuscar" value="Buscar"
+												actionListener="#{facturasMb.Buscar()}"
+												class="btn btn-primary"
+												update="#{p:component('tblFactura')}" />
+										</div>
+									</div>
+								</h:form>
+							</div>
+						</div>
+						<div class="col-md-12">
+							<div class="box box-primary">
+								<p:dataTable var="factura" id="tblFactura"
+									emptyMessage="No existe facturas creadas"
+									widgetVar="tblFactura" value="#{facturasMb.listaFacturas}"
+									paginator="true" rows="10">
+
+									<p:column headerText="Id. de factura">
+										<h:outputText value="#{factura.numFactura}"
+											style="text-align:center" />
+									</p:column>
+
+									<p:column headerText="Fecha de Creación"
+										sortBy="#{factura.fechaCreacionStr}">
+										<h:outputText value="#{factura.fechaCreacionStr}"
+											styleClass="centerColum" />
+									</p:column>
+
+									<p:column headerText="Origen Factura"
+										sortBy="#{factura.origenFactura}">
+										<h:outputText styleClass="centerColum"
+											value="#{factura.origenFactura}" />
+									</p:column>
+
+									<p:column headerText="Especialidad"
+										sortBy="#{factura.especialidad}">
+										<h:outputText style="text-align:center"
+											value="#{factura.especialidad}" />
+									</p:column>
+
+									<p:column headerText="Médico"
+										sortBy="#{factura.nombresCompletosMedico}">
+										<h:outputText style="text-align:center"
+											value="#{factura.nombresCompletosMedico}" />
+									</p:column>
+
+									<p:column headerText="Número de identificación Paciente">
+										<h:outputText value="#{factura.numDocumentoPaciente}"
+											styleClass="centerColum" />
+									</p:column>
+
+									<p:column headerText="Nombres paciente"
+										sortBy="#{factura.nombresCompletosPacient}">
+										<h:outputText style="text-align:center"
+											value="#{factura.nombresCompletosPacient}" />
+									</p:column>
+
+									<p:column headerText="Tipo de Pago">
+										<center>
+											<ui:repeat varStatus="loop" value="#{factura.mediosDePago}">
+												<h:outputText value="#{factura.mediosDePago[loop.index]}" />
+												<br />
+											</ui:repeat>
+										</center>
+									</p:column>
+
+									<p:column headerText="Estado Factura"
+										sortBy="#{factura.estadoFactura}">
+										<center>
+											<h:outputText
+												class="#{factura.estadoFactura eq 'C' ? 'label label-success' : factura.estadoFactura eq 'P' ? factura.estadoConvenioCred eq 'CP' ? 'label label-primary' : 'label label-warning' : factura.estadoFactura eq 'PD' ? 'label label-info' : 'label label-danger'}"
+												value="#{factura.estadoFactura eq 'C' ? 'Cancelado' : factura.estadoFactura eq 'P' ? factura.estadoConvenioCred eq 'CP' ? 'Pendiente de Facturación' : 'Pendiente de Cancelar' : factura.estadoFactura eq 'PD' ? 'Pendiente de Despacho' :'Otros'}" />
+										</center>
+									</p:column>
+
+									<p:column headerText="Ver Detalle">
+										<center>
+											<p:commandButton icon="ui-icon-bookmark" id="btnVerDetalle"
+												title="Permite ver detalle de la factura"
+												actionListener="#{facturasMb.onRowSelectFactura(factura)}"
+												update="#{p:component('pnlDialog')},#{p:component('pnlDialogFactAcum')},#{p:component('pnlDlgFactPnd')}" />
+										</center>
+									</p:column>
+									<p:column headerText="Reprocesar">
+										<center>
+											<p:commandButton icon="ui-icon-arrowrefresh-1-w" id="btnReprocesar"
+												title="Permite reprocesar la factura al ser rechazada por el SRI" disabled="#{factura.estadoFactElect}"
+												actionListener="#{facturasMb.reprocesarFacturaSRI(factura)}"
+												update="#{p:component('msjGeneral')},#{p:component('tblFactura')}" />
+										</center>
+									</p:column>
+								</p:dataTable>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<p:dialog header="Detalle Factura" widgetVar="dlgDetalle"
+					draggable="false" id="idDlgDetalle" hideEffect="clip" modal="true"
+					showEffect="clip" resizable="false" width="60%" height="60%"
+					maximizable="true" onShow="autAjustePantalla('form:idDlgDetalle')">
+
+					<p:ajax event="close" listener="#{facturasMb.seteaSelectedFactura}" />
+
+					<p:scrollPanel mode="native" style="width:100%;height:96%">
+						<p:panel toggleSpeed="400" closeSpeed="500"
+							widgetVar="panelDetalle" style="margin-bottom:20px">
+							<h:panelGroup id="pnlDialog">
+								<div class="row">
+									<div class="box-body">
+										<div class="row">
+											<div class="col-md-6">
+												<div class="box box-info">
+													<div class="box-header with-border">
+														<h3 class="box-title">Datos Pacientes</h3>
+													</div>
+													<div class="box-body form-horizontal">
+														<div class="form-group">
+															<h:outputLabel style="color:#000000" class="col-sm-5"
+																value="Número de identificación:" />
+															<div class="col-sm-7">
+																<div class="input-group">
+																	<h:inputText id="txtNumDocPac"
+																		styleClass="form-control" disabled="true"
+																		style="text-align:center"
+																		value="#{facturasMb.selectRowFact.idPacienteFact.numDocumento}" />
+																	<div class="input-group-btn">
+																		<p:commandButton icon="ui-icon-refresh"
+																			title="Actualiza paciente"
+																			disabled="#{facturasMb.replicadoSAP}"
+																			actionListener="#{facturasMb.actualizaPacienteClienteFacturado('P')}"
+																			update="#{p:component('txtNotas')},#{p:component('btnActualizar')}"
+																			oncomplete="PF('tblPaciente').filter()" />
+																	</div>
+																</div>
+															</div>
+														</div>
+														<div class="form-group">
+															<h:outputLabel style="color:#000000" value="Paciente:"
+																class="col-sm-5" />
+															<div class="col-sm-7">
+																<h:inputText id="txtNombresPac"
+																	style="text-align:center"
+																	value="#{facturasMb.selectRowFact.idPacienteFact.nombresCompletos}"
+																	styleClass="form-control" disabled="true" />
+															</div>
+														</div>
+														<div class="form-group">
+															<h:outputLabel style="color:#000000"
+																value="Tarjeta Afiliado:" class="col-sm-5" />
+															<div class="col-sm-7">
+																<div class="input-group">
+																	<h:selectOneMenu id="txtMailPac" disabled="true"
+																		value="#{facturasMb.selectRowFact.idPacienteFact.afiliadoTarjeta}"
+																		styleClass="form-control">
+																		<f:selectItem itemValue="N" itemLabel="No" />
+																		<f:selectItem itemValue="Y" itemLabel="Si" />
+																	</h:selectOneMenu>
+																	<div class="input-group-btn">
+																		<p:commandButton icon="ui-icon-print"
+																			id="btnImpTarjeta"
+																			disabled="#{facturasMb.habilitaImpresion()}"
+																			actionListener="#{facturasMb.imprimirTarjeta()}">
+																		</p:commandButton>
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+											<div class="col-md-6">
+												<div class="box box-info">
+													<div class="box-header with-border">
+														<h3 class="box-title">Datos Clientes</h3>
+													</div>
+													<div class="box-body form-horizontal">
+														<div class="form-group">
+															<h:outputLabel style="color:#000000" class="col-sm-5"
+																value="Número de identificación:" />
+															<div class="col-sm-7">
+																<div class="input-group">
+																	<h:inputText id="txtNumDoc" styleClass="form-control"
+																		disabled="true" style="text-align:center"
+																		value="#{facturasMb.selectRowFact.idClienteFact.numDocumento}" />
+																	<div class="input-group-btn">
+																		<p:commandButton icon="ui-icon-refresh"
+																			title="Actualiza cliente"
+																			disabled="#{facturasMb.replicadoSAP}"
+																			actionListener="#{facturasMb.actualizaPacienteClienteFacturado('C')}"
+																			update="#{p:component('txtNotas')},#{p:component('btnActualizar')}"
+																			oncomplete="PF('tblCliente').filter()" />
+																	</div>
+																</div>
+															</div>
+														</div>
+														<div class="form-group">
+															<h:outputLabel style="color:#000000" class="col-sm-5"
+																value="Cliente:" />
+															<div class="col-sm-7">
+																<h:inputText id="txtNombres" style="text-align:center"
+																	value="#{facturasMb.selectRowFact.idClienteFact.nombresCompletos}"
+																	styleClass="form-control" disabled="true" />
+															</div>
+														</div>
+														<div class="form-group">
+															<h:outputLabel style="color:#000000"
+																value="Correo Electrónico:" class="col-sm-5" />
+															<div class="col-sm-7">
+																<h:inputText id="txtMail" style="text-align:center"
+																	value="#{facturasMb.selectRowFact.idClienteFact.email}"
+																	styleClass="form-control" disabled="true" />
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+
+										<div class="form-group">
+											<div class="nav-tabs-custom">
+												<div class="row">
+													<div class="col-sm-6" />
+													<div class="col-sm-6">
+														<div class="col-sm-5" />
+														<div align="right" class="col-sm-6">
+															<p:outputLabel>Nombre Lista Precio: #{facturasMb.nombreListaPrecio} </p:outputLabel>
+														</div>
+														<div class="col-sm-1" />
+													</div>
+												</div>
+												<p:tabView dynamic="true" cache="true"
+													activeIndex="#{facturasMb.idxTabView}">
+													<p:tab id="tab0" title="Servicios" titleStyleClass="tab1">
+														<p:dataTable var="facturaDetEsp" id="tblDetalleProforma"
+															widgetVar="tblDetalleProforma"
+															emptyMessage="No se ha seleccionado Medico"
+															scrollHeight="170" value="#{facturasMb.listDetFactEsp}"
+															scrollable="true" style="margin-bottom:20px">
+
+															<p:columnGroup type="header">
+																<p:column headerText="Especialidad"
+																	style="#{loginMb.styleTable}" />
+																<p:column headerText="Médico"
+																	style="#{loginMb.styleTable}" />
+																<p:column headerText="Fecha de Atención"
+																	style="#{loginMb.styleTable}" />
+																<p:column headerText="Turno"
+																	style="#{loginMb.styleTable}" />
+																<p:column headerText="Valor Unitario"
+																	style="#{loginMb.styleTable}" />
+																<p:column headerText="Cantidad"
+																	style="#{loginMb.styleTable}" />
+																<p:column headerText="% Descuento"
+																	style="#{loginMb.styleTable}" />
+																<p:column headerText="Precio Sin IVA"
+																	style="#{loginMb.styleTable}" />
+															</p:columnGroup>
+
+															<p:column>
+																<center>
+																	<h:outputText value="#{facturaDetEsp.especialidad}" />
+																</center>
+															</p:column>
+															<p:column>
+																<center>
+																	<h:outputText
+																		value="#{facturaDetEsp.idMedicoFact.nombreCompleto}" />
+																</center>
+															</p:column>
+															<p:column>
+																<center>
+																	<h:outputText value="#{facturaDetEsp.fechaAtencionStr}">
+																		<f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+																	</h:outputText>
+																</center>
+															</p:column>
+															<p:column>
+																<center>
+																	<h:outputText value="#{facturaDetEsp.turno}" />
+																</center>
+															</p:column>
+															<p:column>
+																<center>
+																	<h:outputText value="#{facturaDetEsp.precio}">
+																		<f:convertNumber pattern="0.00" />
+																	</h:outputText>
+																</center>
+															</p:column>
+															<p:column>
+																<center>
+																	<h:outputText value="#{facturaDetEsp.cantidad}" />
+																</center>
+															</p:column>
+															<p:column>
+																<center>
+																	<h:outputText
+																		value="#{facturaDetEsp.porcentajeDescuento}" />
+																</center>
+															</p:column>
+															<p:column>
+																<center>
+																	<h:outputText value="#{facturaDetEsp.precioTotal}">
+																		<f:convertNumber pattern="0.00" />
+																	</h:outputText>
+																</center>
+															</p:column>
+														</p:dataTable>
+													</p:tab>
+													<p:tab id="tab1" title="Farmacia" titleStyleClass="tab1">
+														<p:dataTable var="farmacia" id="tblDetalleFarmacia"
+															widgetVar="tblDetalleFarmacia" scrollRows="2"
+															emptyMessage="No se ha seleccionado Items"
+															scrollHeight="170" value="#{facturasMb.listDetFactFarm}"
+															scrollable="true" style="margin-bottom:20px">
+
+															<p:columnGroup type="header">
+																<p:column headerText="Descripción"
+																	style="#{loginMb.styleTable}" />
+																<p:column headerText="Ubicación"
+																	style="#{loginMb.styleTable}" />
+																<p:column headerText="Asignación de Lote"
+																	style="#{loginMb.styleTable}" />
+																<p:column headerText="Valor Unitario"
+																	style="#{loginMb.styleTable}" />
+																<p:column headerText="Cantidad"
+																	style="#{loginMb.styleTable}" />
+																<p:column headerText="% Descuento"
+																	style="#{loginMb.styleTable}" />
+																<p:column headerText="Precio Sin IVA"
+																	style="#{loginMb.styleTable}" />
+															</p:columnGroup>
+
+															<p:column>
+																<center>
+																	<h:outputText value="#{farmacia.descripcionItems}" />
+																</center>
+															</p:column>
+															<p:column styleClass="centerColum">
+																<h:outputText value="#{farmacia.ubicacionSap}" />
+															</p:column>
+															<p:column styleClass="centerColum">
+																<h:outputText value="#{farmacia.loteUbicacion}" />
+															</p:column>
+															<p:column>
+																<center>
+																	<h:outputText value="#{farmacia.precio}">
+																		<f:convertNumber pattern="0.00" />
+																	</h:outputText>
+																</center>
+															</p:column>
+															<p:column>
+																<center>
+																	<h:outputText value="#{farmacia.cantidad}" />
+																</center>
+															</p:column>
+															<p:column>
+																<center>
+																	<h:outputText value="#{farmacia.porcentajeDescuento}" />
+																</center>
+															</p:column>
+															<p:column>
+																<center>
+																	<h:outputText value="#{farmacia.precioTotal}">
+																		<f:convertNumber pattern="0.00" />
+																	</h:outputText>
+																</center>
+															</p:column>
+														</p:dataTable>
+													</p:tab>
+													<p:tab id="tab2" title="Activo Fijo" titleStyleClass="tab1">
+														<p:dataTable var="factActFijo" id="tblDetFactActFijo"
+															widgetVar="tblDetFactActFijo"
+															emptyMessage="No se ha seleccionado items"
+															scrollHeight="150" value="#{facturasMb.listDetFactAF}"
+															scrollable="true" style="margin-bottom:20px">
+
+															<p:columnGroup type="header">
+																<p:column headerText="Número de artículo"
+																	style="#{loginMb.styleTable}" />
+																<p:column headerText="Descripción artículo"
+																	style="#{loginMb.styleTable}" />
+																<p:column headerText="Valor Unitario"
+																	style="#{loginMb.styleTable}" />
+																<p:column headerText="Cantidad"
+																	style="#{loginMb.styleTable}" />
+																<p:column headerText="Baja Parcial"
+																	style="#{loginMb.styleTable}" />
+															</p:columnGroup>
+
+															<p:column styleClass="centerColum">
+																<h:outputText value="#{factActFijo.codigoItems}" />
+															</p:column>
+															<p:column styleClass="centerColum">
+																<h:outputText value="#{factActFijo.descripcionItems}" />
+															</p:column>
+															<p:column styleClass="centerColum">
+																<h:outputText value="#{factActFijo.precio}">
+																	<f:convertNumber pattern="0.00" />
+																</h:outputText>
+															</p:column>
+															<p:column styleClass="centerColum">
+																<h:outputText id="cantidad"
+																	value="#{factActFijo.cantidad}"
+																	inputStyleClass="centerColumn" />
+															</p:column>
+															<p:column styleClass="centerColum">
+																<p:selectBooleanCheckbox
+																	value="#{factActFijo.actFijoBajaParcial}"
+																	disabled="true" />
+															</p:column>
+														</p:dataTable>
+													</p:tab>
+													<p:tab id="tab3" title="Óptica" titleStyleClass="tab1">
+														<p:dataTable var="opt" id="tblDetOptica"
+															widgetVar="tblDetOptica"
+															emptyMessage="No se ha seleccionado items"
+															scrollHeight="150" value="#{facturasMb.listDetFactOP}"
+															scrollable="true" style="margin-bottom:20px">
+
+															<p:columnGroup type="header">
+																<p:column headerText="Número de artículo"
+																	style="#{loginMb.styleTable}" />
+																<p:column headerText="Descripción artículo"
+																	style="#{loginMb.styleTable}" />
+																<p:column headerText="Valor Unitario"
+																	style="#{loginMb.styleTable}" />
+																<p:column headerText="Cantidad"
+																	style="#{loginMb.styleTable}" />
+
+															</p:columnGroup>
+
+															<p:column styleClass="centerColum">
+																<h:outputText value="#{opt.codigoItems}" />
+															</p:column>
+															<p:column styleClass="centerColum">
+																<h:outputText value="#{opt.descripcionItems}" />
+															</p:column>
+															<p:column styleClass="centerColum">
+																<h:outputText value="#{opt.precio}">
+																	<f:convertNumber pattern="0.00" />
+																</h:outputText>
+															</p:column>
+															<p:column styleClass="centerColum">
+																<h:outputText id="cantidad" value="#{opt.cantidad}"
+																	inputStyleClass="centerColumn" />
+															</p:column>
+														</p:dataTable>
+													</p:tab>
+												</p:tabView>
+											</div>
+										</div>
+										<div class="form-group">
+											<div class="row">
+												<div class="col-lg-6">
+													<div class="box-body form-horizontal">
+														<h:outputLabel style="color:#000000" value="Notas:"
+															class="col-sm-2" />
+														<div class="col-sm-10">
+															<h:inputTextarea id="txtNotas" styleClass="form-control"
+																disabled="#{facturasMb.updateCliPacFactura}"
+																value="#{facturasMb.selectRowFact.notas}" />
+														</div>
+													</div>
+													<div class="box box-info">
+														<p:panel id="pnlFormaPago">
+															<p:dataTable var="formaPago" id="tblFormaPago"
+																widgetVar="tblFormaPago" scrollRows="3"
+																emptyMessage="No se ha seleccionado forma de pago"
+																scrollHeight="60" value="#{facturasMb.listaMedioDPago}"
+																scrollable="true" style="margin-bottom:20px">
+
+																<p:columnGroup type="header">
+																	<p:column headerText="Medio de Pago"
+																		style="#{loginMb.styleTable}" />
+																	<p:column headerText="Valor Recibido"
+																		style="#{loginMb.styleTable}" />
+																</p:columnGroup>
+
+																<p:column>
+																	<center>
+																		<h:outputText id="txtMedioPagoOut"
+																			value="#{formaPago.medioPago}" />
+																	</center>
+																</p:column>
+
+																<p:column>
+																	<center>
+																		<h:outputText id="txtVlrFrmPagoOut"
+																			value="#{formaPago.valorFrmPago}">
+																			<f:convertNumber pattern="0.00" />
+																		</h:outputText>
+																	</center>
+																</p:column>
+															</p:dataTable>
+															<div class="form-group">
+																<div class="col-sm-6" />
+																<h:outputLabel style="color:#000000" value="Vuelto:"
+																	class="col-sm-2" />
+																<div class="col-sm-3">
+																	<h:inputText id="txtvuelto" disabled="true"
+																		styleClass="form-control"
+																		value="#{facturasMb.selectRowFact.valorVuelto}">
+																		<f:convertNumber pattern="0.00" />
+																	</h:inputText>
+																</div>
+															</div>
+														</p:panel>
+													</div>
+												</div>
+												<div class="col-lg-6">
+													<div class="row">
+														<div class="col-lg-4" />
+														<div class="col-lg-8">
+															<p:panel>
+																<div class="box-body form-horizontal">
+																	<div class="form-group">
+																		<h:outputLabel style="color:#000000" value="Subtotal:"
+																			class="col-sm-5" />
+																		<div class="col-lg-7">
+																			<h:inputText id="txtSubtotal"
+																				style="text-align: center"
+																				value="#{facturasMb.selectRowFact.subtotal}"
+																				styleClass="form-control" disabled="true">
+																				<f:convertNumber pattern="0.00" />
+																			</h:inputText>
+																		</div>
+																	</div>
+																	<div class="form-group">
+																		<h:outputLabel style="color:#000000" class="col-sm-5"
+																			value="IVA #{facturasMb.txtValorIVA}%:" />
+																		<div class="col-lg-7">
+																			<h:inputText id="txtIva" style="text-align: center"
+																				value="#{facturasMb.selectRowFact.iva}"
+																				styleClass="form-control" disabled="true">
+																				<f:convertNumber pattern="0.00" />
+																			</h:inputText>
+																		</div>
+																	</div>
+																	<div class="form-group">
+																		<h:outputLabel style="color:#000000" value="IVA 0%:"
+																			class="col-sm-5" />
+																		<div class="col-lg-7">
+																			<h:inputText id="txtIvaCero"
+																				style="text-align: center"
+																				value="#{facturasMb.selectRowFact.ivaCero}"
+																				styleClass="form-control" disabled="true">
+																				<f:convertNumber pattern="0.00" />
+																			</h:inputText>
+																		</div>
+																	</div>
+																	<div class="form-group">
+																		<h:outputLabel style="color:#000000"
+																			value="Valor Total:" class="col-sm-5" />
+																		<div class="col-lg-7">
+																			<h:inputText id="txtValorTotal"
+																				style="text-align: center"
+																				value="#{facturasMb.selectRowFact.valorTotal}"
+																				styleClass="form-control" disabled="true">
+																				<f:convertNumber pattern="0.00" />
+																			</h:inputText>
+																		</div>
+																	</div>
+																</div>
+															</p:panel>
+															<div class="form-group" />
+															<div class="form-group">
+																<div class="row">
+																	<div class="col-lg-3" />
+																	<p:commandButton value="Actualizar" id="btnActualizar"
+																		disabled="#{facturasMb.updateCliPacFactura}"
+																		update="#{p:component('msjGeneral')},#{p:component('tblFactura')},#{p:component('txtNotas')},#{p:component('pnlDialog')}"
+																		actionListener="#{facturasMb.updateFactura(facturasMb.selectRowFact, 'dlgDetalle')}" />
+																	<p:commandButton value="Pagar" id="btnPagar"
+																		rendered="#{facturasMb.selectRowFact.valorCredito > 0}"
+																		update="#{p:component('msjGeneral')},#{p:component('tblFactura')},#{p:component('txtNotas')},#{p:component('pnlDialog')}"
+																		actionListener="#{facturasMb.cobraCreditoFactura(facturasMb.selectRowFact, 'dlgDetalle')}" />
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</h:panelGroup>
+						</p:panel>
+					</p:scrollPanel>
+				</p:dialog>
+
+				<p:dialog header="Lista de Clientes" widgetVar="dlgListCliente"
+					draggable="false" hideEffect="clip" modal="true" showEffect="clip"
+					width="700" resizable="true">
+					<p:dataTable var="clientes" id="tblCliente" widgetVar="tblCliente"
+						value="#{facturasMb.listaClientes}" selectionMode="single"
+						paginator="true" rows="10"
+						filteredValue="#{facturasMb.listaFiltroClientes}"
+						selection="#{facturasMb.selectedCliente}"
+						rowKey="#{clientes.cardCode}">
+
+						<p:ajax event="rowSelect"
+							listener="#{facturasMb.onRowSelectCliente}"
+							update="#{p:component('txtNumDoc')}, #{p:component('txtNombres')}, #{p:component('txtMail')}, #{p:component('txtNumDocFactPnd')}, #{p:component('txtNombresFactPnd')}, #{p:component('txtMailFactPnd')}" />
+
+						<p:column headerText="Número de identificación"
+							styleClass="centerColum" filterStyle="width: 150px"
+							filterBy="#{clientes.numDocumento}">
+							<h:outputText value="#{clientes.numDocumento}" />
+						</p:column>
+
+						<p:column headerText="Nombres" filterStyle="width: 260px"
+							filterBy="#{clientes.nombresCompletos}">
+							<h:outputText value="#{clientes.nombresCompletos}" />
+						</p:column>
+					</p:dataTable>
+				</p:dialog>
+
+				<p:dialog header="Lista de Pacientes" widgetVar="dlgListPaciente"
+					draggable="false" hideEffect="clip" modal="true" showEffect="clip"
+					width="700" resizable="false">
+					<p:dataTable var="pacientes" id="tblPaciente"
+						widgetVar="tblPaciente" value="#{facturasMb.listaPacientes}"
+						selectionMode="single" paginator="true" rows="10"
+						filteredValue="#{facturasMb.listaFiltroClientes}"
+						selection="#{facturasMb.selectedCliente}"
+						rowKey="#{pacientes.cardCode}">
+
+						<p:ajax event="rowSelect"
+							listener="#{facturasMb.onRowSelectPaciente}"
+							update="#{p:component('txtNumDocPac')},#{p:component('txtNombresPac')}, #{p:component('txtMailPac')},#{p:component('txtNumDocPacFactPnd')},#{p:component('txtNombresPacFactPnd')}, #{p:component('txtMailPacFactPnd')}, #{p:component('txtNumDocPacFactAcum')},#{p:component('txtNombresPacFactAcum')}, #{p:component('txtMailPacFactAcum')}" />
+
+						<p:column headerText="Número de identificación"
+							filterBy="#{pacientes.numDocumento}" styleClass="centerColum"
+							filterStyle="width: 160px" filterMatchMode="contains">
+							<h:outputText value="#{pacientes.numDocumento}" />
+						</p:column>
+
+						<p:column headerText="Nombres" filterStyle="width: 260px"
+							filterBy="#{pacientes.nombresCompletos}"
+							filterMatchMode="contains">
+							<h:outputText value="#{pacientes.nombresCompletos}" />
+						</p:column>
+					</p:dataTable>
+				</p:dialog>
+
+				<p:dialog header="Detalle Factura" widgetVar="dlgDetalleFactAcum"
+					id="idDlgDetalleFactAcum" hideEffect="clip" modal="true"
+					draggable="false" maximizable="true" showEffect="clip" width="60%"
+					height="60%"
+					onShow="autAjustePantalla('form:idDlgDetalleFactAcum')"
+					resizable="false">
+
+					<p:ajax event="close" listener="#{facturasMb.seteaSelectedFactura}" />
+
+					<p:scrollPanel mode="native" style="width:100%;height:96%">
+						<p:panel toggleSpeed="500" closeSpeed="500"
+							widgetVar="panelDetalleFactAcum" style="margin-bottom:20px">
+							<h:panelGroup id="pnlDialogFactAcum">
+								<div class="row">
+									<div class="box-body">
+										<div class="row">
+											<div class="col-md-6">
+												<div class="box box-info">
+													<div class="box-header with-border">
+														<h3 class="box-title">Datos Pacientes</h3>
+													</div>
+													<div class="box-body form-horizontal">
+														<div class="form-group">
+															<h:outputLabel style="color:#000000" class="col-sm-5"
+																value="Número de identificación:" />
+															<div class="col-sm-7">
+																<div class="input-group">
+																	<h:inputText id="txtNumDocPacFactAcum"
+																		styleClass="form-control" disabled="true"
+																		style="text-align:center"
+																		value="#{facturasMb.selectRowFact.idPacienteFact.numDocumento}" />
+																	<div class="input-group-btn">
+																		<p:commandButton icon="ui-icon-refresh"
+																			title="Actualiza paciente"
+																			disabled="#{facturasMb.replicadoSAP}"
+																			actionListener="#{facturasMb.actualizaPacienteClienteFacturado('P')}"
+																			update="#{p:component('txtNotasFactAcum')}"
+																			oncomplete="PF('tblPaciente').filter()" />
+																	</div>
+																</div>
+															</div>
+														</div>
+														<div class="form-group">
+															<h:outputLabel style="color:#000000" value="Paciente:"
+																class="col-sm-5" />
+															<div class="col-sm-7">
+																<h:inputText id="txtNombresPacFactAcum"
+																	style="text-align:center"
+																	value="#{facturasMb.selectRowFact.idPacienteFact.nombresCompletos}"
+																	styleClass="form-control" disabled="true" />
+															</div>
+														</div>
+														<div class="form-group">
+															<h:outputLabel style="color:#000000"
+																value="Tarjeta Afiliado:" class="col-sm-5" />
+															<div class="col-sm-4">
+																<h:selectOneMenu id="txtMailPacFactAcum" disabled="true"
+																	value="#{facturasMb.selectRowFact.idPacienteFact.afiliadoTarjeta}"
+																	styleClass="form-control">
+																	<f:selectItem itemValue="N" itemLabel="No" />
+																	<f:selectItem itemValue="Y" itemLabel="Si" />
+																</h:selectOneMenu>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+											<div class="col-md-6">
+												<div class="box box-info">
+													<div class="box-header with-border">
+														<h3 class="box-title">Datos Clientes</h3>
+													</div>
+													<div class="box-body form-horizontal">
+														<div class="form-group">
+															<h:outputLabel style="color:#000000" class="col-sm-5"
+																value="Número de identificación:" />
+															<div class="col-sm-7">
+																<h:inputText id="txtNumDocFactAcum"
+																	styleClass="form-control" disabled="true"
+																	style="text-align:center"
+																	value="#{facturasMb.selectRowFact.idClienteFact.numDocumento}" />
+															</div>
+														</div>
+														<div class="form-group">
+															<h:outputLabel style="color:#000000" class="col-sm-5"
+																value="Cliente:" />
+															<div class="col-sm-7">
+																<h:inputText id="txtNombresFactAcum"
+																	style="text-align:center"
+																	value="#{facturasMb.selectRowFact.idClienteFact.nombresCompletos}"
+																	styleClass="form-control" disabled="true" />
+															</div>
+														</div>
+														<div class="form-group">
+															<h:outputLabel style="color:#000000"
+																value="Correo Electrónico:" class="col-sm-5" />
+															<div class="col-sm-7">
+																<h:inputText id="txtMailFactAcum"
+																	style="text-align:center"
+																	value="#{facturasMb.selectRowFact.idClienteFact.email}"
+																	styleClass="form-control" disabled="true" />
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+
+										<div class="form-group">
+											<div class="nav-tabs-custom">
+												<div class="row">
+													<div class="col-sm-6" />
+													<div class="col-sm-6">
+														<div class="col-sm-5" />
+														<div align="right" class="col-sm-6">
+															<p:outputLabel>Nombre Lista Precio: #{facturasMb.nombreListaPrecio} </p:outputLabel>
+														</div>
+														<div class="col-sm-1" />
+													</div>
+												</div>
+												<p:tabView dynamic="true" cache="true"
+													activeIndex="#{facturasMb.idxTabView}">
+													<p:tab id="tab0" title="Servicios" titleStyleClass="tab1">
+														<p:dataTable var="facturaDetEsp"
+															id="tblDetProformaFactAcum"
+															widgetVar="tblDetProformaFactAcum"
+															emptyMessage="No se ha seleccionado Medico"
+															scrollHeight="170" value="#{facturasMb.listDetFactEsp}"
+															scrollable="true" style="margin-bottom:20px">
+
+															<p:columnGroup type="header">
+																<p:column headerText="Orden de Venta"
+																	style="#{loginMb.styleTable}" />
+																<p:column headerText="Especialidad"
+																	style="#{loginMb.styleTable}" />
+																<p:column headerText="Fecha de Atención"
+																	style="#{loginMb.styleTable}" />
+																<p:column headerText="Turno"
+																	style="#{loginMb.styleTable}" />
+																<p:column headerText="Valor Unitario"
+																	style="#{loginMb.styleTable}" />
+																<p:column headerText="Cantidad"
+																	style="#{loginMb.styleTable}" />
+																<p:column headerText="Precio Sin IVA"
+																	style="#{loginMb.styleTable}" />
+															</p:columnGroup>
+
+															<p:column>
+																<center>
+																	<p:commandLink id="cmdLink"
+																		actionListener="#{facturasMb.consultaOrdenVenta(facturaDetEsp.numOrdnVentaFactAcum)}"
+																		onclick="PF('dlgDetalleOrdnVta').show()"
+																		update=":formOrdnVta:pnlDialogOrdenVta">
+																		<h:outputText
+																			value="#{facturaDetEsp.numOrdnVentaFactAcum}" />
+																	</p:commandLink>
+																</center>
+															</p:column>
+															<p:column>
+																<center>
+																	<h:outputText value="#{facturaDetEsp.especialidad}" />
+																</center>
+															</p:column>
+															<p:column>
+																<center>
+																	<h:outputText value="#{facturaDetEsp.fechaAtencionStr}">
+																		<f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+																	</h:outputText>
+																</center>
+															</p:column>
+															<p:column>
+																<center>
+																	<h:outputText value="#{facturaDetEsp.turno}" />
+																</center>
+															</p:column>
+															<p:column>
+																<center>
+																	<h:outputText value="#{facturaDetEsp.precio}">
+																		<f:convertNumber pattern="0.00" />
+																	</h:outputText>
+																</center>
+															</p:column>
+															<p:column>
+																<center>
+																	<h:outputText value="#{facturaDetEsp.cantidad}" />
+																</center>
+															</p:column>
+															<p:column>
+																<center>
+																	<h:outputText value="#{facturaDetEsp.precioTotal}">
+																		<f:convertNumber pattern="0.00" />
+																	</h:outputText>
+																</center>
+															</p:column>
+														</p:dataTable>
+													</p:tab>
+													<p:tab id="tab1" title="Farmacia" titleStyleClass="tab1">
+														<p:dataTable var="farmacia" id="tblDetFarmaciaFactAcum"
+															widgetVar="tblDetFarmaciaFactAcum"
+															emptyMessage="No se ha seleccionado Items"
+															scrollHeight="170" value="#{facturasMb.listDetFactFarm}"
+															scrollable="true" style="margin-bottom:20px">
+
+															<p:columnGroup type="header">
+																<p:column headerText="Descripción"
+																	style="#{loginMb.styleTable}" />
+																<p:column headerText="Ubicación"
+																	style="#{loginMb.styleTable}" />
+																<p:column headerText="Asignación de Lote"
+																	style="#{loginMb.styleTable}" />
+																<p:column headerText="Valor Unitario"
+																	style="#{loginMb.styleTable}" />
+																<p:column headerText="Cantidad"
+																	style="#{loginMb.styleTable}" />
+																<p:column headerText="Precio Sin IVA"
+																	style="#{loginMb.styleTable}" />
+															</p:columnGroup>
+
+															<p:column>
+																<center>
+																	<h:outputText value="#{farmacia.descripcionItems}" />
+																</center>
+															</p:column>
+															<p:column styleClass="centerColum">
+																<h:outputText value="#{farmacia.ubicacionSap}" />
+															</p:column>
+															<p:column styleClass="centerColum">
+																<h:outputText value="#{farmacia.loteUbicacion}" />
+															</p:column>
+															<p:column>
+																<center>
+																	<h:outputText value="#{farmacia.precio}">
+																		<f:convertNumber pattern="0.00" />
+																	</h:outputText>
+																</center>
+															</p:column>
+															<p:column>
+																<center>
+																	<h:outputText value="#{farmacia.cantidad}" />
+																</center>
+															</p:column>
+															<p:column>
+																<center>
+																	<h:outputText value="#{farmacia.precioTotal}">
+																		<f:convertNumber pattern="0.00" />
+																	</h:outputText>
+																</center>
+															</p:column>
+														</p:dataTable>
+													</p:tab>
+												</p:tabView>
+
+											</div>
+										</div>
+										<div class="form-group">
+											<div class="row">
+												<div class="col-lg-6">
+													<p:panel style="border: 0px">
+														<div class="box-body form-horizontal">
+															<h:outputLabel style="color:#000000" value="Notas:"
+																class="col-sm-2" />
+															<div class="col-sm-10">
+																<h:inputTextarea id="txtNotasFactAcum"
+																	styleClass="form-control"
+																	disabled="#{facturasMb.updateCliPacFactura}"
+																	value="#{facturasMb.selectRowFact.notas}" />
+															</div>
+														</div>
+														<div class="box box-info">
+															<p:panel id="pnlFormaPagoFactAcum">
+																<p:dataTable var="formaPago" id="tblFormaPagoFactAcum"
+																	widgetVar="tblFormaPagoFactAcum" scrollRows="3"
+																	emptyMessage="No se ha seleccionado forma de pago"
+																	scrollHeight="60" value="#{facturasMb.listaMedioDPago}"
+																	scrollable="true" expandableRowGroups="true"
+																	expandedRow="0" rowExpandMode="single"
+																	style="margin-bottom:20px">
+
+																	<p:column headerText="Medio de Pago">
+																		<p:cellEditor
+																			disabled="#{formaPago.banderaChqFormMedPgo}">
+																			<f:facet name="output">
+																				<center>
+																					<h:outputText id="txtMedioPagoOutFactAcum"
+																						value="#{formaPago.medioPago}" />
+																				</center>
+																			</f:facet>
+																			<f:facet name="input">
+																				<center>
+																					<h:selectOneMenu id="txtMedioPagoInFactAcum"
+																						disabled="#{formaPago.banderaChqFormMedPgo}"
+																						value="#{formaPago.medioPago}"
+																						styleClass="form-control">
+																						<f:selectItems
+																							value="#{facturasMb.auxListaFormaPago}" />
+																					</h:selectOneMenu>
+																				</center>
+																			</f:facet>
+																		</p:cellEditor>
+																	</p:column>
+
+																	<p:column headerText="Valor Recibido">
+																		<p:cellEditor
+																			disabled="#{formaPago.banderaChqFormMedPgo}">
+																			<f:facet name="output">
+																				<center>
+																					<h:outputText id="txtVlrFrmPagoOutFactAcum"
+																						value="#{formaPago.valorFrmPago}">
+																						<f:convertNumber pattern="0.00" />
+																					</h:outputText>
+																				</center>
+																			</f:facet>
+																			<f:facet name="input">
+																				<center>
+																					<p:inputText id="txtVlrFrmPagoInFactAcum"
+																						disabled="#{formaPago.banderaChqFormMedPgo}"
+																						value="#{formaPago.valorFrmPago}">
+																					</p:inputText>
+																				</center>
+																			</f:facet>
+																		</p:cellEditor>
+																	</p:column>
+																</p:dataTable>
+
+																<div class="form-group">
+																	<div class="col-sm-1" />
+																	<div class="col-sm-6" />
+																	<h:outputLabel style="color:#000000" value="Vuelto:"
+																		class="col-sm-2" />
+																	<div class="col-sm-3">
+																		<h:inputText id="txtvueltoFactAcum" disabled="true"
+																			styleClass="form-control"
+																			value="#{facturasMb.selectRowFact.valorVuelto}">
+																			<f:convertNumber pattern="0.00" />
+																		</h:inputText>
+																	</div>
+																</div>
+															</p:panel>
+														</div>
+													</p:panel>
+												</div>
+												<div class="col-lg-6">
+													<div class="row">
+														<div class="col-lg-4" />
+														<div class="col-lg-8">
+															<p:panel>
+																<div class="box-body form-horizontal">
+																	<div class="form-group">
+																		<h:outputLabel style="color:#000000" value="Subtotal:"
+																			class="col-sm-5" />
+																		<div class="col-sm-7">
+																			<h:inputText id="txtSubtotalFactAcum"
+																				style="text-align: center"
+																				value="#{facturasMb.selectRowFact.subtotal}"
+																				styleClass="form-control" disabled="true">
+																				<f:convertNumber pattern="0.00" />
+																			</h:inputText>
+																		</div>
+																	</div>
+																	<div class="form-group">
+																		<h:outputLabel style="color:#000000" class="col-sm-5"
+																			value="IVA #{facturasMb.txtValorIVA}%:" />
+																		<div class="col-sm-7">
+																			<h:inputText id="txtIvaFactAcum"
+																				style="text-align: center"
+																				value="#{facturasMb.selectRowFact.iva}"
+																				styleClass="form-control" disabled="true">
+																				<f:convertNumber pattern="0.00" />
+																			</h:inputText>
+																		</div>
+																	</div>
+																	<div class="form-group">
+																		<div class="col-sm-5">
+																			<h:outputLabel style="color:#000000" value="IVA 0%:" />
+																		</div>
+																		<div class="col-sm-7">
+																			<h:inputText id="txtIvaCeroFactAcum"
+																				style="text-align: center"
+																				value="#{facturasMb.selectRowFact.ivaCero}"
+																				styleClass="form-control" disabled="true">
+																				<f:convertNumber pattern="0.00" />
+																			</h:inputText>
+																		</div>
+																	</div>
+																	<div class="form-group">
+																		<div class="col-sm-5">
+																			<h:outputLabel style="color:#000000"
+																				value="Valor Total:" />
+																		</div>
+																		<div class="col-sm-7">
+																			<h:inputText id="txtValorTotalFactAcum"
+																				style="text-align: center"
+																				value="#{facturasMb.selectRowFact.valorTotal}"
+																				styleClass="form-control" disabled="true">
+																				<f:convertNumber pattern="0.00" />
+																			</h:inputText>
+																		</div>
+																	</div>
+																</div>
+															</p:panel>
+															<div class="form-group" />
+															<div class="form-group">
+																<div class="row">
+																	<div class="col-lg-3" />
+																	<p:commandButton value="Actualizar"
+																		id="btnUpdateFactAcum"
+																		disabled="#{facturasMb.updateCliPacFactura}"
+																		update="#{p:component('msjGeneral')},#{p:component('tblFactura')},#{p:component('txtNotasFactAcum')},#{p:component('pnlDialogFactAcum')}"
+																		actionListener="#{facturasMb.updateFactura(facturasMb.selectRowFact, 'dlgDetalleFactAcum')}" />
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</h:panelGroup>
+						</p:panel>
+					</p:scrollPanel>
+				</p:dialog>
+
+			</section>
+		</h:form>
+
+		<h:form id="formOrdnVta">
+			<p:dialog header="Detalle Orden de Venta Factura Acumulada"
+				maximizable="true" draggable="false"
+				onShow="autAjustePantalla('formOrdnVta:idDlgDetalleOrdnVta')"
+				closeOnEscape="true" widgetVar="dlgDetalleOrdnVta" hideEffect="clip"
+				id="idDlgDetalleOrdnVta" modal="true" showEffect="clip" width="60%"
+				height="650" resizable="false">
+
+				<p:ajax event="close" listener="#{facturasMb.seteaSelectedOrdenVta}" />
+
+				<p:scrollPanel mode="native" style="width:100%;height:95%">
+					<p:panel toggleSpeed="500" closeSpeed="500"
+						widgetVar="panelDetalleOrdenVta" style="margin-bottom:20px">
+						<h:panelGroup id="pnlDialogOrdenVta">
+							<div class="row">
+								<div class="box-body">
+									<div class="row">
+										<div class="col-md-6">
+											<div class="box box-info">
+												<div class="box-header with-border">
+													<h3 class="box-title">Datos Pacientes</h3>
+												</div>
+												<div class="box-body form-horizontal">
+													<div class="form-group">
+														<h:outputLabel style="color:#000000" class="col-sm-5"
+															value="Número de identificación:" />
+														<div class="col-sm-7">
+															<h:inputText id="txtNumDocPacOrdVta"
+																styleClass="form-control" disabled="true"
+																style="text-align:center"
+																value="#{facturasMb.ordenVenta.idPacienteFact.numDocumento}" />
+														</div>
+													</div>
+													<div class="form-group">
+														<h:outputLabel style="color:#000000" value="Paciente:"
+															class="col-sm-5" />
+														<div class="col-sm-7">
+															<h:inputText id="txtNombresPacOrdVta"
+																style="text-align:center"
+																value="#{facturasMb.ordenVenta.idPacienteFact.nombresCompletos}"
+																styleClass="form-control" disabled="true" />
+														</div>
+													</div>
+													<div class="form-group">
+														<h:outputLabel style="color:#000000"
+															value="Tarjeta Afiliado:" class="col-sm-5" />
+														<div class="col-sm-4">
+															<h:selectOneMenu id="txtMailPacOrdVta" disabled="true"
+																value="#{facturasMb.ordenVenta.idPacienteFact.afiliadoTarjeta}"
+																styleClass="form-control">
+																<f:selectItem itemValue="N" itemLabel="No" />
+																<f:selectItem itemValue="Y" itemLabel="Si" />
+															</h:selectOneMenu>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="col-md-6">
+											<div class="box box-info">
+												<div class="box-header with-border">
+													<h3 class="box-title">Datos Clientes</h3>
+												</div>
+												<div class="box-body form-horizontal">
+													<div class="form-group">
+														<h:outputLabel style="color:#000000" class="col-sm-5"
+															value="Número de identificación:" />
+														<div class="col-sm-7">
+															<h:inputText id="txtNumDocOrdVta"
+																styleClass="form-control" disabled="true"
+																style="text-align:center"
+																value="#{facturasMb.ordenVenta.idClienteFact.numDocumento}" />
+														</div>
+													</div>
+													<div class="form-group">
+														<h:outputLabel style="color:#000000" class="col-sm-5"
+															value="Cliente:" />
+														<div class="col-sm-7">
+															<h:inputText id="txtNombresOrdVta"
+																style="text-align:center"
+																value="#{facturasMb.ordenVenta.idClienteFact.nombresCompletos}"
+																styleClass="form-control" disabled="true" />
+														</div>
+													</div>
+													<div class="form-group">
+														<h:outputLabel style="color:#000000"
+															value="Correo Electrónico:" class="col-sm-5" />
+														<div class="col-sm-7">
+															<h:inputText id="txtMailOrdVta" style="text-align:center"
+																value="#{facturasMb.ordenVenta.idClienteFact.email}"
+																styleClass="form-control" disabled="true" />
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+
+									<div class="form-group">
+										<div class="nav-tabs-custom">
+											<div class="row">
+												<div class="col-sm-6" />
+												<div class="col-sm-6">
+													<div class="col-sm-5" />
+													<div align="right" class="col-sm-6">
+														<p:outputLabel>Nombre Lista Precio: #{facturasMb.nombreListaPrecio} </p:outputLabel>
+													</div>
+													<div class="col-sm-1" />
+												</div>
+											</div>
+											<p:tabView dynamic="true" cache="true"
+												activeIndex="#{facturasMb.idxTabView}">
+												<p:tab id="tab0" title="Servicios" titleStyleClass="tab1">
+													<p:dataTable var="facturaDetEsp"
+														id="tblDetalleProformaOrdVta"
+														widgetVar="tblDetalleProformaOrdVta"
+														emptyMessage="No se ha seleccionado Medico"
+														scrollHeight="170" value="#{facturasMb.listDetEspOrdnVta}"
+														scrollable="true" style="margin-bottom:20px">
+
+														<p:columnGroup type="header">
+															<p:column headerText="Especialidad"
+																style="#{loginMb.styleTable}" />
+															<p:column headerText="Médico"
+																style="#{loginMb.styleTable}" />
+															<p:column headerText="Fecha de Atención"
+																style="#{loginMb.styleTable}" />
+															<p:column headerText="Valor Unitario"
+																style="#{loginMb.styleTable}" />
+															<p:column headerText="Cantidad"
+																style="#{loginMb.styleTable}" />
+															<p:column headerText="Precio Sin IVA"
+																style="#{loginMb.styleTable}" />
+														</p:columnGroup>
+
+														<p:column>
+															<center>
+																<h:outputText value="#{facturaDetEsp.especialidad}" />
+															</center>
+														</p:column>
+														<p:column>
+															<center>
+																<h:outputText
+																	value="#{facturaDetEsp.idMedicoFact.nombreCompleto}" />
+															</center>
+														</p:column>
+														<p:column>
+															<center>
+																<h:outputText value="#{facturaDetEsp.fechaAtencionStr}">
+																	<f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+																</h:outputText>
+															</center>
+														</p:column>
+														<p:column>
+															<center>
+																<h:outputText value="#{facturaDetEsp.precio}">
+																	<f:convertNumber pattern="0.00" />
+																</h:outputText>
+															</center>
+														</p:column>
+														<p:column>
+															<center>
+																<h:outputText value="#{facturaDetEsp.cantidad}" />
+															</center>
+														</p:column>
+														<p:column>
+															<center>
+																<h:outputText value="#{facturaDetEsp.precioTotal}">
+																	<f:convertNumber pattern="0.00" />
+																</h:outputText>
+															</center>
+														</p:column>
+													</p:dataTable>
+												</p:tab>
+												<p:tab id="tab1" title="Farmacia" titleStyleClass="tab1">
+													<p:dataTable var="farmacia" id="tblDetalleFarmaciaOrdVta"
+														widgetVar="tblDetalleFarmaciaOrdVta" scrollRows="2"
+														emptyMessage="No se ha seleccionado Items"
+														scrollHeight="170"
+														value="#{facturasMb.listDetFarmOrdnVta}" scrollable="true"
+														style="margin-bottom:20px">
+
+														<p:columnGroup type="header">
+															<p:column headerText="Descripción"
+																style="#{loginMb.styleTable}" />
+															<p:column headerText="Ubicación"
+																style="#{loginMb.styleTable}" />
+															<p:column headerText="Asignación de Lote"
+																style="#{loginMb.styleTable}" />
+															<p:column headerText="Valor Unitario"
+																style="#{loginMb.styleTable}" />
+															<p:column headerText="Cantidad"
+																style="#{loginMb.styleTable}" />
+															<p:column headerText="Precio Sin IVA"
+																style="#{loginMb.styleTable}" />
+														</p:columnGroup>
+
+														<p:column>
+															<center>
+																<h:outputText value="#{farmacia.descripcionItems}" />
+															</center>
+														</p:column>
+														<p:column styleClass="centerColum">
+															<h:outputText value="#{farmacia.ubicacionSap}" />
+														</p:column>
+														<p:column styleClass="centerColum">
+															<h:outputText value="#{farmacia.loteUbicacion}" />
+														</p:column>
+														<p:column>
+															<center>
+																<h:outputText value="#{farmacia.precio}">
+																	<f:convertNumber pattern="0.00" />
+																</h:outputText>
+															</center>
+														</p:column>
+														<p:column>
+															<center>
+																<h:outputText value="#{farmacia.cantidad}" />
+															</center>
+														</p:column>
+														<p:column>
+															<center>
+																<h:outputText value="#{farmacia.precioTotal}">
+																	<f:convertNumber pattern="0.00" />
+																</h:outputText>
+															</center>
+														</p:column>
+													</p:dataTable>
+												</p:tab>
+											</p:tabView>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="row">
+											<div class="col-lg-6">
+												<p:panel style="border: 0px">
+													<div class="box-body form-horizontal">
+														<h:outputLabel style="color:#000000" value="Notas:"
+															class="col-sm-2" />
+														<div class="col-sm-10">
+															<h:inputTextarea id="txtNotasOrdVta"
+																styleClass="form-control" maxlength="250"
+																disabled="#{facturasMb.updateCliPacFactura}"
+																value="#{facturasMb.ordenVenta.notas}" />
+														</div>
+													</div>
+													<div class="box box-info">
+														<p:panel id="pnlFormaPagoOrdVta">
+															<p:dataTable var="formaPago" id="tblFormaPagoOrdVta"
+																widgetVar="tblFormaPagoOrdVta" scrollRows="3"
+																emptyMessage="No se ha seleccionado forma de pago"
+																scrollHeight="60"
+																value="#{facturasMb.ordenVenta.formaPagoFactura}"
+																scrollable="true" style="margin-bottom:20px">
+
+																<p:column headerText="Medio de Pago">
+																	<center>
+																		<h:outputText id="txtMedioPagoOutOrdVta"
+																			value="#{formaPago.medioPago}" />
+																	</center>
+																</p:column>
+
+																<p:column headerText="Valor Recibido">
+																	<center>
+																		<h:outputText id="txtVlrFrmPagoOutOrdVta"
+																			value="#{formaPago.valorFrmPago}">
+																			<f:convertNumber pattern="0.00" />
+																		</h:outputText>
+																	</center>
+																</p:column>
+															</p:dataTable>
+															<div class="form-group">
+																<div class="col-sm-1" />
+																<div class="col-sm-6" />
+																<h:outputLabel style="color:#000000" value="Vuelto:"
+																	class="col-sm-2" />
+																<div class="col-sm-3">
+																	<h:inputText id="txtvueltoOrdVta" disabled="true"
+																		styleClass="form-control"
+																		value="#{facturasMb.ordenVenta.valorVuelto}">
+																		<f:convertNumber pattern="0.00" />
+																	</h:inputText>
+																</div>
+															</div>
+														</p:panel>
+													</div>
+												</p:panel>
+											</div>
+											<div class="col-lg-6">
+												<div class="row">
+													<div class="col-lg-4" />
+													<div class="col-lg-8">
+														<p:panel>
+															<div class="box-body form-horizontal">
+																<div class="form-group">
+																	<h:outputLabel style="color:#000000" value="Subtotal:"
+																		class="col-sm-5" />
+																	<div class="col-sm-7">
+																		<h:inputText id="txtSubtotalOrdVta"
+																			style="text-align: center"
+																			value="#{facturasMb.ordenVenta.subtotal}"
+																			styleClass="form-control" disabled="true">
+																			<f:convertNumber pattern="0.00" />
+																		</h:inputText>
+																	</div>
+																</div>
+																<div class="form-group">
+																	<div class="col-sm-5">
+																		<h:outputLabel style="color:#000000"
+																			value="IVA #{facturasMb.txtValorIVA}%:" />
+																	</div>
+																	<div class="col-sm-7">
+																		<h:inputText id="txtIvaOrdVta"
+																			style="text-align: center"
+																			value="#{facturasMb.ordenVenta.iva}"
+																			styleClass="form-control" disabled="true">
+																			<f:convertNumber pattern="0.00" />
+																		</h:inputText>
+																	</div>
+																</div>
+																<div class="form-group">
+																	<div class="col-sm-5">
+																		<h:outputLabel style="color:#000000" value="IVA 0%:" />
+																	</div>
+																	<div class="col-sm-7">
+																		<h:inputText id="txtIvaCeroOrdVta"
+																			style="text-align: center"
+																			value="#{facturasMb.ordenVenta.ivaCero}"
+																			styleClass="form-control" disabled="true">
+																			<f:convertNumber pattern="0.00" />
+																		</h:inputText>
+																	</div>
+																</div>
+																<div class="form-group">
+																	<div class="col-sm-5">
+																		<h:outputLabel style="color:#000000"
+																			value="Valor Total:" />
+																	</div>
+																	<div class="col-sm-7">
+																		<h:inputText id="txtValorTotalOrdVta"
+																			style="text-align: center"
+																			value="#{facturasMb.ordenVenta.valorTotal}"
+																			styleClass="form-control" disabled="true">
+																			<f:convertNumber pattern="0.00" />
+																		</h:inputText>
+																	</div>
+																</div>
+															</div>
+														</p:panel>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</h:panelGroup>
+					</p:panel>
+				</p:scrollPanel>
+			</p:dialog>
+		</h:form>
+
+		<h:form id="formFactPndDespch">
+			<p:dialog header="Detalle Factura" widgetVar="dlgDetFactPndDespch"
+				maximizable="true" id="idDlgDetFactPndDespch" hideEffect="clip"
+				modal="true" showEffect="clip" resizable="false" width="60%"
+				height="60%" draggable="false"
+				onShow="autAjustePantalla('formFactPndDespch:idDlgDetFactPndDespch')">
+
+				<p:ajax event="close" listener="#{facturasMb.seteaSelectedFactura}" />
+
+				<p:scrollPanel mode="native" style="width:100%;height:92%">
+					<p:messages globalOnly="false" id="msjGnrlDesp" showDetail="false" />
+					<p:panel toggleSpeed="400" closeSpeed="500"
+						widgetVar="pnlDetFactPnd" style="margin-bottom:20px">
+						<h:panelGroup id="pnlDlgFactPnd">
+							<div class="row">
+								<div class="box-body">
+									<div class="row">
+										<div class="col-md-6">
+											<div class="box box-info">
+												<div class="box-header with-border">
+													<h3 class="box-title">Datos Pacientes</h3>
+												</div>
+												<div class="box-body form-horizontal">
+													<div class="form-group">
+														<h:outputLabel style="color:#000000" class="col-sm-5"
+															value="Número de identificación:" />
+														<div class="col-sm-7">
+															<div class="input-group">
+																<h:inputText id="txtNumDocPacFactPnd"
+																	styleClass="form-control" disabled="true"
+																	style="text-align:center"
+																	value="#{facturasMb.selectRowFact.idPacienteFact.numDocumento}" />
+																<div class="input-group-btn">
+																	<p:commandButton icon="ui-icon-refresh"
+																		title="Actualiza paciente"
+																		disabled="#{facturasMb.replicadoSAP}"
+																		actionListener="#{facturasMb.actualizaPacienteClienteFacturado('P')}"
+																		update="#{p:component('txtNotasFactPnd')},#{p:component('btnActualizarFactPnd')}"
+																		oncomplete="PF('tblPaciente').filter()" />
+																</div>
+															</div>
+														</div>
+													</div>
+													<div class="form-group">
+														<h:outputLabel style="color:#000000" value="Paciente:"
+															class="col-sm-5" />
+														<div class="col-sm-7">
+															<h:inputText id="txtNombresPacFactPnd"
+																style="text-align:center"
+																value="#{facturasMb.selectRowFact.idPacienteFact.nombresCompletos}"
+																styleClass="form-control" disabled="true" />
+														</div>
+													</div>
+													<div class="form-group">
+														<h:outputLabel style="color:#000000"
+															value="Tarjeta Afiliado:" class="col-sm-5" />
+														<div class="col-sm-4">
+															<h:selectOneMenu id="txtMailPacFactPnd" disabled="true"
+																value="#{facturasMb.selectRowFact.idPacienteFact.afiliadoTarjeta}"
+																styleClass="form-control">
+																<f:selectItem itemValue="N" itemLabel="No" />
+																<f:selectItem itemValue="Y" itemLabel="Si" />
+															</h:selectOneMenu>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="col-md-6">
+											<div class="box box-info">
+												<div class="box-header with-border">
+													<h3 class="box-title">Datos Clientes</h3>
+												</div>
+												<div class="box-body form-horizontal">
+													<div class="form-group">
+														<h:outputLabel style="color:#000000" class="col-sm-5"
+															value="Número de identificación:" />
+														<div class="col-sm-7">
+															<div class="input-group">
+																<h:inputText id="txtNumDocFactPnd"
+																	styleClass="form-control" disabled="true"
+																	style="text-align:center"
+																	value="#{facturasMb.selectRowFact.idClienteFact.numDocumento}" />
+																<div class="input-group-btn">
+																	<p:commandButton icon="ui-icon-refresh"
+																		title="Actualiza cliente"
+																		disabled="#{facturasMb.replicadoSAP}"
+																		actionListener="#{facturasMb.actualizaPacienteClienteFacturado('C')}"
+																		update="#{p:component('txtNotasFactPnd')},#{p:component('btnActualizarFactPnd')}"
+																		oncomplete="PF('tblCliente').filter()" />
+																</div>
+															</div>
+														</div>
+													</div>
+													<div class="form-group">
+														<h:outputLabel style="color:#000000" class="col-sm-5"
+															value="Cliente:" />
+														<div class="col-sm-7">
+															<h:inputText id="txtNombresFactPnd"
+																style="text-align:center"
+																value="#{facturasMb.selectRowFact.idClienteFact.nombresCompletos}"
+																styleClass="form-control" disabled="true" />
+														</div>
+													</div>
+													<div class="form-group">
+														<h:outputLabel style="color:#000000"
+															value="Correo Electrónico:" class="col-sm-5" />
+														<div class="col-sm-7">
+															<h:inputText id="txtMailFactPnd"
+																style="text-align:center"
+																value="#{facturasMb.selectRowFact.idClienteFact.email}"
+																styleClass="form-control" disabled="true" />
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+
+									<div class="form-group">
+										<div class="nav-tabs-custom">
+											<div class="row">
+												<div class="col-sm-6" />
+												<div class="col-sm-6">
+													<div class="col-sm-5" />
+													<div align="right" class="col-sm-6">
+														<p:outputLabel>Nombre Lista Precio: #{facturasMb.nombreListaPrecio} </p:outputLabel>
+													</div>
+													<div class="col-sm-1" />
+												</div>
+											</div>
+											<p:tabView dynamic="true" cache="true"
+												activeIndex="#{facturasMb.idxTabView}">
+												<p:tab id="tab0" title="Servicios" titleStyleClass="tab1">
+													<p:dataTable var="facturaDetEsp"
+														id="tblDetalleProformaFactPnd"
+														widgetVar="tblDetalleProformaFactPnd"
+														emptyMessage="No se ha seleccionado Medico"
+														scrollHeight="170" value="#{facturasMb.listDetFactEsp}"
+														scrollable="true" style="margin-bottom:20px">
+
+														<p:columnGroup type="header">
+															<p:column headerText="Especialidad"
+																style="#{loginMb.styleTable}" />
+															<p:column headerText="Médico"
+																style="#{loginMb.styleTable}" />
+															<p:column headerText="Fecha de Atención"
+																style="#{loginMb.styleTable}" />
+															<p:column headerText="Turno"
+																style="#{loginMb.styleTable}" />
+															<p:column headerText="Valor Unitario"
+																style="#{loginMb.styleTable}" />
+															<p:column headerText="Cantidad"
+																style="#{loginMb.styleTable}" />
+															<p:column headerText="% Descuento"
+																style="#{loginMb.styleTable}" />
+															<p:column headerText="Precio Sin IVA"
+																style="#{loginMb.styleTable}" />
+														</p:columnGroup>
+
+														<p:column styleClass="centerColum">
+															<h:outputText value="#{facturaDetEsp.especialidad}" />
+														</p:column>
+														<p:column styleClass="centerColum">
+															<h:outputText
+																value="#{facturaDetEsp.idMedicoFact.nombreCompleto}" />
+														</p:column>
+														<p:column styleClass="centerColum">
+															<h:outputText value="#{facturaDetEsp.fechaAtencionStr}">
+																<f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+															</h:outputText>
+														</p:column>
+														<p:column styleClass="centerColum">
+															<h:outputText value="#{facturaDetEsp.turno}" />
+														</p:column>
+														<p:column styleClass="centerColum">
+															<h:outputText value="#{facturaDetEsp.precio}">
+																<f:convertNumber pattern="0.00" />
+															</h:outputText>
+														</p:column>
+														<p:column styleClass="centerColum">
+															<h:outputText value="#{facturaDetEsp.cantidad}" />
+														</p:column>
+														<p:column styleClass="centerColum">
+															<h:outputText
+																value="#{facturaDetEsp.porcentajeDescuento}" />
+														</p:column>
+														<p:column styleClass="centerColum">
+															<h:outputText value="#{facturaDetEsp.precioTotal}">
+																<f:convertNumber pattern="0.00" />
+															</h:outputText>
+														</p:column>
+													</p:dataTable>
+												</p:tab>
+												<p:tab id="tab1" title="Farmacia" titleStyleClass="tab1">
+													<p:dataTable var="farmacia" id="tblDetalleFarmaciaFactPnd"
+														widgetVar="tblDetalleFarmaciaFactPnd" scrollRows="2"
+														emptyMessage="No se ha seleccionado Items"
+														scrollHeight="170" value="#{facturasMb.listDetFactFarm}"
+														scrollable="true" style="margin-bottom:20px">
+
+														<p:columnGroup type="header">
+															<p:column headerText="Descripción"
+																style="#{loginMb.styleTable}" />
+															<p:column headerText="Ubicación"
+																style="#{loginMb.styleTable}" />
+															<p:column headerText="Asignación de Lote"
+																style="#{loginMb.styleTable};width:200px" />
+															<p:column headerText="Valor Unitario"
+																style="#{loginMb.styleTable}" />
+															<p:column headerText="Cantidad"
+																style="#{loginMb.styleTable}" />
+															<p:column headerText="% Descuento"
+																style="#{loginMb.styleTable}" />
+															<p:column headerText="Precio Sin IVA"
+																style="#{loginMb.styleTable}" />
+														</p:columnGroup>
+
+														<p:column styleClass="centerColum">
+															<h:outputText value="#{farmacia.descripcionItems}" />
+														</p:column>
+														<p:column styleClass="centerColum">
+															<h:outputText value="#{farmacia.ubicacionSap}" />
+														</p:column>
+														<p:column styleClass="centerColum">
+															<div class="input-group">
+																<h:outputText value="#{farmacia.loteUbicacion}" />
+																<p:spacer width="5" height="0" />
+																<div class="input-group-btn">
+																	<p:commandButton icon="ui-icon-search"
+																		id="btnUbicacion"
+																		disabled="#{farmacia.itemOSDonado eq 'S' ? true : false}"
+																		actionListener="#{facturasMb.getListaLotesUbicaciones(farmacia)}"
+																		title="Permite seleccionar lote, ubicación del item a despachar"
+																		oncomplete="PF('tblDtoLotes').filter()" />
+																</div>
+															</div>
+														</p:column>
+														<p:column styleClass="centerColum">
+															<h:outputText value="#{farmacia.precio}">
+																<f:convertNumber pattern="0.00" />
+															</h:outputText>
+														</p:column>
+														<p:column styleClass="centerColum">
+															<h:outputText value="#{farmacia.cantidad}" />
+														</p:column>
+														<p:column styleClass="centerColum">
+															<h:outputText value="#{farmacia.porcentajeDescuento}" />
+														</p:column>
+														<p:column styleClass="centerColum">
+															<h:outputText value="#{farmacia.precioTotal}">
+																<f:convertNumber pattern="0.00" />
+															</h:outputText>
+														</p:column>
+													</p:dataTable>
+												</p:tab>
+											</p:tabView>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="row">
+											<div class="col-lg-6">
+												<div class="box-body form-horizontal">
+													<h:outputLabel style="color:#000000" value="Notas:"
+														class="col-sm-2" />
+													<div class="col-sm-10">
+														<h:inputTextarea id="txtNotasFactPnd"
+															styleClass="form-control"
+															disabled="#{facturasMb.updateCliPacFactura}"
+															value="#{facturasMb.selectRowFact.notas}" />
+													</div>
+												</div>
+												<div class="box box-info">
+													<p:panel id="pnlFormaPago">
+														<p:dataTable var="formaPago" id="tblFormaPagoFactPnd"
+															widgetVar="tblFormaPagoFactPnd" scrollRows="3"
+															emptyMessage="No se ha seleccionado forma de pago"
+															scrollHeight="60" value="#{facturasMb.listaMedioDPago}"
+															scrollable="true" style="margin-bottom:20px">
+
+															<p:columnGroup type="header">
+																<p:column headerText="Medio de Pago"
+																	style="#{loginMb.styleTable}" />
+																<p:column headerText="Valor Recibido"
+																	style="#{loginMb.styleTable}" />
+															</p:columnGroup>
+
+															<p:column>
+																<center>
+																	<h:outputText id="txtMedioPagoOutFactPnd"
+																		value="#{formaPago.medioPago}" />
+																</center>
+															</p:column>
+
+															<p:column>
+																<center>
+																	<h:outputText id="txtVlrFrmPagoOutFactPnd"
+																		value="#{formaPago.valorFrmPago}">
+																		<f:convertNumber pattern="0.00" />
+																	</h:outputText>
+																</center>
+															</p:column>
+														</p:dataTable>
+														<div class="form-group">
+															<div class="col-sm-1" />
+															<div class="col-sm-6" />
+															<h:outputLabel style="color:#000000" value="Vuelto:"
+																class="col-sm-2" />
+															<div class="col-sm-3">
+																<h:inputText id="txtvueltoFactPnd" disabled="true"
+																	styleClass="form-control"
+																	value="#{facturasMb.selectRowFact.valorVuelto}">
+																	<f:convertNumber pattern="0.00" />
+																</h:inputText>
+															</div>
+														</div>
+													</p:panel>
+												</div>
+											</div>
+											<div class="col-lg-6">
+												<div class="row">
+													<div class="col-lg-4" />
+													<div class="col-lg-8">
+														<p:panel>
+															<div class="box-body form-horizontal">
+																<div class="form-group">
+																	<h:outputLabel style="color:#000000" value="Subtotal:"
+																		class="col-sm-5" />
+																	<div class="col-lg-7">
+																		<h:inputText id="txtSubtotalFactPnd"
+																			style="text-align: center"
+																			value="#{facturasMb.selectRowFact.subtotal}"
+																			styleClass="form-control" disabled="true">
+																			<f:convertNumber pattern="0.00" />
+																		</h:inputText>
+																	</div>
+																</div>
+																<div class="form-group">
+																	<h:outputLabel style="color:#000000" class="col-sm-5"
+																		value="IVA #{facturasMb.txtValorIVA}%:" />
+																	<div class="col-lg-7">
+																		<h:inputText id="txtIvaFactPnd"
+																			style="text-align: center"
+																			value="#{facturasMb.selectRowFact.iva}"
+																			styleClass="form-control" disabled="true">
+																			<f:convertNumber pattern="0.00" />
+																		</h:inputText>
+																	</div>
+																</div>
+																<div class="form-group">
+																	<h:outputLabel style="color:#000000" value="IVA 0%:"
+																		class="col-sm-5" />
+																	<div class="col-lg-7">
+																		<h:inputText id="txtIvaCeroFactPnd"
+																			style="text-align: center"
+																			value="#{facturasMb.selectRowFact.ivaCero}"
+																			styleClass="form-control" disabled="true">
+																			<f:convertNumber pattern="0.00" />
+																		</h:inputText>
+																	</div>
+																</div>
+																<div class="form-group">
+																	<h:outputLabel style="color:#000000"
+																		value="Valor Total:" class="col-sm-5" />
+																	<div class="col-lg-7">
+																		<h:inputText id="txtValorTotalFactPnd"
+																			style="text-align: center"
+																			value="#{facturasMb.selectRowFact.valorTotal}"
+																			styleClass="form-control" disabled="true">
+																			<f:convertNumber pattern="0.00" />
+																		</h:inputText>
+																	</div>
+																</div>
+															</div>
+														</p:panel>
+														<div class="form-group" />
+														<div class="form-group">
+															<div class="row">
+																<p:commandButton value="Traslado Quirofano"
+																	id="btnTrasladoFactPnd" disabled="true"
+																	update="#{p:component('msjGnrlDesp')}"
+																	oncomplete="PF('tblDtoQuirof').filter()"
+																	actionListener="#{facturasMb.addFacturaDespachada('T')}" />
+																<p:commandButton value="Despachado"
+																	id="btnDespachoFactPnd"
+																	update="#{p:component('msjGnrlDesp')}"
+																	actionListener="#{facturasMb.addFacturaDespachada('D')}" />
+																<p:commandButton value="Actualizar"
+																	id="btnActualizarFactPnd"
+																	disabled="#{facturasMb.updateCliPacFactura}"
+																	update="#{p:component('msjGeneral')},#{p:component('tblFactura')},#{p:component('txtNotas')},#{p:component('pnlDialog')}"
+																	actionListener="#{facturasMb.updateFactura(facturasMb.selectRowFact,'dlgDetFactPndDespch')}" />
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</h:panelGroup>
+					</p:panel>
+				</p:scrollPanel>
+			</p:dialog>
+		</h:form>
+
+		<h:form id="formAsignaLote">
+			<p:dialog header="Selección de Lotes" widgetVar="dlgLotes"
+				draggable="false" showEffect="clip" width="40%" modal="true"
+				resizable="false">
+				<p:dataTable var="datosUbiLotes" id="tblDtoLotes"
+					widgetVar="tblDtoLotes" value="#{facturasMb.auxUbicacionLotes}"
+					selectionMode="single"
+					filteredValue="#{facturasMb.listaFiltroUbicLot}" paginator="true"
+					rows="10" selection="#{facturasMb.selectedLotsStock}"
+					rowKey="#{datosUbiLotes.contador}">
+
+					<p:ajax event="rowSelect"
+						listener="#{facturasMb.onRowSelectUbicacion}"
+						update="#{p:component('tblDetalleFarmaciaFactPnd')}" />
+
+					<p:column headerText="Lotes" filterBy="#{datosUbiLotes.lote}"
+						filterMatchMode="contains" styleClass="centerColum"
+						filterStyle="150px">
+						<h:outputText id="txtUbiLote" value="#{datosUbiLotes.lote}" />
+					</p:column>
+					<p:column headerText="Ubicación"
+						filterBy="#{datosUbiLotes.codigoDescrpUbicacion}"
+						filterMatchMode="contains" styleClass="centerColum">
+						<h:outputText id="txtUbicacionLote"
+							value="#{datosUbiLotes.codigoDescrpUbicacion}" />
+					</p:column>
+					<p:column headerText="Fecha Expiración" styleClass="centerColum">
+						<h:outputText id="txtFechaUbi"
+							value="#{datosUbiLotes.fechaExpiracionStr}" />
+					</p:column>
+					<p:column headerText="Cantidad Disponible" styleClass="centerColum">
+						<h:outputText id="txtUbiCantLot"
+							value="#{datosUbiLotes.cantidadLote}" />
+					</p:column>
+				</p:dataTable>
+			</p:dialog>
+			<p:dialog header="Tarjeta Afiliacion" widgetVar="dlgImprTarjeta"
+				showEffect="fade" width="650" height="600">
+				<h:panelGroup id="pnlPrintCard">
+					<div class="box-body">
+						<iframe frameborder="0" align="left"
+							src="#{facturasMb.obtenerRuta()}" name="someName" id="someId"
+							scrolling="auto" width="550" height="550" marginheight="0"
+							marginwidth="0"> </iframe>
+					</div>
+				</h:panelGroup>
+			</p:dialog>
+		</h:form>
+
+		<h:form id="formTrasldoQuirf">
+			<p:dialog header="Selección de Ubicación" widgetVar="dlgUbiQ"
+				draggable="false" showEffect="clip" width="40%" modal="true"
+				resizable="false">
+				<p:dataTable var="ubicacionQ" id="tblDtoQuirof" editable="true"
+					editMode="cell" widgetVar="tblDtoQuirof"
+					value="#{facturasMb.listaUbiQuirof}" paginator="true" rows="10">
+
+					<h:outputText style="color:#000000"
+						value="La bodega de quirofano posee mas de una ubicación, por favor seleccione las ubicaciones y de click en aceptar" />
+					<p:spacer height="50" />
+					<p:column headerText="Cod. Item" styleClass="centerColum">
+						<h:outputText id="txtUbiCantLot" value="#{ubicacionQ.itemCode}" />
+					</p:column>
+
+					<p:column headerText="Descripción" styleClass="centerColum">
+						<h:outputText value="#{ubicacionQ.itemName}" />
+					</p:column>
+
+					<p:column headerText="Asignación de Ubicación"
+						styleClass="centerColum">
+						<h:selectOneMenu id="txtMedioPagoIn" a:autofocus="true"
+							value="#{ubicacionQ.idUbicacion}" styleClass="form-control">
+							<f:selectItems value="#{facturasMb.auxListaUbiQuirof}" />
+						</h:selectOneMenu>
+					</p:column>
+				</p:dataTable>
+
+				<div class="row">
+					<br />
+					<div class="col-lg-12" align="center">
+						<p:commandButton value="Aceptar"
+							actionListener="#{facturasMb.aceptaTrasladoQuirofando}" />
+
+						<p:commandButton value="Cancelar" onclick="PF('dlgUbiQ').hide()" />
+					</div>
+				</div>
+			</p:dialog>
+		</h:form>
+
+		<h:form id="formHistFact">
+			<p:dialog widgetVar="dlgDetHist" id="idDlgDetHist" responsive="true"
+				draggable="false" maximizable="true" resizable="false"
+				header="Log de modificaciones" showEffect="clip" hideEffect="clip"
+				width="57%" height="50%" modal="true"
+				onShow="autAjustePantLog('formHistFact:idDlgDetHist')">
+
+				<p:scrollPanel mode="native" style="width:100%;height:95%">
+					<p:panel toggleSpeed="500" closeSpeed="500"
+						widgetVar="panelDetalle" style="margin-bottom:20px">
+						<h:panelGroup id="pnlDialog">
+							<p:dataTable var="historico" id="tblHistFacturas"
+								widgetVar="tblHistFacturas" styleClass="table table-bordered"
+								value="#{facturasMb.datoHistorico}" paginator="true" rows="7"
+								reflow="true" selectionMode="single"
+								selection="#{facturasMb.selectHistorico}"
+								rowKey="#{historico.idRegistro}">
+
+								<p:ajax event="rowSelect"
+									listener="#{facturasMb.seleccionaProfHistorica()}"
+									update="#{p:component('pnlDlgHistFact')}" />
+
+								<p:column headerText="Instancia" styleClass="centerColum">
+									<h:outputText value="#{historico.instanciaModificada}" />
+								</p:column>
+
+								<p:column headerText="Fecha/Hora de actualización"
+									styleClass="centerColum">
+									<h:outputText value="#{historico.fechaModificacionStr}" />
+								</p:column>
+
+								<p:column headerText="Actualizado por" styleClass="centerColum">
+									<h:outputText value="#{historico.nombreActualizadoPor}" />
+								</p:column>
+
+								<p:column headerText="Fecha/Hora de creación"
+									styleClass="centerColum">
+									<h:outputText value="#{historico.fechaCreacionStr}" />
+								</p:column>
+
+								<p:column headerText="Creado por" styleClass="centerColum">
+									<h:outputText value="#{historico.nombreCreadoPor}"
+										style="text-transform:uppercase;" />
+								</p:column>
+							</p:dataTable>
+						</h:panelGroup>
+					</p:panel>
+				</p:scrollPanel>
+			</p:dialog>
+		</h:form>
+
+		<h:form id="formHist">
+			<p:dialog header="Detalle Factura - Instancia Historial"
+				widgetVar="dlgDetHistorico" id="idDlgDetHistorico" resizable="false"
+				closeOnEscape="true" hideEffect="clip" modal="true"
+				showEffect="clip" maximizable="true" responsive="true" width="57%"
+				height="57%"
+				onShow="autAjustePantalla('formHist:idDlgDetHistorico')">
+
+				<p:scrollPanel mode="native" style="width:100%;height:96%">
+					<p:panel toggleSpeed="500" closeSpeed="500"
+						widgetVar="panelDetHist" style="margin-bottom:20px">
+						<h:panelGroup id="pnlDlgHistFact">
+						<div class="row">
+									<div class="box-body">
+										<div class="row">
+											<div class="col-md-6">
+												<div class="box box-info">
+													<div class="box-header with-border">
+														<h3 class="box-title">Datos Pacientes</h3>
+													</div>
+													<div class="box-body form-horizontal">
+														<div class="form-group">
+															<h:outputLabel style="color:#000000" class="col-sm-5"
+																value="Número de identificación:" />
+															<div class="col-sm-7">
+																<div class="input-group">
+																	<h:inputText id="txtNumDocPac"
+																		styleClass="form-control" disabled="true"
+																		style="text-align:center"
+																		value="#{facturasMb.selectHistorico.idPacienteHistFact.numDocumento}" />
+																	<div class="input-group-btn">
+																		<p:commandButton icon="ui-icon-refresh"
+																			title="Actualiza paciente"
+																			disabled="true"
+																			actionListener="#{facturasMb.actualizaPacienteClienteFacturado('P')}"
+																			update="#{p:component('txtNotas')},#{p:component('btnActualizar')}"
+																			oncomplete="PF('tblPaciente').filter()" />
+																	</div>
+																</div>
+															</div>
+														</div>
+														<div class="form-group">
+															<h:outputLabel style="color:#000000" value="Paciente:"
+																class="col-sm-5" />
+															<div class="col-sm-7">
+																<h:inputText id="txtNombresPac"
+																	style="text-align:center"
+																	value="#{facturasMb.selectHistorico.idPacienteHistFact.nombresCompletos}"
+																	styleClass="form-control" disabled="true" />
+															</div>
+														</div>
+														<div class="form-group">
+															<h:outputLabel style="color:#000000"
+																value="Tarjeta Afiliado:" class="col-sm-5" />
+															<div class="col-sm-7">
+																<div class="input-group">
+																	<h:selectOneMenu id="txtMailPac" disabled="true"
+																		value="#{facturasMb.selectHistorico.idPacienteHistFact.afiliadoTarjeta}"
+																		styleClass="form-control">
+																		<f:selectItem itemValue="N" itemLabel="No" />
+																		<f:selectItem itemValue="Y" itemLabel="Si" />
+																	</h:selectOneMenu>
+																	<div class="input-group-btn">
+																		<p:commandButton icon="ui-icon-print"
+																			id="btnImpTarjeta"
+																			disabled="true"
+																			actionListener="#{facturasMb.imprimirTarjeta()}">
+																		</p:commandButton>
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+											<div class="col-md-6">
+												<div class="box box-info">
+													<div class="box-header with-border">
+														<h3 class="box-title">Datos Clientes</h3>
+													</div>
+													<div class="box-body form-horizontal">
+														<div class="form-group">
+															<h:outputLabel style="color:#000000" class="col-sm-5"
+																value="Número de identificación:" />
+															<div class="col-sm-7">
+																<div class="input-group">
+																	<h:inputText id="txtNumDoc" styleClass="form-control"
+																		disabled="true" style="text-align:center"
+																		value="#{facturasMb.selectHistorico.idClienteHistFact.numDocumento}" />
+																	<div class="input-group-btn">
+																		<p:commandButton icon="ui-icon-refresh"
+																			title="Actualiza cliente"
+																			disabled="true"
+																			actionListener="#{facturasMb.actualizaPacienteClienteFacturado('C')}"
+																			update="#{p:component('txtNotas')},#{p:component('btnActualizar')}"
+																			oncomplete="PF('tblCliente').filter()" />
+																	</div>
+																</div>
+															</div>
+														</div>
+														<div class="form-group">
+															<h:outputLabel style="color:#000000" class="col-sm-5"
+																value="Cliente:" />
+															<div class="col-sm-7">
+																<h:inputText id="txtNombres" style="text-align:center"
+																	value="#{facturasMb.selectHistorico.idClienteHistFact.nombresCompletos}"
+																	styleClass="form-control" disabled="true" />
+															</div>
+														</div>
+														<div class="form-group">
+															<h:outputLabel style="color:#000000"
+																value="Correo Electrónico:" class="col-sm-5" />
+															<div class="col-sm-7">
+																<h:inputText id="txtMail" style="text-align:center"
+																	value="#{facturasMb.selectHistorico.idClienteHistFact.email}"
+																	styleClass="form-control" disabled="true" />
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+
+										<div class="form-group">
+											<div class="nav-tabs-custom">
+												<div class="row">
+													<div class="col-sm-6" />
+													<div class="col-sm-6">
+														<div class="col-sm-5" />
+														<div align="right" class="col-sm-6">
+															<p:outputLabel>Nombre Lista Precio: #{facturasMb.nombreListaPrecio} </p:outputLabel>
+														</div>
+														<div class="col-sm-1" />
+													</div>
+												</div>
+												<p:tabView dynamic="true" cache="true"
+													activeIndex="#{facturasMb.idxTabViewHist}">
+													<p:tab id="tab0" title="Servicios" titleStyleClass="tab1">
+														<p:dataTable var="facturaDetEsp" id="tblDetalleProforma"
+															widgetVar="tblDetalleProforma"
+															emptyMessage="No se ha seleccionado Medico"
+															scrollHeight="170" value="#{facturasMb.listHistDetServ}"
+															scrollable="true" style="margin-bottom:20px">
+
+															<p:columnGroup type="header">
+																<p:column headerText="Especialidad"
+																	style="#{loginMb.styleTable}" />
+																<p:column headerText="Médico"
+																	style="#{loginMb.styleTable}" />
+																<p:column headerText="Fecha de Atención"
+																	style="#{loginMb.styleTable}" />
+																<p:column headerText="Turno"
+																	style="#{loginMb.styleTable}" />
+																<p:column headerText="Valor Unitario"
+																	style="#{loginMb.styleTable}" />
+																<p:column headerText="Cantidad"
+																	style="#{loginMb.styleTable}" />
+																<p:column headerText="% Descuento"
+																	style="#{loginMb.styleTable}" />
+																<p:column headerText="Precio Sin IVA"
+																	style="#{loginMb.styleTable}" />
+															</p:columnGroup>
+
+															<p:column>
+																<center>
+																	<h:outputText value="#{facturaDetEsp.especialidad}" />
+																</center>
+															</p:column>
+															<p:column>
+																<center>
+																	<h:outputText
+																		value="#{facturaDetEsp.idMedicoHistFact.nombreCompleto}" />
+																</center>
+															</p:column>
+															<p:column>
+																<center>
+																	<h:outputText value="#{facturaDetEsp.fechaAtencionStr}">
+																		<f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+																	</h:outputText>
+																</center>
+															</p:column>
+															<p:column>
+																<center>
+																	<h:outputText value="#{facturaDetEsp.turno}" />
+																</center>
+															</p:column>
+															<p:column>
+																<center>
+																	<h:outputText value="#{facturaDetEsp.precio}">
+																		<f:convertNumber pattern="0.00" />
+																	</h:outputText>
+																</center>
+															</p:column>
+															<p:column>
+																<center>
+																	<h:outputText value="#{facturaDetEsp.cantidad}" />
+																</center>
+															</p:column>
+															<p:column>
+																<center>
+																	<h:outputText
+																		value="#{facturaDetEsp.porcentajeDescuento}" />
+																</center>
+															</p:column>
+															<p:column>
+																<center>
+																	<h:outputText value="#{facturaDetEsp.precioTotal}">
+																		<f:convertNumber pattern="0.00" />
+																	</h:outputText>
+																</center>
+															</p:column>
+														</p:dataTable>
+													</p:tab>
+													<p:tab id="tab1" title="Farmacia" titleStyleClass="tab1">
+														<p:dataTable var="farmacia" id="tblDetalleFarmacia"
+															widgetVar="tblDetalleFarmacia" scrollRows="2"
+															emptyMessage="No se ha seleccionado Items"
+															scrollHeight="170" value="#{facturasMb.listHistDetFarm}"
+															scrollable="true" style="margin-bottom:20px">
+
+															<p:columnGroup type="header">
+																<p:column headerText="Descripción"
+																	style="#{loginMb.styleTable}" />
+																<p:column headerText="Ubicación"
+																	style="#{loginMb.styleTable}" />
+																<p:column headerText="Asignación de Lote"
+																	style="#{loginMb.styleTable}" />
+																<p:column headerText="Valor Unitario"
+																	style="#{loginMb.styleTable}" />
+																<p:column headerText="Cantidad"
+																	style="#{loginMb.styleTable}" />
+																<p:column headerText="% Descuento"
+																	style="#{loginMb.styleTable}" />
+																<p:column headerText="Precio Sin IVA"
+																	style="#{loginMb.styleTable}" />
+															</p:columnGroup>
+
+															<p:column>
+																<center>
+																	<h:outputText value="#{farmacia.descripcionItems}" />
+																</center>
+															</p:column>
+															<p:column styleClass="centerColum">
+																<h:outputText value="#{farmacia.ubicacionSap}" />
+															</p:column>
+															<p:column styleClass="centerColum">
+																<h:outputText value="#{farmacia.loteUbicacion}" />
+															</p:column>
+															<p:column>
+																<center>
+																	<h:outputText value="#{farmacia.precio}">
+																		<f:convertNumber pattern="0.00" />
+																	</h:outputText>
+																</center>
+															</p:column>
+															<p:column>
+																<center>
+																	<h:outputText value="#{farmacia.cantidad}" />
+																</center>
+															</p:column>
+															<p:column>
+																<center>
+																	<h:outputText value="#{farmacia.porcentajeDescuento}" />
+																</center>
+															</p:column>
+															<p:column>
+																<center>
+																	<h:outputText value="#{farmacia.precioTotal}">
+																		<f:convertNumber pattern="0.00" />
+																	</h:outputText>
+																</center>
+															</p:column>
+														</p:dataTable>
+													</p:tab>
+													<p:tab id="tab2" title="Activo Fijo" titleStyleClass="tab1">
+														<p:dataTable var="factActFijo" id="tblDetFactActFijo"
+															widgetVar="tblDetFactActFijo"
+															emptyMessage="No se ha seleccionado items"
+															scrollHeight="150" value="#{facturasMb.listHistDetAF}"
+															scrollable="true" style="margin-bottom:20px">
+
+															<p:columnGroup type="header">
+																<p:column headerText="Número de artículo"
+																	style="#{loginMb.styleTable}" />
+																<p:column headerText="Descripción artículo"
+																	style="#{loginMb.styleTable}" />
+																<p:column headerText="Valor Unitario"
+																	style="#{loginMb.styleTable}" />
+																<p:column headerText="Cantidad"
+																	style="#{loginMb.styleTable}" />
+																<p:column headerText="Baja Parcial"
+																	style="#{loginMb.styleTable}" />
+															</p:columnGroup>
+
+															<p:column styleClass="centerColum">
+																<h:outputText value="#{factActFijo.codigoItems}" />
+															</p:column>
+															<p:column styleClass="centerColum">
+																<h:outputText value="#{factActFijo.descripcionItems}" />
+															</p:column>
+															<p:column styleClass="centerColum">
+																<h:outputText value="#{factActFijo.precio}">
+																	<f:convertNumber pattern="0.00" />
+																</h:outputText>
+															</p:column>
+															<p:column styleClass="centerColum">
+																<h:outputText id="cantidad"
+																	value="#{factActFijo.cantidad}"
+																	inputStyleClass="centerColumn" />
+															</p:column>
+															<p:column styleClass="centerColum">
+																<p:selectBooleanCheckbox
+																	value="#{factActFijo.actFijoBajaParcial}"
+																	disabled="true" />
+															</p:column>
+														</p:dataTable>
+													</p:tab>
+													<p:tab id="tab3" title="Óptica" titleStyleClass="tab1">
+														<p:dataTable var="opt" id="tblDetOptica"
+															widgetVar="tblDetOptica"
+															emptyMessage="No se ha seleccionado items"
+															scrollHeight="150" value="#{facturasMb.listHistDetOptica}"
+															scrollable="true" style="margin-bottom:20px">
+
+															<p:columnGroup type="header">
+																<p:column headerText="Número de artículo"
+																	style="#{loginMb.styleTable}" />
+																<p:column headerText="Descripción artículo"
+																	style="#{loginMb.styleTable}" />
+																<p:column headerText="Valor Unitario"
+																	style="#{loginMb.styleTable}" />
+																<p:column headerText="Cantidad"
+																	style="#{loginMb.styleTable}" />
+
+															</p:columnGroup>
+
+															<p:column styleClass="centerColum">
+																<h:outputText value="#{opt.codigoItems}" />
+															</p:column>
+															<p:column styleClass="centerColum">
+																<h:outputText value="#{opt.descripcionItems}" />
+															</p:column>
+															<p:column styleClass="centerColum">
+																<h:outputText value="#{opt.precio}">
+																	<f:convertNumber pattern="0.00" />
+																</h:outputText>
+															</p:column>
+															<p:column styleClass="centerColum">
+																<h:outputText id="cantidad" value="#{opt.cantidad}"
+																	inputStyleClass="centerColumn" />
+															</p:column>
+														</p:dataTable>
+													</p:tab>
+												</p:tabView>
+											</div>
+										</div>
+										<div class="form-group">
+											<div class="row">
+												<div class="col-lg-6">
+													<div class="box-body form-horizontal">
+														<h:outputLabel style="color:#000000" value="Notas:"
+															class="col-sm-2" />
+														<div class="col-sm-10">
+															<h:inputTextarea id="txtNotas" styleClass="form-control"
+																disabled="true"
+																value="#{facturasMb.selectHistorico.notas}" />
+														</div>
+													</div>
+													<div class="box box-info">
+														<p:panel id="pnlFormaPago">
+															<p:dataTable var="formaPago" id="tblFormaPago"
+																widgetVar="tblFormaPago" scrollRows="3"
+																emptyMessage="No se ha seleccionado forma de pago"
+																scrollHeight="60" value="#{facturasMb.listHistFormPag}"
+																scrollable="true" style="margin-bottom:20px">
+
+																<p:columnGroup type="header">
+																	<p:column headerText="Medio de Pago"
+																		style="#{loginMb.styleTable}" />
+																	<p:column headerText="Valor Recibido"
+																		style="#{loginMb.styleTable}" />
+																</p:columnGroup>
+
+																<p:column>
+																	<center>
+																		<h:outputText id="txtMedioPagoOut"
+																			value="#{formaPago.medioPago}" />
+																	</center>
+																</p:column>
+
+																<p:column>
+																	<center>
+																		<h:outputText id="txtVlrFrmPagoOut"
+																			value="#{formaPago.valorFrmPago}">
+																			<f:convertNumber pattern="0.00" />
+																		</h:outputText>
+																	</center>
+																</p:column>
+															</p:dataTable>
+															<div class="form-group">
+																<div class="col-sm-6" />
+																<h:outputLabel style="color:#000000" value="Vuelto:"
+																	class="col-sm-2" />
+																<div class="col-sm-3">
+																	<h:inputText id="txtvuelto" disabled="true"
+																		styleClass="form-control"
+																		value="#{facturasMb.selectHistorico.valorVuelto}">
+																		<f:convertNumber pattern="0.00" />
+																	</h:inputText>
+																</div>
+															</div>
+														</p:panel>
+													</div>
+												</div>
+												<div class="col-lg-6">
+													<div class="row">
+														<div class="col-lg-4" />
+														<div class="col-lg-8">
+															<p:panel>
+																<div class="box-body form-horizontal">
+																	<div class="form-group">
+																		<h:outputLabel style="color:#000000" value="Subtotal:"
+																			class="col-sm-5" />
+																		<div class="col-lg-7">
+																			<h:inputText id="txtSubtotal"
+																				style="text-align: center"
+																				value="#{facturasMb.selectHistorico.subtotal}"
+																				styleClass="form-control" disabled="true">
+																				<f:convertNumber pattern="0.00" />
+																			</h:inputText>
+																		</div>
+																	</div>
+																	<div class="form-group">
+																		<h:outputLabel style="color:#000000" class="col-sm-5"
+																			value="IVA #{facturasMb.txtValorIVA}%:" />
+																		<div class="col-lg-7">
+																			<h:inputText id="txtIva" style="text-align: center"
+																				value="#{facturasMb.selectHistorico.iva}"
+																				styleClass="form-control" disabled="true">
+																				<f:convertNumber pattern="0.00" />
+																			</h:inputText>
+																		</div>
+																	</div>
+																	<div class="form-group">
+																		<h:outputLabel style="color:#000000" value="IVA 0%:"
+																			class="col-sm-5" />
+																		<div class="col-lg-7">
+																			<h:inputText id="txtIvaCero"
+																				style="text-align: center"
+																				value="#{facturasMb.selectHistorico.ivaCero}"
+																				styleClass="form-control" disabled="true">
+																				<f:convertNumber pattern="0.00" />
+																			</h:inputText>
+																		</div>
+																	</div>
+																	<div class="form-group">
+																		<h:outputLabel style="color:#000000"
+																			value="Valor Total:" class="col-sm-5" />
+																		<div class="col-lg-7">
+																			<h:inputText id="txtValorTotal"
+																				style="text-align: center"
+																				value="#{facturasMb.selectHistorico.valorTotal}"
+																				styleClass="form-control" disabled="true">
+																				<f:convertNumber pattern="0.00" />
+																			</h:inputText>
+																		</div>
+																	</div>
+																</div>
+															</p:panel>
+															<div class="form-group" />
+															<div class="form-group">
+																<div class="row">
+																	<div class="col-lg-3" />
+																	<p:commandButton value="Actualizar" id="btnActualizar"
+																		disabled="true"
+																		update="#{p:component('msjGeneral')},#{p:component('tblFactura')},#{p:component('txtNotas')},#{p:component('pnlDialog')}"
+																		actionListener="#{facturasMb.updateFactura(facturasMb.selectRowFact, 'dlgDetalle')}" />																	
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								</h:panelGroup>
+					</p:panel>
+				</p:scrollPanel>
+			</p:dialog>
+		</h:form>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,179 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:pm="http://primefaces.org/mobile"
+	xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml">
+
+
+
+	<ui:define name="head">
+
+	</ui:define>
+
+	<ui:define name="content">
+		<style type="text/css">
+.main-content {
+	padding: 0;
+}
+
+.ui-treetable table {
+	table-layout: fixed
+}
+
+.value {
+	font-weight: bold
+}
+
+.ui-dialog table {
+	margin-left: auto;
+	margin-right: auto;
+}
+</style>
+		<h:form>
+			<p:ajaxStatus onstart="PF('statusDialog').show()"
+				onsuccess="PF('statusDialog').hide()" />
+			<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+				closable="false" resizable="false" showHeader="false">
+				<p:graphicImage name="/imagenes/barra_ajax.gif" />
+			</p:dialog>
+			<p:messages globalOnly="false" id="msjGeneral" showDetail="false" />
+
+
+			<section class="content">
+				<div class="row">
+					<div class="col-md-6">
+						<div class="box box-info">
+							<div class="box-header with-border"  style="width: 100%; height: 530px;">
+								<div class="box-header with-border">
+									<h:outputText value="Registro de Opciones Por Aplicación"
+										styleClass="FontBold Fs18 hardblue"></h:outputText>
+								</div>
+								<div class="box-body">									
+									<p:outputLabel value="Opción:" styleClass="Container20" />
+									<p:inputText id="txtRol" maxlength="22"
+										value="#{opcionMb.nombre}" styleClass="Container90">
+									</p:inputText>
+									<p:outputLabel value="Ruta:" styleClass="Container20" />
+									<p:inputText id="txtNombreRol" maxlength="80"
+										value="#{opcionMb.ruta}" styleClass="Container90">
+									</p:inputText>
+									<p:outputLabel value="Icono:" styleClass="Container100" />
+									<p:inputText id="txtIcono" maxlength="50"
+										value="#{opcionMb.icono}" styleClass="Container45">
+										<p:ajax update="#{p:component('lblIconoPrevio')}"></p:ajax>
+									</p:inputText>
+									<p:outputLabel id="lblIconoPrevio"
+										styleClass="#{opcionMb.icono} Container10"></p:outputLabel>
+									<p:outputLabel value="Orden:" styleClass="Container100" />
+									<p:inputText id="txtOrden" maxlength="3"
+										value="#{opcionMb.orden}" styleClass="Container20">
+									</p:inputText>
+									<p:outputLabel value="Clase" styleClass="Container100" />
+									<p:selectOneMenu value="#{opcionMb.clase}" autoWidth="false"
+										disabled="#{opcionMb.changeApp}" styleClass="Container45">
+										<f:selectItem itemLabel="Opción Padre" itemValue="P" />
+										<f:selectItem itemLabel="Opción Hija" itemValue="H" />
+										<f:selectItem itemLabel="Opción Directa" itemValue="D" />
+									</p:selectOneMenu>
+									<p:outputLabel value="Padre" styleClass="Container100" />
+									<p:inputText id="txtOpcionPadre" maxlength="5"
+										value="#{opcionMb.padre}" styleClass="Container20">
+									</p:inputText>
+									<p:outputLabel value="aa" style="color: #ffffff "
+										styleClass="Container100" />
+								</div>
+								<div class="box-footer">
+									<div class="row"> <div class="col-lg-1" />
+										<div class="col-lg-12" align="center">
+											<h:commandButton value="Crear" icon="ui-icon-disk"
+												styleClass="btn btn-primary"
+												actionListener="#{opcionMb.crearRol}" id="btnCrear"
+												title="Opcion para generar nuevos Roles" update="@form"
+												disabled="false" />
+										 	<h:outputText value="&#160;&#160;" /> 
+											<h:commandButton value="Modificar" icon="ui-icon-alert"
+												id="btnModificar" update="@form"
+												actionListener="#{opcionMb.modificarRol}"
+												disabled="#{opcionMb.modificar}"
+												styleClass="btn btn-primary" />
+										 	<h:outputText value="&#160;&#160;" /> 
+											<h:commandButton value="Cancelar" icon="ui-icon-cancel"
+												id="btnCancelar"
+												actionListener="#{opcionMb.cancelarModificacionRol}"
+												update="@form" disabled="#{opcionMb.modificar}"
+												styleClass="btn btn-primary" />
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						
+					</div>
+					<div class="col-md-6">
+						<div class="box box-info">
+							<div class="box-header with-border"  style="width: 100%; height: 530px;">
+								<div class="ContainerIndent">
+									<h:outputText value="Opciones por Rol"
+										styleClass="FontBold Fs18 hardblue"></h:outputText>
+								</div>
+								<p:dataTable var="uRol" id="tblUsuariosRol"
+									emptyMessage="No se ha seleccionado Aplicación"
+									value="#{opcionMb.rolesPorOpcionYApp}" reflow="true" rows="9"
+									paginator="true">
+									<p:column headerText="">
+										<div align="center">
+											<p:selectBooleanCheckbox value="#{uRol.seleccion}" />
+										</div>
+									</p:column>
+									<p:column headerText="Rol">
+										<h:outputText value="#{uRol.rol}" />
+									</p:column>
+									<p:column headerText="Nombre">
+										<h:outputText value="#{uRol.name} " />
+									</p:column>
+								</p:dataTable>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="box box-info">
+					<p:treeTable var="usr" id="tblUsuarios"
+						value="#{opcionMb.opciones}"
+						emptyMessage="No se ha seleccionado Aplicación">
+						<f:facet name="header">Lista Opciones</f:facet>
+						<p:column headerText="Código" style="width:100px; ">
+							<h:outputText value="#{usr.code}" />
+						</p:column>
+						<p:column headerText="Opción" style="width:250px; ">
+							<h:outputText value="#{usr.name}" />
+						</p:column>
+						<p:column headerText="Icono" style="width:60px;" >
+							<div align="center">
+								<h:outputText styleClass="#{usr.icono} orange" />
+							</div>
+						</p:column>
+						<p:column headerText="Ruta">
+							<h:outputText value="#{usr.ruta}" />
+						</p:column>
+						<p:column headerText="Orden" style="width:60px; align:center;" >
+							<h:outputText value="#{usr.orden}" />
+						</p:column>
+						<p:column headerText="Acciones" style="width:200px; ">
+						<div align="center">
+							<h:commandButton icon="ui-icon-pencil" value="Editar" styleClass="btn btn-primary"
+								title="Permite editar los datos del rol" update="@form"
+								actionListener="#{opcionMb.seleccionarRol(usr)}" />
+							<h:outputText value="&#160;&#160;" /> 
+							<h:commandButton icon="ui-icon-cancel" value="Cancelar" styleClass="btn btn-primary"
+								title="Permite inactivar un rol" update="@form"
+								actionListener="#{opcionMb.seleccionarRol(usr)}" />
+							</div>
+						</p:column>
+					</p:treeTable>
+				</div>
+			</section>
+		</h:form>
+	</ui:define>
+</ui:composition>

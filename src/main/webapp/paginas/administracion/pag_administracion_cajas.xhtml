@@ -1,0 +1,204 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:pm="http://primefaces.org/mobile"
+	xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml">
+
+
+	<ui:define name="head">
+		<style type="text/css">
+td.centerColum {
+	text-align: center;
+}
+</style>
+	</ui:define>
+
+	<ui:define name="content">
+
+		<h:form id="formCaja">
+			<p:ajaxStatus onstart="PF('statusDialog').show()"
+				onsuccess="PF('statusDialog').hide()" />
+			<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+				closable="false" resizable="false" showHeader="false">
+				<p:graphicImage name="/imagenes/barra_ajax.gif" />
+			</p:dialog>
+			<p:messages globalOnly="false" id="msjGeneral" showDetail="false" />
+
+			<section class="content">
+				<div class="row">
+					<div class="col-md-12">
+						<div class="box box-info">
+							<div class="box-header with-border" style="width: 100%">
+								<div class="box-header with-border">
+									<h:outputText value="Definición de Cajas"
+										styleClass="FontBold Fs18 hardblue" />
+								</div>
+								<div class="box-body">
+									<div class="form-group">
+										<div class="row">
+											<div class="col-md-6">
+												<div class="row">
+													<div class="col-lg-1" />
+													<div class="col-lg-3">
+														<p:outputLabel value="Caja ID:" styleClass="Container30" />
+														<p:inputText id="txtCajaId" maxlength="20"
+															style="text-transform:uppercase;" disabled="#{cajaMb.crear}"
+															value="#{cajaMb.datoCaja.idCaja}"
+															styleClass="Container100" />
+													</div>
+													<div class="col-lg-8">
+														<p:outputLabel value="Nombre de Caja"
+															styleClass="Container50" />
+														<p:inputText id="txtNombreCaja" maxlength="100"
+															style="text-transform:uppercase;"
+															value="#{cajaMb.datoCaja.nombreCaja}"
+															styleClass="Container100" />
+													</div>
+												</div>
+											</div>
+											<div class="col-md-6">
+												<div class="row">
+													<div class="col-lg-1" />
+													<div class="col-lg-4">
+														<p:outputLabel value="Sucursal" styleClass="Container40" />
+														<p:selectOneMenu id="onMenuSucursal" autoWidth="false"
+															value="#{cajaMb.datoCaja.nombreSucursal}"
+															styleClass="Container85">
+															<f:selectItems value="#{cajaMb.listaSucursales}"
+																var="cajaLista" itemLabel="#{cajaLista.nombreSucursal}"
+																itemValue="#{cajaLista.nombreSucursal}" />
+															<p:ajax update="onMenuEstablecimiento,onMenuPtoEmision"
+																listener="#{cajaMb.consultaEstablecimiento(cajaMb.datoCaja.nombreSucursal)}" />
+														</p:selectOneMenu>
+													</div>
+													<div class="col-lg-3">
+														<p:outputLabel value="Establecimiento"
+															styleClass="Container85" />
+														<p:selectOneMenu id="onMenuEstablecimiento"
+															autoWidth="false"
+															value="#{cajaMb.datoCaja.establecimiento}"
+															styleClass="Container80">
+															<f:selectItems value="#{cajaMb.listaEstablecimientos}"
+																var="cajaEst" itemLabel="#{cajaEst.establecimiento}"
+																itemValue="#{cajaEst.establecimiento}" />
+															<p:ajax update="onMenuPtoEmision"
+																listener="#{cajaMb.consultaPuntoEmision(cajaMb.datoCaja.establecimiento)}" />
+														</p:selectOneMenu>
+													</div>
+													<div class="col-lg-3">
+														<p:outputLabel value="Punto de Emisión"
+															styleClass="Container85" />
+														<p:selectOneMenu id="onMenuPtoEmision" autoWidth="false"
+															value="#{cajaMb.datoCaja.ptoEmision}"
+															styleClass="Container80">
+															<f:selectItems value="#{cajaMb.listaPuntoEmision}"
+																var="cajaPtoEmi" itemLabel="#{cajaPtoEmi.puntoEmision}"
+																itemValue="#{cajaPtoEmi.puntoEmision}" />
+														</p:selectOneMenu>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="row"></div>
+									</div>
+								</div>
+								<div class="box-footer">
+									<div class="row" align="center">
+										<h:commandButton value="Crear"
+											actionListener="#{cajaMb.insertaDatosCaja(cajaMb.datoCaja)}"
+											title="Opcion para crear nuevas cajas en el POS"
+											update="@form" disabled="#{cajaMb.crear}"
+											styleClass="btn btn-primary" />
+
+										<h:outputText value="&#160;&#160;" />
+										<h:commandButton value="Modificar" icon="ui-icon-alert"
+											update="@form" actionListener="#{cajaMb.modificarDatosCaja(cajaMb.datoCaja)}"
+											disabled="#{cajaMb.modificar}"
+											styleClass="btn btn-primary" />
+										<h:outputText value="&#160;&#160;" />
+										<h:commandButton value="Cancelar" icon="ui-icon-cancel"
+											actionListener="#{cajaMb.cancelarModificarCaja}"
+											update="@form" disabled="#{cajaMb.modificar}"
+											styleClass="btn btn-primary" />
+
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-12">
+						<div class="box box-info">
+							<div class="box-header with-border">
+								<p:dataTable var="usr" id="tblDatosCaja"
+									value="#{cajaMb.listaDatosCajas}" reflow="true" rows="10"
+									paginator="true">
+									<p:column headerText="Caja ID" filterBy="#{usr.idCaja}"
+										filterMatchMode="contains" style="width:120px; align: center;">
+										<center>
+											<h:outputText value="#{usr.idCaja}" />
+										</center>
+									</p:column>
+									<p:column headerText="Nombre de Caja" style="align: center;">
+										<center>
+											<h:outputText value="#{usr.nombreCaja}" />
+										</center>
+									</p:column>
+									<p:column headerText="Sucursal" style="align: center">
+										<center>
+											<h:outputText value="#{usr.nombreSucursal}" />
+										</center>
+									</p:column>
+									<p:column headerText="Establecimiento" style="align: center">
+										<center>
+											<h:outputText value="#{usr.establecimiento}" />
+										</center>
+									</p:column>
+									<p:column headerText="Punto de Emisión" style="align: center">
+										<center>
+											<h:outputText value="#{usr.ptoEmision}" />
+										</center>
+									</p:column>
+									<p:column headerText="Estado"
+										style="align: center; width:60px;">
+										<center>
+											<p:graphicImage
+												name="#{usr.estado eq 'A' ? cajaMb.rutaActivo : cajaMb.rutaInactivo}"
+												id="grpEstado" height="15px" />
+										</center>
+									</p:column>
+									<p:column headerText="Acciones">
+										<div align="center">
+											<h:commandButton icon="ui-icon-pencil" value="Editar"
+												styleClass="btn btn-primary"
+												title="Permite editar los datos de la caja" update="@form"
+												actionListener="#{cajaMb.seleccionarCaja(usr)}" />
+											<h:outputText value="&#160;&#160;" />
+											<h:commandButton icon="ui-icon-cancel" id="btnBloquear"
+												styleClass="btn btn-primary"
+												disabled="#{usr.estado eq 'A' ? false : true }"
+												actionListener="#{cajaMb.inactivarCaja(usr)}"
+												value="Inactivar"
+												title="Permite realizar la inactivación de la caja"
+												update="#{p:component('tblDatosCaja')} , #{p:component('msjGeneral')}, #{p:component('btnDesbloquear')}" />
+											<h:outputText value="&#160;&#160;" />
+											<h:commandButton icon="ui-icon-check" id="btnDesbloquear"
+												styleClass="btn btn-primary"
+												disabled="#{usr.estado eq 'I' ? false : true }"
+												actionListener="#{cajaMb.activarCaja(usr)}" value="Activar"
+												title="Permite realizar a activación de la caja"
+												update="#{p:component('tblDatosCaja')} , #{p:component('msjGeneral')}, #{p:component('btnBloquear')} , #{p:component('grpEstadoUsuario')}" />
+										</div>
+									</p:column>
+								</p:dataTable>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+		</h:form>
+	</ui:define>
+</ui:composition>

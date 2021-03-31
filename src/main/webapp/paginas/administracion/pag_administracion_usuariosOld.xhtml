@@ -1,0 +1,192 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:pm="http://primefaces.org/mobile"
+	xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml">
+
+
+	<ui:define name="head">
+		<script type="text/javascript">
+		function ChangeCase(elem) {
+			elem.value = elem.value.toChangeCase();
+		}
+	</script>
+
+		<style type="text/css">
+.main-content {
+	padding: 0;
+}
+</style>
+	</ui:define>
+
+	<ui:define name="content">
+
+		<style type="text/css">
+.ui-panel {
+	margin-top: 20px
+}
+</style>
+		<h:form>
+
+
+			<p:ajaxStatus onstart="PF('statusDialog').show()"
+				onsuccess="PF('statusDialog').hide()" />
+
+			<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+				closable="false" resizable="false" showHeader="false">
+				<p:graphicImage name="/imagenes/barra_ajax.gif" />
+			</p:dialog>
+
+			<p:messages globalOnly="false" id="msjGeneral" showDetail="false" />
+
+
+			<div class="ContainerIndent">
+
+				<div class="Container50">
+					<p:panel id="pnlDatosUsr">
+						<div class="Container100">
+							<div class="ContainerIndent">
+								<h:outputText value="Registro de Usuarios"
+									styleClass="FontBold Fs18 hardblue"></h:outputText>
+							</div>
+						</div>
+						<div class="Container100">
+							<div class="ContainerIndent">
+
+								<p:outputLabel value="Nombre:" styleClass="Container20" />
+								<p:inputText id="txtNombre" maxlength="100"
+									value="#{usuarioMb.nombre}" styleClass="Container90"></p:inputText>
+
+								<p:outputLabel value="Apellido:" styleClass="Container20" />
+								<p:inputText id="txtApellido" maxlength="100"
+									value="#{usuarioMb.apellido}" styleClass="Container90">
+
+									
+								</p:inputText>
+
+								<p:outputLabel value="Usuario:" styleClass="Container20" />
+								<p:inputText id="txtUsuario" value="#{usuarioMb.usuario}"
+									maxlength="25" styleClass="Container85"></p:inputText>
+
+								<p:commandButton actionListener="#{usuarioMb.generarUsuario}" icon="ui-icon-search"
+									styleClass="Container5" update="#{p:component('txtUsuario')}"></p:commandButton>
+
+								<p:outputLabel value="Email:" styleClass="Container20" />
+								<p:inputText id="txtCorreo" value="#{usuarioMb.correo}"
+									maxlength="200" styleClass="Container90"></p:inputText>
+
+
+								<p:outputLabel value="aa" style="color: #ffffff "
+									styleClass="Container100" />
+
+								<p:commandButton value="Crear" icon="ui-icon-disk"
+									actionListener="#{usuarioMb.crearUsuario}"
+									title="Opcion para generar nuevos usuarios" update="@form"
+									disabled="#{usuarioMb.crear}" styleClass="Container20"></p:commandButton>
+								<p:outputLabel value="aa" style="color: #ffffff "
+									styleClass="Container10" />
+								<p:commandButton value="Modificar" icon="ui-icon-alert"
+									update="@form" actionListener="#{usuarioMb.modificarUsuario}"
+									disabled="#{usuarioMb.modificar}" styleClass="Container20"></p:commandButton>
+								<p:outputLabel value="aa" style="color: #ffffff "
+									styleClass="Container10" />
+								<p:commandButton value="Cancelar" icon="ui-icon-cancel"
+									actionListener="#{usuarioMb.cancelarModificacionUsuario}"
+									update="@form" disabled="#{usuarioMb.modificar}"
+									styleClass="Container20"></p:commandButton>
+							</div>
+
+						</div>
+					</p:panel>
+				</div>
+				<div class="Container5">
+					<div class="EmptyBox5"></div>
+				</div>
+
+				<div class="Container40">
+
+					<p:panel>
+						<div class="Container100">
+							<div class="ContainerIndent">
+								<h:outputText value="Aplicaciones"
+									styleClass="FontBold Fs18 hardblue"></h:outputText>
+							</div>
+						</div>
+						<div class="Container100">
+							<div class="ContainerIndent">
+								<p:dataTable var="apl" id="tblAplicaciones"
+									value="#{usuarioMb.listaAplicaciones}" reflow="true">
+
+									<p:column headerText="">
+										<p:selectBooleanCheckbox value="#{apl.seleccionada}" />
+									</p:column>
+
+									<p:column headerText="Aplicación">
+										<h:outputText value="#{apl.nombre}" />
+									</p:column>
+								</p:dataTable>
+							</div>
+						</div>
+					</p:panel>
+				</div>
+
+				<div class="Container100">
+					<p:panel>
+
+						<p:dataTable var="usr" id="tblUsuarios"
+							value="#{usuarioMb.listaUsuarios}" reflow="true" rows="10"
+							paginator="true">
+							<p:column headerText="Usuario" filterBy="#{usr.usuario}"
+								filterMatchMode="contains">
+								<h:outputText value="#{usr.usuario}" />
+							</p:column>
+
+							<p:column headerText="Nombre">
+								<h:outputText value="#{usr.name} #{usr.apellido}" />
+							</p:column>
+
+							<p:column headerText="Email">
+								<h:outputText value="#{usr.correo}" />
+							</p:column>
+
+							<p:column headerText="Estado" style="align: center">
+								<center>
+									<p:graphicImage name="#{usr.imagenBloqueo}"
+										id="grpEstadoUsuario" height="15px" />
+								</center>
+							</p:column>
+
+							<p:column headerText="Acciones">
+								<p:commandButton icon="ui-icon-pencil"
+									title="Permite editar los datos del usuario" update="@form"
+									actionListener="#{usuarioMb.seleccionarUsuario(usr)}"></p:commandButton>
+								<p:commandButton icon="ui-icon-arrowrefresh-1-n"
+									actionListener="#{usuarioMb.resetearClave(usr)}"
+									title="Permite resetear la clave del usuario"
+									update="#{p:component('tblUsuarios')} , #{p:component('msjGeneral')}"
+									disabled="#{usr.primerIngreso}"></p:commandButton>
+								<p:commandButton icon="ui-icon-cancel" id="btnBloquear"
+									actionListener="#{usuarioMb.bloquearUsuario(usr)}"
+									title="Permite realizar el bloqueo del usuario"
+									update="#{p:component('tblUsuarios')} , #{p:component('msjGeneral')},  #{p:component('btnDesbloquear')}"
+									rendered="#{usr.usuarioHabilitado}"></p:commandButton>
+								<p:commandButton icon="ui-icon-check" id="btnDesbloquear"
+									actionListener="#{usuarioMb.desbloquearUsuario(usr)}"
+									title="Permite realizar el desbloqueo del usuario"
+									update="#{p:component('tblUsuarios')} , #{p:component('msjGeneral')}, #{p:component('btnBloquear')} , #{p:component('grpEstadoUsuario')}"
+									rendered="#{usr.usuarioBloqueado}"></p:commandButton>
+							</p:column>
+						</p:dataTable>
+					</p:panel>
+				</div>
+
+			</div>
+
+		</h:form>
+
+
+	</ui:define>
+
+</ui:composition>

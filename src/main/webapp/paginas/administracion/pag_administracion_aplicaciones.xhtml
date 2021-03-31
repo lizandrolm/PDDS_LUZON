@@ -1,0 +1,133 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:pm="http://primefaces.org/mobile"
+	xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml">
+
+<ui:define name="head">
+<script type="text/javascript">
+function ChangeCase(elem) {
+  elem.value = elem.value.toChangeCase();
+}
+</script>
+
+<style type="text/css">
+.main-content {
+	padding: 0;
+}
+</style>
+</ui:define>
+
+<ui:define name="content">
+<style type="text/css">
+.ui-panel {
+	margin-top: 20px
+}
+</style>
+<h:form>
+
+<p:ajaxStatus onstart="PF('statusDialog').show()"
+	onsuccess="PF('statusDialog').hide()" />
+<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+	closable="false" resizable="false" showHeader="false">
+	<p:graphicImage name="/imagenes/barra_ajax.gif" />
+</p:dialog>
+<p:messages globalOnly="false" id="msjGeneral" showDetail="false" />
+
+<section class="content">
+	<div class="row">
+		<div class="col-md-6">
+			<div class="box box-info">
+				<div class="box-header with-border">
+					<div class="ContainerIndent">
+				   		<h:outputText value="Registro de Aplicaciones"
+					    styleClass="FontBold Fs18 hardblue"></h:outputText>
+                    </div>
+					<p:outputLabel value="Nombre:" styleClass="Container20" />
+					<p:inputText id="txtNombre" maxlength="15"
+						value="#{aplicacionMb.nombre}" styleClass="Container90"></p:inputText>
+					<p:outputLabel value="Descripción:" styleClass="Container20" />
+					<p:inputText id="txtApellido" maxlength="50"
+						value="#{aplicacionMb.descripcion}" styleClass="Container90">
+					</p:inputText>
+					<p:outputLabel value="Url:" styleClass="Container20" />
+					<p:inputText id="txtUsuario" value="#{aplicacionMb.url}"
+						styleClass="Container90"></p:inputText>
+					<p:outputLabel value="aa" style="color: #ffffff "
+						styleClass="Container100" />
+					<p:outputLabel value="Imagen:" styleClass="Container20" />
+					<p:fileUpload value="#{aplicacionMb.file}" mode="advanced" update="#{p:component('grpImagenApp')} , #{p:component('msjGeneral')}"
+						styleClass="Container90"  auto="true" sizeLimit="1000000" allowTypes="/(\.|\/)(gif|png)$/" />
+					<p:outputLabel value="aa" style="color: #ffffff "
+						styleClass="Container100" />
+					<p:commandButton value="Crear" icon="ui-icon-disk"
+						actionListener="#{aplicacionMb.crearAplicacion}"
+						title="Opcion para generar nuevos usuarios" update="@form"
+						disabled="#{aplicacionMb.crear}" styleClass="Container20"></p:commandButton>
+					<p:outputLabel value="aa" style="color: #ffffff "
+						styleClass="Container10" />
+					<p:commandButton value="Modificar" icon="ui-icon-alert"
+						update="@form"
+						actionListener="#{aplicacionMb.modificarAplicacion}"
+						disabled="#{aplicacionMb.modificar}" styleClass="Container20"></p:commandButton>
+					<p:outputLabel value="aa" style="color: #ffffff "
+						styleClass="Container10" />
+					<p:commandButton value="Cancelar" icon="ui-icon-cancel"
+						actionListener="#{aplicacionMb.cancelarModificacionAplicacion}"
+						update="@form" disabled="#{aplicacionMb.modificar}"
+						styleClass="Container20"></p:commandButton>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-6">
+			<div class="box box-info">
+				<div class="box-header with-border">
+					<div class="ContainerIndent">
+				   		<h:outputText value="Grafico"
+					    styleClass="FontBold Fs18 hardblue"></h:outputText>
+                    </div>
+					<div class="Container100">
+						<div class="ContainerIndent">
+							<p:graphicImage value="#{aplicacionMb.grafico}" stream="true"
+								id="grpImagenApp" />
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+<section class="content">
+	<div class="row">
+		<div class="box box-info">
+			<div class="box-header with-border">
+			<p:dataTable var="usr" id="tblUsuarios"
+				value="#{aplicacionMb.listaAplicaciones}" reflow="true" rows="10"
+				paginator="true">
+				<p:column headerText="Aplicación">
+					<h:outputText value="#{usr.nombre}" />
+				</p:column>
+
+				<p:column headerText="URL">
+					<h:outputText value="#{usr.url}" />
+				</p:column>
+				<p:column headerText="Descripción">
+					<h:outputText value="#{usr.descripcion}" />
+				</p:column>
+				<p:column headerText="Imagen" style="align: center">
+				</p:column>
+				<p:column headerText="Acciones">
+					<p:commandButton icon="ui-icon-pencil"
+						title="Permite editar los datos del usuario" update="@form"
+						actionListener="#{aplicacionMb.seleccionarAplicacion(usr)}"></p:commandButton>
+				</p:column>
+			</p:dataTable>
+			</div>
+		</div>
+	</div>
+</section>
+</h:form>
+</ui:define>
+</ui:composition>

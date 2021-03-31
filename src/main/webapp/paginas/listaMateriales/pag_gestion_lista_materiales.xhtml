@@ -1,0 +1,305 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	template="/WEB-INF/template.xhtml">
+	<ui:define name="head">
+
+		<style type="text/css">
+td.centerColum {
+	text-align: center;
+}
+
+.ui-datatable .ui-datatable-header {
+	border: hidden;
+	background: linear-gradient(to bottom, #f4f4f4 0%, #fbfcfd 100%);
+}
+
+.ui-row-editor-outline {
+	outline: dotted thin !important;
+	color: blue !important;
+}
+
+.ui-inputfield {
+	color: black !important
+}
+</style>
+	</ui:define>
+
+	<ui:define name="content">
+		<h:form id="form">
+			<p:ajaxStatus onstart="PF('statusDialog').show()"
+				onsuccess="PF('statusDialog').hide()" />
+
+			<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+				closable="false" resizable="false" showHeader="false">
+				<p:graphicImage name="/imagenes/barra_ajax.gif" />
+			</p:dialog>
+
+			<p:messages globalOnly="false" id="msjGeneral" showDetail="false" />
+			<section class="content-header"></section>
+
+			<section class="content">
+				<div class="row">
+					<div class="col-md-12">
+						<div class="box box-info">
+							<div class="box-header with-border">
+								<h3 class="box-title">Busqueda Lista de Materiales</h3>
+							</div>
+							<div class="box-body">
+								<div class="ui-g">
+									<div class="ui-g-3">
+										<div class="ui-g-12 ui-md-1" />
+										<h:outputLabel style="color:#000000"
+											styleClass="ui-g-12 ui-md-4" value="Especialidad:" />
+										<p:focus />
+										<p:selectOneMenu id="selectProcedimiento" autoWidth="false"
+											filter="true" filterMatchMode="contains"
+											styleClass="ui-g-12 ui-md-7"
+											value="#{listaMaterialesMb.idProcedimiento}">
+											<f:selectItem itemValue="0" itemLabel="Todos" />
+											<f:selectItems
+												value="#{listaMaterialesMb.listaProcedimientos}" />
+											<p:ajax update="selectServicio,msjGeneral,tblMateriales"
+												listener="#{listaMaterialesMb.consultarServicios(listaMaterialesMb.idProcedimiento)}" />
+										</p:selectOneMenu>
+									</div>
+									<div class="ui-g-4">
+										<div class="ui-g-12 ui-md-2" />
+										<h:outputLabel style="color:#000000" value="Procedimiento:"
+											styleClass="ui-g-12 ui-md-3" />
+										<p:selectOneMenu id="selectServicio" autoWidth="false"
+											filter="true" filterMatchMode="contains"
+											styleClass="ui-g-12 ui-md-7"
+											value="#{listaMaterialesMb.codProcedimiento}">
+											<f:selectItem itemValue="0" itemLabel="Todos" />
+											<f:selectItems value="#{listaMaterialesMb.listaServicios}" />
+											<p:ajax update="selectMedico,msjGeneral,tblMateriales"
+												listener="#{listaMaterialesMb.consultaMedicos(listaMaterialesMb.codProcedimiento)}" />
+										</p:selectOneMenu>
+									</div>
+									<div class="ui-g-4">
+										<div class="ui-g-12 ui-md-2" />
+										<h:outputLabel style="color:#000000" value="Médico:"
+											styleClass="ui-g-12 ui-md-3" />
+										<p:selectOneMenu id="selectMedico" autoWidth="false"
+											filter="true" filterMatchMode="contains"
+											styleClass="ui-g-12 ui-md-7"
+											value="#{listaMaterialesMb.idMedico}">
+											<f:selectItem itemValue="0" itemLabel="Todos" />
+											<f:selectItems value="#{listaMaterialesMb.listaMedicos}" />
+											<p:ajax
+												update="#{p:component('tblMateriales')},#{p:component('txtNoProd')},#{p:component('txtDescrProc')},#{p:component('txtMedico')},#{p:component('msjGeneral')}"
+												listener="#{listaMaterialesMb.consultaDatosProcedimiento(listaMaterialesMb.codProcedimiento,listaMaterialesMb.idMedico)}" />
+										</p:selectOneMenu>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-12">
+						<div class="box box-primary">
+							<div class="box-header with-border">
+								<h3 class="box-title">Lista de Materiales</h3>
+							</div>
+							<div class="box-body">
+								<div class="ui-g">
+									<div class="ui-g-3">
+										<div class="ui-g-12 ui-md-1" />
+										<h:outputLabel style="color:#000000"
+											value="ID Procedimiento: " styleClass="ui-g-12 ui-md-4" />
+										<div class="ui-g-12 ui-md-7">
+											<p:inputText id="txtNoProd" styleClass="form-control"
+												disabled="true"
+												value="#{listaMaterialesMb.datoListaMateriales.itemCode}" />
+										</div>
+									</div>
+									<div class="ui-g-4">
+										<div class="ui-g-12 ui-md-2" />
+										<h:outputLabel style="color:#000000" value="Procedimiento: "
+											styleClass="ui-g-12 ui-md-3" />
+										<div class="ui-g-12 ui-md-7">
+											<p:inputText id="txtDescrProc" styleClass="form-control"
+												disabled="true"
+												value="#{listaMaterialesMb.datoListaMateriales.itemName}" />
+										</div>
+									</div>
+									<div class="ui-g-4">
+										<div class="ui-g-12 ui-md-2" />
+										<h:outputLabel style="color:#000000" value="Médico: "
+											styleClass="ui-g-12 ui-md-3" />
+										<p:selectOneMenu id="txtMedico" styleClass="ui-g-12 ui-md-7"
+											disabled="true" autoWidth="false" filter="true"
+											filterMatchMode="contains"
+											value="#{listaMaterialesMb.datoListaMateriales.idMedico}">
+											<f:selectItem itemValue="0" itemLabel=" -" />
+											<f:selectItems value="#{listaMaterialesMb.listaMedicos}" />
+										</p:selectOneMenu>
+									</div>
+								</div>
+
+								<p:dataTable var="listaMaterial" id="tblMateriales"
+									widgetVar="tblMateriales" styleClass="table table-bordered"
+									paginator="true" rows="15" editable="true"
+									rowIndexVar="rowIndex"
+									value="#{listaMaterialesMb.datoDetListaMateriales}"
+									emptyMessage="Seleccione un procedimiento">
+
+									<f:facet name="header">
+										<p:commandButton icon="ui-icon-plus" id="cmbAgregarItem"
+											value="Agregar Nuevo Item" update="cmbGuardarList"
+											actionListener="#{listaMaterialesMb.agregarNuevaFilaMateriales}"
+											disabled="#{listaMaterialesMb.existeProced}"
+											oncomplete="PF('tblMateriales').addRow();" />
+										<p:commandButton icon="ui-icon-script" value="Guardar Lista"
+											id="cmbGuardarList"
+											actionListener="#{listaMaterialesMb.guardarListaMateriales}"
+											disabled="#{listaMaterialesMb.guardaListaModfi}"
+											update="@form" />
+										<p:commandButton icon="ui-icon-disk" value="Crear Nueva Lista"
+											id="cmbCrearNuevList"
+											update="cmbGuardarList,cmbAgregarItem,@form"
+											actionListener="#{listaMaterialesMb.crearNuevaLista(listaMaterialesMb.codProcedimiento,listaMaterialesMb.idMedico)}"
+											disabled="#{!listaMaterialesMb.existeProced}" />
+									</f:facet>
+
+									<p:ajax event="rowEditInit" update=":form:msjGeneral"
+										listener="#{listaMaterialesMb.seleccionaItem('txtItemcodeIn',listaMaterial.itemCode)}" />
+									<p:ajax event="rowEdit" update=":form:msjGeneral"
+										listener="#{listaMaterialesMb.rowEdit(listaMaterial,rowIndex)}" />
+									<p:ajax event="rowEditCancel"
+										listener="#{listaMaterialesMb.confirmaEliminarFilaMaterial(listaMaterial)}"
+										update=":form:msjGeneral, :formConfDeltItems" />
+
+									<p:column headerText="
+										Código Items"
+										styleClass="centerColum">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText id="txtItemcodeOut"
+													value="#{listaMaterial.itemCode}" />
+											</f:facet>
+											<f:facet name="input">
+												<div class="input-group">
+													<p:inputText id="txtItemcodeIn" styleClass="form-control"
+														value="#{listaMaterial.itemCode}">
+														<p:ajax event="change" update=":form:msjGeneral"
+															listener="#{listaMaterialesMb.consultaDatosItems(listaMaterial.itemCode,rowIndex)}" />
+													</p:inputText>
+													<div class="input-group-btn">
+														<p:commandButton icon="ui-icon-search" id="cmbSearchItem"
+															process="@this"
+															actionListener="#{listaMaterialesMb.consultaListaItems(rowIndex)}"
+															oncomplete="PF('tblItems').filter()" />
+													</div>
+												</div>
+											</f:facet>
+										</p:cellEditor>
+									</p:column>
+									<p:column headerText="Descripción Items"
+										styleClass="centerColum">
+										<h:outputText value="#{listaMaterial.itemName}"
+											id="txtDescrpItem" />
+									</p:column>
+									<p:column headerText="Sucursal" styleClass="centerColum">
+										<h:outputText value="#{loginMb.nombreSucursal}" />
+									</p:column>
+									<p:column headerText="Cantidad" styleClass="centerColum">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText id="txtCantidadOut"
+													value="#{listaMaterial.cantidad}" />
+											</f:facet>
+											<f:facet name="input">
+												<p:inputText id="txtCantidadIn"
+													value="#{listaMaterial.cantidad}" />
+											</f:facet>
+										</p:cellEditor>
+									</p:column>
+									<p:column headerText="Unidad de Médida"
+										styleClass="centerColum">
+										<h:outputText value="#{listaMaterial.unidadMedida}"
+											id="txtUnidMedIn" />
+									</p:column>
+									<p:column headerText="Bodega" styleClass="centerColum">
+										<h:outputText value="#{listaMaterial.idBodega}" />
+									</p:column>
+									<p:column headerText="Comentario" styleClass="centerColum">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText id="txtComentarioOut"
+													value="#{listaMaterial.comentario}" />
+											</f:facet>
+											<f:facet name="input">
+												<p:inputText id="txtComentarioIn" styleClass="form-control"
+													value="#{listaMaterial.comentario}" />
+											</f:facet>
+										</p:cellEditor>
+									</p:column>
+									<p:column style="width:35px">
+										<p:rowEditor />
+									</p:column>
+								</p:dataTable>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+		</h:form>
+
+		<h:form id="formListItems">
+			<p:dialog header="Lista Items" widgetVar="dlgItems" hideEffect="clip"
+				resizable="false" closeOnEscape="true" modal="true"
+				showEffect="clip" width="1000">
+				<p:messages globalOnly="false" id="msjGnrlItems" showDetail="false" />
+
+				<p:ajax event="close"
+					listener="#{listaMaterialesMb.closeDialogItem}"
+					update="#{p:component('msjGnrlItems')}" />
+
+				<p:dataTable var="items" id="tblItems" widgetVar="tblItems"
+					value="#{listaMaterialesMb.listaItems}" selectionMode="single"
+					filteredValue="#{listaMaterialesMb.listaFiltroItems}"
+					paginator="true" rows="8"
+					selection="#{listaMaterialesMb.selectdItems}"
+					rowKey="#{items.codigoItems}">
+
+					<p:ajax event="rowSelect" update="formListItems:msjGnrlItems"
+						listener="#{listaMaterialesMb.onRowSelectItem}" />
+
+					<p:column headerText="Código Articulo" filterStyle="width: 150px"
+						filterBy="#{items.codigoItems}" filterMatchMode="contains"
+						styleClass="centerColum">
+						<h:outputText value="#{items.codigoItems}" />
+					</p:column>
+
+					<p:column headerText="Descripción/Articulo"
+						filterBy="#{items.descripcionItems}" filterStyle="width: 260px"
+						filterFunction="#{listaMaterialesMb.filterByName}"
+						styleClass="centerColum">
+						<h:outputText value="#{items.descripcionItems}" />
+					</p:column>
+				</p:dataTable>
+			</p:dialog>
+		</h:form>
+
+		<h:form id="formConfDeltItems">
+			<p:dialog header="Confirmación para eliminar items"
+				widgetVar="dlgConfDelItems" hideEffect="clip" resizable="false"
+				modal="true" showEffect="clip" width="350">
+				<h:outputText style="color:red"
+					value="Desea eliminar el items #{listaMaterialesMb.itemNameDelete}" />
+				<f:facet name="footer">
+					<p:commandButton value="Si"
+						styleClass="ui-confirmdialog-yes" 
+						actionListener="#{listaMaterialesMb.eliminarFilaMateriales(listaMaterialesMb.listaMaterialesDetalles)}"
+						update=":form:msjGeneral, :form:tblMateriales" />
+					<p:commandButton value="No"  onclick="PF('dlgConfDelItems').hide()"
+						styleClass="ui-confirmdialog-no"  />
+				</f:facet>
+			</p:dialog>
+		</h:form>
+	</ui:define>
+</ui:composition>

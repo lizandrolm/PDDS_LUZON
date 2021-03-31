@@ -1,0 +1,182 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:hf="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:h5="http://xmlns.jcp.org/jsf/passthrough"
+	template="/WEB-INF/template.xhtml">
+	<ui:define name="head">
+
+	</ui:define>
+
+	<ui:define name="content">
+		<h:form id="form">
+			<p:ajaxStatus onstart="PF('statusDialog').show()"
+				onsuccess="PF('statusDialog').hide()" />
+
+			<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+				closable="false" resizable="false" showHeader="false">
+				<p:graphicImage name="/imagenes/barra_ajax.gif" />
+			</p:dialog>
+
+			<p:messages globalOnly="false" id="msjGeneral" showDetail="false" />
+
+			<section class="content-header"></section>
+
+			<!-- Main content -->
+			<section class="container-fluid">
+				<div class="row">
+					<div class="col-lg-2 col-md-3" />
+					<div class="col-lg-7 col-md-8">
+						<div class="box box-primary">
+							<div class="box-header with-border">
+								<h3 class="box-title">Orden de Déposito</h3>
+							</div>
+							<div class="box-body">
+								<div class="form-group">
+									<div class="row">
+										<div class="col-lg-4 col-md-6 col-sm-6 col-xs-6">
+											<h:outputLabel style="color:#000000" value="Sucursal:" />
+											<p:inputText id="cajaID" disabled="true"
+												style="text-align:center"
+												value="#{ordenDepositoMb.ordenDeposito.nombreSucursal}"
+												styleClass="form-control" />
+										</div>
+										<div class="col-lg-4 col-md-6 col-sm-6 col-xs-6">
+											<h:outputLabel style="color:#000000" value="Caja ID:" />
+											<h:inputText id="nombCaja" disabled="true"
+												style="text-align:center"
+												value="#{ordenDepositoMb.ordenDeposito.idCaja}"
+												styleClass="form-control" />
+										</div>
+										<div class="col-lg-4 col-md-6 col-sm-6 col-xs-6">
+											<h:outputLabel style="color:#000000" value="Cajero:" />
+											<p:inputText styleClass="form-control" style="text-align:center"
+												value="#{ordenDepositoMb.ordenDeposito.usuarioCajero}"
+												disabled="true" />
+										</div>
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="row">
+										<div class="col-lg-4 col-md-6 col-sm-6 col-xs-6">
+											<h:outputLabel style="color:#000000"
+												value="Cuenta caja admin:" />
+											<p:inputText styleClass="form-control" style="text-align:center"
+												value="#{ordenDepositoMb.ordenDeposito.cuentaCajaAdmin}"
+												disabled="true" />
+										</div>
+										<div class="col-lg-5 col-md-6 col-sm-6 col-xs-6">
+											<h:outputLabel style="color:#000000"
+												value="Nombre cuenta admin:" />
+											<p:inputText styleClass="form-control" 
+												value="#{ordenDepositoMb.ordenDeposito.nombreCajaAdmin}"
+												style="text-align:center" disabled="true" />
+										</div>
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="row">
+										<div class="col-lg-4 col-md-6 col-sm-6 col-xs-6">
+											<h:outputLabel style="color:#000000"
+												value="Cuenta de Déposito" />
+											<p:inputText styleClass="form-control" style="text-align:center"
+												value="#{ordenDepositoMb.ordenDeposito.cuentaDepositada}"
+												disabled="true" />
+										</div>
+										<div class="col-lg-5 col-md-6 col-sm-6 col-xs-6">
+											<h:outputLabel style="color:#000000"
+												value="Nombre cuenta déposito" />
+											<p:inputText styleClass="form-control" style="text-align:center"
+												value="#{ordenDepositoMb.ordenDeposito.nombreCtaDeposito}"
+												disabled="true" />
+										</div>
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="row">
+										<div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+											<h:outputLabel style="color:#000000" value="Fecha Déposito:" />
+											<p:inputText styleClass="form-control"
+												value="#{ordenDepositoMb.ordenDeposito.fechaDepositoStr}"
+												disabled="true" />
+										</div>
+										<div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+											<h:outputLabel style="color:#000000" value="Saldo de Cuenta:" />
+											<h:inputText disabled="#{ordenDepositoMb.pendienteDep}" 
+												styleClass="form-control" hf:type="number" hf:step="0.01"
+												value="#{ordenDepositoMb.ordenDeposito.saldoCuentaDep}">
+												<p:ajax update="msjGeneral"
+												listener="#{ordenDepositoMb.validaSaldos}" />
+											</h:inputText>
+										</div>
+										<div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+											<h:outputLabel style="color:#000000"
+												value="Saldo de Cuenta Aut.:" />
+											<p:inputText styleClass="form-control"
+												value="#{ordenDepositoMb.ordenDeposito.saldoCuentaAut}"
+												disabled="true">
+												<f:convertNumber type="number" minFractionDigits="2"
+													pattern="#0.00" />
+											</p:inputText>
+										</div>
+									</div>
+								</div>
+								<div class="form-group">
+									<h:outputLabel style="color:#000000" value="Referencia:" />
+									<p:inputText styleClass="form-control" disabled="#{ordenDepositoMb.pendienteDep}" maxlength="11"
+										value="#{ordenDepositoMb.ordenDeposito.referencia}" />
+								</div>
+								<div class="form-group">
+									<h:outputLabel style="color:#000000" value="Comentario:" />
+									<p:inputTextarea styleClass="form-control" maxlength="253"
+										value="#{ordenDepositoMb.ordenDeposito.comentario}" />
+								</div>
+								<div class="box-footer">
+									<div class="row">
+										<div class="col-lg-4 col-md-5 col-sm-5 col-xs-5">
+											<h:commandButton value="Realizar Déposito"
+												disabled="#{ordenDepositoMb.pendienteDep}"
+												styleClass="btn btn-block btn-primary"
+												actionListener="#{ordenDepositoMb.apruebaDeposito}" />
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+		</h:form>
+
+		<h:form id="formDlgAceptAdmin">
+			<p:dialog widgetVar="dlgConfirmAdmin" hideEffect="clip"
+				responsive="true" id="idDlgAndmin" draggable="false"
+				closeOnEscape="true" modal="true" showEffect="clip" width="260"
+				header="Credenciales Administradora" height="30%"
+				position="center center" resizable="false">
+				<p:panel style="text-align: -webkit-center;">
+					<p:focus context="panelAdmin" />
+
+					<h:panelGrid id="panelAdmin" columns="1" cellpadding="2">
+
+						<h:inputText styleClass="form-control" style="font-size:16px"
+							value="#{ordenDepositoMb.userAdmin}" h5:placeholder="Usuario Admin"
+							onblur="upperCase(this);" h5:autofocus="autofocus">
+						</h:inputText>
+
+						<h:inputSecret styleClass="form-control"
+							value="#{ordenDepositoMb.password}" h5:placeholder="Contraseña"
+							id="password2" placeholder="Clave"></h:inputSecret>
+
+						<p:commandButton id="submitButton" value="Aceptar"
+							action="#{ordenDepositoMb.apruebaAdministracion('N')}"
+							styleClass="btn btn-block" />
+					</h:panelGrid>
+				</p:panel>
+			</p:dialog>
+		</h:form>
+	</ui:define>
+</ui:composition>

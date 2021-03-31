@@ -1,0 +1,413 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	template="/WEB-INF/template.xhtml">
+	<ui:define name="head">
+
+	</ui:define>
+
+
+	<ui:define name="content">
+		<h:form>
+			<section class="content-header">
+				<h1>
+					<h:outputLabel styleClass="box-title" style="color:#000000" value="Titulo de la pagnia"></h:outputLabel>
+				</h1>
+			</section>
+
+			<!-- Main content -->
+			<section class="content">
+
+				<div class="row">
+					<div class="col-md-12">
+						<div class="box box-default">
+							<div class="box-header with-border">
+								<h3 class="box-title">
+									<h:outputLabel value="#{altasMb.pais}" />
+									<small> <h:outputLabel value="#{altasMb.version}" />
+									</small>
+								</h3>
+
+								<div class="box-tools pull-right">
+									<button type="button" class="btn btn-box-tool"
+										data-widget="collapse">
+										<i class="fa fa-minus"></i>
+									</button>
+									<button type="button" class="btn btn-box-tool"
+										data-widget="remove">
+										<i class="fa fa-remove"></i>
+									</button>
+								</div>
+							</div>
+							<div class="box-body">
+								<div class="row">
+									<div class="col-sm-4 col-md-2">
+										<h:commandButton value="Buscar"
+											styleClass="btn btn-block btn-default" />
+									</div>
+									<div class="col-sm-4 col-md-2">
+										<h:commandButton value="Calcular"
+											styleClass="btn btn-block btn-success" />
+									</div>
+									<div class="col-sm-4 col-md-2">
+										<h:commandButton value="Guardar"
+											styleClass="btn btn-block btn-primary" />
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- left column -->
+					<div class="col-md-12">
+						<div class="box box-danger">
+							<p:panel
+								style="float:left;overflow-y: auto;overflow-x: none;width: 100%;">
+								<p:dataTable id="tblCtas" value="#{altasMb.cuentasCuatro}"
+									var="cta" tableStyleClass="table table-bordered table-hover"
+									tableStyle="float:left;overflow-y: auto;overflow-x: none"
+									azy="true">
+									<p:columnGroup type="header">
+										<p:row>
+											<p:column rowspan="2" headerText="Cod. Contable"
+												style="width: 150px" />
+											<p:column rowspan="2" headerText="Descripción"
+												style="width: 300px" />
+											<p:column rowspan="2" headerText="V. Unitario"
+												style="width: 90px" />
+											<p:column colspan="4" headerText="Enero #{altasMb.anio}"
+												style="width: 400px" />
+											<p:column colspan="4" headerText="Febrero #{altasMb.anio}"
+												style="width: 400px" />
+											<p:column colspan="4" headerText="Marzo #{altasMb.anio}"
+												style="width: 400px" />
+											<p:column colspan="4" headerText="Abril #{altasMb.anio}"
+												style="width: 400px" />
+											<p:column colspan="4" headerText="Mayo #{altasMb.anio}"
+												style="width: 400px" />
+											<p:column colspan="4" headerText="Junio #{altasMb.anio}"
+												style="width: 400px" />
+											<p:column colspan="4" headerText="Julio #{altasMb.anio}"
+												style="width: 400px" />
+											<p:column colspan="4" headerText="Agosto #{altasMb.anio}"
+												style="width: 400px" />
+											<p:column colspan="4" headerText="Septiembre #{altasMb.anio}"
+												style="width: 400px" />
+											<p:column colspan="4" headerText="Octubre #{altasMb.anio}"
+												style="width: 400px" />
+											<p:column colspan="4" headerText="Noviembre #{altasMb.anio}"
+												style="width: 400px" />
+											<p:column colspan="4" headerText="Diciembre #{altasMb.anio}"
+												style="width: 400px" />
+
+										</p:row>
+										<p:row>
+											<p:column headerText="A (Ppto - U)" />
+											<p:column headerText="B (Ppto - $)" />
+											<p:column headerText="B (Ppto - U)" />
+											<p:column headerText="B (Ppto - $)" />
+
+											<p:column headerText="A (Ppto - U)" />
+											<p:column headerText="B (Ppto - $)" />
+											<p:column headerText="B (Ppto - U)" />
+											<p:column headerText="B (Ppto - $)" />
+
+											<p:column headerText="A (Ppto - U)" />
+											<p:column headerText="B (Ppto - $)" />
+											<p:column headerText="B (Ppto - U)" />
+											<p:column headerText="B (Ppto - $)" />
+
+											<p:column headerText="A (Ppto - U)" />
+											<p:column headerText="B (Ppto - $)" />
+											<p:column headerText="B (Ppto - U)" />
+											<p:column headerText="B (Ppto - $)" />
+
+											<p:column headerText="A (Ppto - U)" />
+											<p:column headerText="B (Ppto - $)" />
+											<p:column headerText="B (Ppto - U)" />
+											<p:column headerText="B (Ppto - $)" />
+
+											<p:column headerText="A (Ppto - U)" />
+											<p:column headerText="B (Ppto - $)" />
+											<p:column headerText="B (Ppto - U)" />
+											<p:column headerText="B (Ppto - $)" />
+
+											<p:column headerText="A (Ppto - U)" />
+											<p:column headerText="B (Ppto - $)" />
+											<p:column headerText="B (Ppto - U)" />
+											<p:column headerText="B (Ppto - $)" />
+
+											<p:column headerText="A (Ppto - U)" />
+											<p:column headerText="B (Ppto - $)" />
+											<p:column headerText="B (Ppto - U)" />
+											<p:column headerText="B (Ppto - $)" />
+
+											<p:column headerText="A (Ppto - U)" />
+											<p:column headerText="B (Ppto - $)" />
+											<p:column headerText="B (Ppto - U)" />
+											<p:column headerText="B (Ppto - $)" />
+
+											<p:column headerText="A (Ppto - U)" />
+											<p:column headerText="B (Ppto - $)" />
+											<p:column headerText="B (Ppto - U)" />
+											<p:column headerText="B (Ppto - $)" />
+
+											<p:column headerText="A (Ppto - U)" />
+											<p:column headerText="B (Ppto - $)" />
+											<p:column headerText="B (Ppto - U)" />
+											<p:column headerText="B (Ppto - $)" />
+
+											<p:column headerText="A (Ppto - U)" />
+											<p:column headerText="B (Ppto - $)" />
+											<p:column headerText="B (Ppto - U)" />
+											<p:column headerText="B (Ppto - $)" />
+										</p:row>
+									</p:columnGroup>
+
+									<p:column>
+										<p:outputLabel value="#{cta.cuenta}" style="color:#000000" />
+									</p:column>
+									<p:column>
+										<p:outputLabel value="#{cta.descripcion}"
+											style="color:#000000"
+											title="Descripción de la cuenta contable" />
+									</p:column>
+
+									<p:column>
+										<center>
+											<p:inputNumber value="#{cta.valorUnitario}" decimalPlaces="2"
+												decimalSeparator="." minValue="0"
+												inputStyle="width: 75px;color:#000000;"
+												style="width: 75px;color:#000000;" disabled="#{cta.disable}" />
+										</center>
+									</p:column>
+
+
+									<p:column>
+										<p:inputNumber value="#{cta.eneAltasCant}"
+											disabled="#{cta.disable}" />
+									</p:column>
+									<p:column>
+										<p:inputNumber value="#{cta.eneAltasDol}"
+											disabled="#{cta.disable}" />
+									</p:column>
+									<p:column>
+										<p:inputNumber value="#{cta.eneBajasCant}"
+											disabled="#{cta.disable}" />
+									</p:column>
+									<p:column>
+										<p:inputNumber value="#{cta.eneBajasDol}"
+											disabled="#{cta.disable}" />
+									</p:column>
+
+
+									<p:column>
+										<p:inputNumber value="#{cta.febAltasCant}"
+											disabled="#{cta.disable}" />
+									</p:column>
+									<p:column>
+										<p:inputNumber value="#{cta.febAltasDol}"
+											disabled="#{cta.disable}" />
+									</p:column>
+									<p:column>
+										<p:inputNumber value="#{cta.febBajasCant}"
+											disabled="#{cta.disable}" />
+									</p:column>
+									<p:column>
+										<p:inputNumber value="#{cta.febBajasDol}"
+											disabled="#{cta.disable}" />
+									</p:column>
+
+									<p:column>
+										<p:inputNumber value="#{cta.marAltasCant}"
+											disabled="#{cta.disable}" />
+									</p:column>
+									<p:column>
+										<p:inputNumber value="#{cta.marAltasDol}"
+											disabled="#{cta.disable}" />
+									</p:column>
+									<p:column>
+										<p:inputNumber value="#{cta.marBajasCant}"
+											disabled="#{cta.disable}" />
+									</p:column>
+									<p:column>
+										<p:inputNumber value="#{cta.marBajasDol}"
+											disabled="#{cta.disable}" />
+									</p:column>
+
+									<p:column>
+										<p:inputNumber value="#{cta.abrAltasCant}"
+											disabled="#{cta.disable}" />
+									</p:column>
+									<p:column>
+										<p:inputNumber value="#{cta.abrAltasDol}"
+											disabled="#{cta.disable}" />
+									</p:column>
+									<p:column>
+										<p:inputNumber value="#{cta.abrBajasCant}"
+											disabled="#{cta.disable}" />
+									</p:column>
+									<p:column>
+										<p:inputNumber value="#{cta.abrBajasDol}"
+											disabled="#{cta.disable}" />
+									</p:column>
+
+
+									<p:column>
+										<p:inputNumber value="#{cta.mayAltasCant}"
+											disabled="#{cta.disable}" />
+									</p:column>
+									<p:column>
+										<p:inputNumber value="#{cta.mayAltasDol}"
+											disabled="#{cta.disable}" />
+									</p:column>
+									<p:column>
+										<p:inputNumber value="#{cta.mayBajasCant}"
+											disabled="#{cta.disable}" />
+									</p:column>
+									<p:column>
+										<p:inputNumber value="#{cta.mayBajasDol}"
+											disabled="#{cta.disable}" />
+									</p:column>
+
+
+									<p:column>
+										<p:inputNumber value="#{cta.junAltasCant}"
+											disabled="#{cta.disable}" />
+									</p:column>
+									<p:column>
+										<p:inputNumber value="#{cta.junAltasDol}"
+											disabled="#{cta.disable}" />
+									</p:column>
+									<p:column>
+										<p:inputNumber value="#{cta.junBajasCant}"
+											disabled="#{cta.disable}" />
+									</p:column>
+									<p:column>
+										<p:inputNumber value="#{cta.junBajasDol}"
+											disabled="#{cta.disable}" />
+									</p:column>
+
+
+
+									<p:column>
+										<p:inputNumber value="#{cta.julAltasCant}"
+											disabled="#{cta.disable}" />
+									</p:column>
+									<p:column>
+										<p:inputNumber value="#{cta.julAltasDol}"
+											disabled="#{cta.disable}" />
+									</p:column>
+									<p:column>
+										<p:inputNumber value="#{cta.julBajasCant}"
+											disabled="#{cta.disable}" />
+									</p:column>
+									<p:column>
+										<p:inputNumber value="#{cta.julBajasDol}"
+											disabled="#{cta.disable}" />
+									</p:column>
+
+									<p:column>
+										<p:inputNumber value="#{cta.agoAltasCant}"
+											disabled="#{cta.disable}" />
+									</p:column>
+									<p:column>
+										<p:inputNumber value="#{cta.agoAltasDol}"
+											disabled="#{cta.disable}" />
+									</p:column>
+									<p:column>
+										<p:inputNumber value="#{cta.agoBajasCant}"
+											disabled="#{cta.disable}" />
+									</p:column>
+									<p:column>
+										<p:inputNumber value="#{cta.agoBajasDol}"
+											disabled="#{cta.disable}" />
+									</p:column>
+
+									<p:column>
+										<p:inputNumber value="#{cta.sepAltasCant}"
+											disabled="#{cta.disable}" />
+									</p:column>
+									<p:column>
+										<p:inputNumber value="#{cta.sepAltasDol}"
+											disabled="#{cta.disable}" />
+									</p:column>
+									<p:column>
+										<p:inputNumber value="#{cta.sepBajasCant}"
+											disabled="#{cta.disable}" />
+									</p:column>
+									<p:column>
+										<p:inputNumber value="#{cta.sepBajasDol}"
+											disabled="#{cta.disable}" />
+									</p:column>
+
+									<p:column>
+										<p:inputNumber value="#{cta.octAltasCant}"
+											disabled="#{cta.disable}" />
+									</p:column>
+									<p:column>
+										<p:inputNumber value="#{cta.octAltasDol}"
+											disabled="#{cta.disable}" />
+									</p:column>
+									<p:column>
+										<p:inputNumber value="#{cta.octBajasCant}"
+											disabled="#{cta.disable}" />
+									</p:column>
+									<p:column>
+										<p:inputNumber value="#{cta.octBajasDol}"
+											disabled="#{cta.disable}" />
+									</p:column>
+
+
+									<p:column>
+										<p:inputNumber value="#{cta.novAltasCant}"
+											disabled="#{cta.disable}" />
+									</p:column>
+									<p:column>
+										<p:inputNumber value="#{cta.novAltasDol}"
+											disabled="#{cta.disable}" />
+									</p:column>
+									<p:column>
+										<p:inputNumber value="#{cta.novBajasCant}"
+											disabled="#{cta.disable}" />
+									</p:column>
+									<p:column>
+										<p:inputNumber value="#{cta.novBajasDol}"
+											disabled="#{cta.disable}" />
+									</p:column>
+
+									<p:column>
+										<p:inputNumber value="#{cta.dicAltasCant}"
+											disabled="#{cta.disable}" />
+									</p:column>
+									<p:column>
+										<p:inputNumber value="#{cta.dicAltasDol}"
+											disabled="#{cta.disable}" />
+									</p:column>
+									<p:column>
+										<p:inputNumber value="#{cta.dicBajasCant}"
+											disabled="#{cta.disable}" />
+									</p:column>
+									<p:column>
+										<p:inputNumber value="#{cta.dicBajasDol}"
+											disabled="#{cta.disable}" />
+									</p:column>
+
+
+
+
+								</p:dataTable>
+							</p:panel>
+						</div>
+					</div>
+				</div>
+			</section>
+		</h:form>
+	</ui:define>
+
+
+
+
+</ui:composition>

@@ -1,0 +1,163 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	template="/WEB-INF/template.xhtml">
+	<ui:define name="head">
+
+	</ui:define>
+
+	<ui:define name="content">
+		<h:form id="form">
+			<p:ajaxStatus onstart="PF('statusDialog').show();"
+				onsuccess="PF('statusDialog').hide();" />
+
+			<p:dialog id="statusDialog" widgetVar="statusDialog" modal="true"
+				draggable="false" closable="false" resizable="false"
+				showHeader="false" position="center"
+				header="Please wait : processing">
+				<p:graphicImage name="/imagenes/barra_ajax.gif" />
+			</p:dialog>
+
+			<p:messages globalOnly="false" id="msjGeneral" showDetail="false" />
+
+			<section class="content-header"></section>
+
+			<!-- Main content -->
+			<section class="content">
+				<div class="row">
+					<div class="col-md-1" />
+					<div class="col-md-4">
+						<div class="box box-primary">
+							<div class="box-header with-border">
+								<h3 class="box-title">Selección de Médico y turno</h3>
+							</div>
+							<div class="box-body">
+								<div class="form-group">
+									<h:outputLabel style="color:#000000" value="Especialidad:" />
+									<h:selectOneMenu styleClass="form-control" id="selectServicio"
+										value="#{medicosMb.especialidadMedico}">
+										<f:selectItem itemLabel="Todos" itemValue="0" />
+										<f:selectItems
+											value="#{medicosMb.obtenerListServicio(medicosMb.medicoAsignado)}" />
+										<p:ajax update="#{p:component('selecMedico')}" />
+									</h:selectOneMenu>
+								</div>
+								<div class="form-group">
+									<h:outputLabel style="color:#000000" value="Médico:" />
+									<h:selectOneMenu styleClass="form-control" id="selecMedico"
+										value="#{medicosMb.medicoAsignado}">
+										<f:selectItem itemLabel="Todos" itemValue="0" />
+										<f:selectItems
+											value="#{medicosMb.obtenerListMedico(medicosMb.especialidadMedico)}" />
+										<p:ajax update="#{p:component('selectServicio')}" />
+									</h:selectOneMenu>
+								</div>
+								<div class="form-group">
+									<h:outputLabel style="color:#000000"
+										value="Fecha del turno seleccionada:" />
+									<p:inputText id="txtTurno"
+										value="#{medicosMb.turnoSeleccionadoStr}"
+										styleClass="form-control" disabled="true" />
+								</div>
+								
+									<div class="box-footer">
+										<div class="row">
+											<div class="col-lg-4">
+												<h:commandButton value="Serv. Médico"
+													styleClass="btn btn-primary"
+													title="#{medicosMb.verificaCaja eq true ? 'Caja no se encuentra abierta o esta abierta en otra sucursal' : ''}"
+													disabled="#{medicosMb.verificaCaja}"
+													action="#{medicosMb.seleccionaMedico}">
+													<p:ajax event="action"
+														oncomplete="PF('myschedule').update()"
+														update="#{p:component('msjGeneral')}" />
+												</h:commandButton>
+											</div>
+											<div class="col-lg-4">
+												<h:commandButton value="Venta Farmacia"
+													styleClass="btn btn-primary"
+													action="#{medicosMb.ventaFarmacia}"
+													disabled="#{medicosMb.verificaCaja}">
+													<p:ajax event="action"
+														oncomplete="PF('myschedule').update()"
+														update="#{p:component('msjGeneral')}" />
+												</h:commandButton>
+											</div>
+											<div class="col-lg-4">
+												<h:commandButton value="Consultar Turno"
+													styleClass="btn btn-primary pull-right"
+													actionListener="#{medicosMb.consultaTurnos(medicosMb.medicoAsignado,medicosMb.especialidadMedico)}">
+													<p:ajax event="action"
+														oncomplete="PF('myschedule').update()"
+														update="#{p:component('msjGeneral')}" />
+												</h:commandButton>
+											</div>
+										</div>
+									
+								</div>
+							</div>
+						</div>
+						<div class="box box-primary">
+							<div class="box-header with-border">
+								<h3 class="box-title">Proformas Aprobadas.</h3>
+							</div>
+							<div class="box-body">
+								<div class="form-group">
+									<h:outputLabel style="color:#000000" value="ID Proforma:" />
+								</div>
+								<p:inputText id="txtIdProforma"
+									value="#{loginMb.proformaConsultada}" styleClass="form-control"
+									disabled="false">
+								</p:inputText>
+								<div class="box-footer">
+									<h:commandButton value="Aceptar" styleClass="btn btn-primary"
+										title="Facturar proforma Aprobada"
+										disabled="#{medicosMb.verificaCaja}"
+										action="#{proformasMb.facturaProformaAprobada()}">
+									</h:commandButton>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-6">
+						<p:schedule id="schedule" value="#{medicosMb.eventModel}"
+							view="agendaDay" rightHeaderTemplate="month,agendaWeek,agendaDay"
+							locale="es" widgetVar="myschedule" allDaySlot="false"
+							minTime="06:00:00" maxTime="22:00:00" timeZone="GMT-5"
+							showWeekends="true" slotDuration="00:15:00">
+							<p:ajax event="eventSelect" listener="#{medicosMb.onEventSelect}"
+								update="eventDetails" oncomplete="PF('eventDialog').show();" />
+						</p:schedule>
+					</div>
+
+					<p:dialog widgetVar="eventDialog" header="Detalle"
+						showEffect="clip" hideEffect="clip">
+						<h:panelGrid id="eventDetails" columns="2">
+							<p:outputLabel value="Titulo:" style="color:#000000" />
+							<p:inputText id="title" value="#{medicosMb.event.title}"
+								styleClass="form-control" disabled="true" />
+							<p:outputLabel value="Fecha Inicio: " style="color:#000000" />
+							<p:inputText id="from" value="#{medicosMb.event.startDate}"
+								styleClass="form-control" disabled="true" pattern="dd/MM/yyyy"
+								showTime="true" />
+							<p:outputLabel value="Fecha Fin: " style="color:#000000" />
+							<p:inputText id="to" value="#{medicosMb.event.endDate}"
+								disabled="true" styleClass="form-control" pattern="dd/MM/yyyy"
+								showTime="true" />
+							<p:outputLabel value="Turno: " style="color:#000000" />
+							<p:inputText value="#{medicosMb.event.description}"
+								disabled="true" styleClass="form-control" />
+							<p:commandButton id="addButton" value="Aceptar"
+								action="#{medicosMb.addEvent}"
+								update="#{p:component('txtTurno')}"
+								oncomplete="PF('eventDialog').hide();" />
+						</h:panelGrid>
+					</p:dialog>
+				</div>
+			</section>
+		</h:form>
+	</ui:define>
+</ui:composition>

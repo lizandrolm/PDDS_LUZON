@@ -1,0 +1,126 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	template="/WEB-INF/template.xhtml">
+	<ui:define name="head">
+
+	</ui:define>
+
+	<ui:define name="content">
+		<h:form id="form">
+			<p:ajaxStatus onstart="PF('statusDialog').show()"
+				onsuccess="PF('statusDialog').hide()" />
+
+			<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+				closable="false" resizable="false" showHeader="false">
+				<p:graphicImage name="/imagenes/barra_ajax.gif" />
+			</p:dialog>
+
+			<p:messages globalOnly="false" id="msjGeneral" showDetail="false" />
+
+			<section class="content-header"></section>
+
+			<!-- Main content -->
+			<section class="content">
+				<div class="row">
+					<div class="col-lg-2 col-md-3" />
+					<div class="col-lg-7 col-md-8">
+						<div class="box box-primary">
+							<div class="box-header with-border">
+								<h3 class="box-title">Apertura de Caja</h3>
+							</div>
+							<div class="box-body">
+								<div class="form-group">
+									<div class="row">
+										<div class="col-lg-3 col-md-6 col-sm-6 col-xs-6">
+											<h:outputLabel style="color:#000000" value="Caja ID:" />
+											<p:inputText id="cajaID" disabled="true" style="text-align:center"
+												value="#{aperturaCajaMb.aperturaCaja.cajaID}"
+												styleClass="form-control" />
+										</div>
+										<div class="col-lg-4 col-md-6 col-sm-6 col-xs-6">
+											<h:outputLabel style="color:#000000" value="Nombre Caja:" />
+											<p:inputText id="nombCaja" disabled="true" style="text-align:center"
+												value="#{aperturaCajaMb.aperturaCaja.nombreCaja}"
+												 styleClass="form-control" />
+										</div>
+										<div class="col-lg-1 col-md-6 col-sm-6 col-xs-6" />
+										<div class="col-lg-4 col-md-6 col-sm-6 col-xs-6">
+											<h:outputLabel style="color:#000000" value="Fecha Apertura:" />
+											<p:inputText styleClass="form-control"
+												value="#{aperturaCajaMb.aperturaCaja.fechaAperturaStr}"
+												disabled="true" />
+										</div>
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="row">
+										<div class="col-lg-3 col-md-6 col-sm-6 col-xs-6">
+											<h:outputLabel style="color:#000000" value="Establecimiento:" />
+											<h:selectOneMenu id="listEstablecimiento"
+												value="#{aperturaCajaMb.aperturaCaja.idSucursal}"
+												dynamic="true" styleClass="form-control">
+												<f:selectItems
+													value="#{aperturaCajaMb.listaEstablecimiento}" var="caja"
+													itemLabel="#{caja.establecimiento}"
+													itemValue="#{caja.establecimiento}" />
+												<p:ajax event="blur"
+													update="#{p:component('listPtoEmision')}"
+													listener="#{aperturaCajaMb.cambiaPuntoEmision(aperturaCajaMb.aperturaCaja.idSucursal)}" />
+											</h:selectOneMenu>
+										</div>
+										<div class="col-lg-3 col-md-6 col-sm-6 col-xs-6">
+											<h:outputLabel style="color:#000000" value="Punto de Emisión" />
+											<h:selectOneMenu id="listPtoEmision"
+												value="#{aperturaCajaMb.aperturaCaja.numeroCaja}"
+												dynamic="true" styleClass="form-control">
+												<f:selectItems value="#{aperturaCajaMb.listaCaja}"
+													var="caja" itemLabel="#{caja.puntoEmision}"
+													itemValue="#{caja.puntoEmision}" />
+												<p:ajax event="blur"
+													update="#{p:component('nombCaja')},#{p:component('cajaID')}"
+													listener="#{aperturaCajaMb.actualizaDatosCaja(aperturaCajaMb.aperturaCaja.idSucursal,aperturaCajaMb.aperturaCaja.numeroCaja)}" />
+											</h:selectOneMenu>
+										</div>
+									</div>
+								</div>
+								<div class="form-group">
+									<h:outputLabel style="color:#000000" value="Empleado:" />
+									<p:inputText styleClass="form-control"
+										value="#{aperturaCajaMb.aperturaCaja.nombresUsuario}"
+										disabled="true" />
+								</div>
+								<div class="form-group">
+									<div class="row">
+										<div class="col-lg-3 col-md-6 col-sm-6 col-xs-6">
+											<h:outputLabel style="color:#000000" value="Saldo Inicial:" />
+											<p:inputNumber
+												value="#{aperturaCajaMb.aperturaCaja.saldoApert}" />
+										</div>
+									</div>
+								</div>
+								<div class="form-group">
+									<h:outputLabel style="color:#000000" value="Comentario" />
+									<p:inputTextarea styleClass="form-control"
+										value="#{aperturaCajaMb.aperturaCaja.comentarioApert}" />
+								</div>
+								<div class="box-footer">
+									<div class="row">
+										<div class="col-lg-4 col-md-5 col-sm-5 col-xs-5">
+											<h:commandButton value="Aperturar"
+												styleClass="btn btn-block btn-primary"
+												actionListener="#{aperturaCajaMb.insertarAperturaCaja}" />
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+		</h:form>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,125 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	template="/WEB-INF/template.xhtml">
+	<ui:define name="head">
+		<style type="text/css">
+.dlgCss {
+	background-color: #F6FAF1;
+}
+}
+</style>
+	</ui:define>
+
+	<ui:define name="content">
+		<h:form id="form">
+			<p:ajaxStatus onstart="PF('statusDialog').show()"
+				onsuccess="PF('statusDialog').hide()" />
+
+			<p:dialog id="statusDialog" widgetVar="statusDialog" modal="true"
+				draggable="false" closable="false" resizable="false"
+				showHeader="false" position="center"
+				header="Please wait : processing">
+				<p:graphicImage name="/imagenes/barra_ajax.gif" />
+			</p:dialog>
+
+			<p:messages globalOnly="false" id="msjGeneral" showDetail="false" />
+
+			<section class="content">
+				<div class="box-body">
+				<div class="row">
+					<!-- left column -->
+					<div class="col-md-12">
+						<!-- general form elements -->
+						<div class="box box-primary">
+							<div class="box-header with-border">
+								<h3 class="box-title">ADMINISTRACIÓN DE ETAPAS</h3>
+							</div>
+							<p:panel id="pnlprocesos" header="Etapas" widgetVar="panel" style="margin-bottom:20px">
+								<div class="box-body">
+									<div class="row">
+										<div class="col-md-1">
+											<h:outputLabel style="color:#000000" value="Nombre Etapa:"/>
+										</div>
+										<div class="col-md-2">
+											<p:inputText value="#{etapasMb.aprEtapa.nombreEtapa}" id="txtNombre" style="text-align:center">
+											</p:inputText>
+										</div>
+										<div class="col-md-1">
+											<h:outputLabel style="color:#000000" value="Descripción Etapa:"/>
+										</div>
+										<div class="col-md-2">
+											<p:inputText value="#{etapasMb.aprEtapa.descripcionEtapa}" id="txtDescripcion" style="text-align:center">
+											</p:inputText>
+										</div>
+										<div class="col-md-1">
+											<p:commandButton icon="ui-icon-check" value="Guardar" id="btnGuardar" rendered="true"
+											update="@form"
+											actionListener="#{etapasMb.guardarProceso()}">
+											</p:commandButton>
+										</div>
+									</div>
+								</div>
+							</p:panel>
+							<p:panel id="pnlUsuarios" header="Usuarios Autorizadores" widgetVar="panel" style="margin-bottom:20px">
+								<div class="box-body">
+									<div class="row">
+										<div class="col-md-1">
+											<h:outputLabel style="color:#000000" value="Etapa:"/>
+										</div>
+										<div class="col-md-2">
+											<h:selectOneMenu styleClass="form-control" id="selectEtapa" value="#{etapasMb.selectEtapa}">
+											<f:selectItem itemLabel="Todos" itemValue="0" />
+											<f:selectItems value="#{etapasMb.obtenerEtapas()}"/>
+											<p:ajax event="change"
+													update="#{p:component('pnlEtapasUsuarios')}">
+											</p:ajax>
+											</h:selectOneMenu>
+										</div>
+										<div class="col-md-1">
+											<h:outputLabel style="color:#000000" value="Autorizado por:"/>
+										</div>
+										<div class="col-md-2">
+											<h:selectOneMenu styleClass="form-control" id="selectUsuario" value="#{etapasMb.selectUsuario}">
+											<f:selectItem itemLabel="Todos" itemValue="0" />
+											<f:selectItems value="#{etapasMb.obtenerUsuarios()}"/>
+											</h:selectOneMenu>
+										</div>
+										<div class="col-md-1">
+											<p:commandButton icon="ui-icon-check" value="Asociar" id="btnAsociar" rendered="true"
+											update="@form"
+											actionListener="#{etapasMb.guardarAsociacion()}">
+											</p:commandButton>
+										</div>
+									</div>
+								</div>
+							</p:panel>
+							<p:panel id="pnlEtapasUsuarios" header="Etapas - Usuarios" widgetVar="panel" style="margin-bottom:20px">
+								<div class="col-md-6">
+								<p:treeTable var="asocia" id="tblAsociaciones" expanded="true"
+									value="#{etapasMb.listaAsociaciones()}" scrollable="true" scrollHeight="200"
+									emptyMessage="No se ha seleccionado Proceso">
+									<div class="col-md-6">
+									<p:column headerText="Etapa">
+										<h:outputText value="#{asocia.idEtapaAut.nombreEtapa}"/>
+									</p:column>
+									</div>
+									<div class="col-md-6">
+									<p:column headerText="Usuario">
+										<h:outputText value="#{asocia.usuario}"/>
+									</p:column>
+									</div>
+								</p:treeTable>
+								</div>
+							</p:panel>
+						</div>
+					</div>
+				</div>
+				</div>
+			</section>
+		</h:form>
+	</ui:define>
+</ui:composition>

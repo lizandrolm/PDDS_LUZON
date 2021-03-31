@@ -1,0 +1,193 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:pm="http://primefaces.org/mobile"
+	xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml">
+	<ui:define name="head">
+	</ui:define>
+
+<ui:define name="content">
+<h:form>
+<p:ajaxStatus onstart="PF('statusDialog').show()"
+	onsuccess="PF('statusDialog').hide()" />
+<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+	closable="false" resizable="false" showHeader="false">
+	<p:graphicImage name="/imagenes/barra_ajax.gif" />
+</p:dialog>
+<p:messages globalOnly="false" id="msjGeneral" showDetail="false"/>
+
+
+<section class="content">
+	<div class="row">
+		<div class="col-md-12">
+			<div class="box box-primary">
+				<div class="box-header with-border">
+					<h3 class="box-title">Ejecución de Devoluciones Aprobadas</h3>
+				</div>
+				<p:panel id="panelDevoluciones" header="Búsqueda de Devoluciones" rendered="#{devolucionesMb.renderedDevEjecutar}"
+					toggleable="true" toggleSpeed="500" closeSpeed="500"
+					widgetVar="panel" style="margin-bottom:20px">
+					<div class="box-body">
+						<div class="form-group">
+							<div class="col-md-1"><h:outputLabel style="color:#000000" value="Fecha Desde:" for="fechDesde"/></div>
+							<div class="col-md-2">
+							<p:calendar id="fechDesde" value="#{devolucionesMb.fechaIniEjecuta}" locale="es" pattern="dd/MM/yyyy">								
+							</p:calendar>
+							</div>
+							<div class="col-md-1"><h:outputLabel style="color:#000000" value="Fecha Hasta:" for="fechHasta"/></div>
+							<div class="col-md-2">
+							<p:calendar id="fechHasta" value="#{devolucionesMb.fechaFinEjecuta}" locale="es" pattern="dd/MM/yyyy">
+							</p:calendar>
+							</div>
+							<div class="col-md-2">
+							<div class="form-group">
+							<h:commandButton value="Buscar" id="btnFecha"
+								styleClass="btn btn-primary"
+								action="#{devolucionesMb.capturarFechasEjecucion(devolucionesMb.sucursalLogin)}"></h:commandButton>
+							</div>
+							</div>
+						</div>
+						<div class="form-group">
+						<div class="col-md-12">
+						<p:dataTable var="devAprob" id="tblDevPorAprob" reflow="true" rows="6"
+							value="#{devolucionesMb.obtieneListaEjecucion(devolucionesMb.sucursalLogin)}"
+							paginator="true">
+							<p:column headerText="ID Devolucion" class="col-md-2">
+								<h:outputText value="#{devAprob.idDevolucion}"/>
+							</p:column>
+							<p:column headerText="Numero Factura" class="col-md-2">
+								<h:outputText value="#{devAprob.numFactura}"/>
+							</p:column>
+							<p:column headerText="Fecha/Creacion Solicitud" class="col-md-3">
+								<h:outputText value="#{devAprob.fechaCreacion}">
+								<f:convertDateTime pattern="dd/MM/yyyy hh:mm:ss"/>
+								</h:outputText>
+							</p:column>
+							<p:column headerText="Valor total" class="col-md-1">
+								<h:outputText value="#{devAprob.valorTotal}"/>
+							</p:column>
+							<p:column headerText="Acciones" class="col-md-1">
+								<div class="form-group">
+									<h:commandButton value="Detalle" id="btnDetalleDev"
+										styleClass="btn btn-primary"
+										update="#{p:component('panelCabDevol')}, #{p:component('tblDetalleDev')}"
+										action="#{devolucionesMb.seleccionarDevEjecutar(devAprob.idDevolucion)}"></h:commandButton>
+								</div>
+							</p:column>
+						</p:dataTable>
+						</div>
+						</div>
+					</div>
+				</p:panel>
+				<p:panel id="panelCabDevol" rendered="#{devolucionesMb.renderedDevEjecutarDet}">
+					<div class="box-body">
+						<div class="form-group">
+							<div class="row">
+							<div class="col-sm-1">
+								<h:outputLabel style="color:#000000" value="ID Devolución:"/>
+							</div>
+							<div class="col-sm-2">
+								<h:inputText styleClass="form-control" disabled="true"
+									style="text-align:center"
+									value="#{devolucionesMb.listaCabDevEjecutar.get(0).getIdDevolucion()}"/>
+							</div>
+							</div>
+							<div class="row">
+							<div class="col-sm-1">
+								<h:outputLabel style="color:#000000" value="Observacion:" />
+							</div>
+							<div class="col-sm-10">
+							<h:inputTextarea id="txtNotas" class="col-sm-10"
+								value="#{devolucionesMb.listaCabDevEjecutar.get(0).notas}"/>
+							</div>
+							</div>
+						</div>
+					</div>
+					<p:dataTable var="detalleDev" id="tblDetalleDev" reflow="true" rows="10"
+					value="#{devolucionesMb.listaDetDevEjecutar}"
+					paginator="true">
+					<p:column headerText="ID" class="col-md-2" rendered="false">
+						<h:outputText value="#{detalleDev.idDetDevolucion}"/>
+					</p:column>
+					<p:column headerText="ID Devolución" class="col-md-2" rendered="false">
+						<h:outputText value="#{detalleDev.idDevolucionCab.idDevolucion}"/>
+					</p:column>
+					<p:column headerText="Código" class="col-md-2">
+						<h:outputText value="#{detalleDev.codigoItems}"/>
+					</p:column>
+					<p:column headerText="Descripcion" class="col-md-2">
+						<h:outputText value="#{detalleDev.descripcionItems}"/>
+					</p:column>
+					<p:column headerText="Descripcion" class="col-md-2">
+						<h:outputText value="#{detalleDev.descripcionItems}"/>
+					</p:column>
+					<p:column headerText="Cantidad" class="col-md-2">
+						<h:outputText value="#{detalleDev.cantidad}"/>
+					</p:column>
+					<p:column headerText="Valor Items" class="col-md-2">
+						<h:outputText value="#{detalleDev.valorItems}"/>
+					</p:column>
+					<p:column headerText="Valor a Devolver" class="col-md-1">
+						<p:inputText value="#{detalleDev.valorDevuelto}"
+						 	id="txtValorDev" styleClass="form-control"/>
+					</p:column>
+				</p:dataTable>
+				<div class="row"><h:outputLabel style="color:#000000" value="."/></div>
+				<div class="row">
+				<div class="form-group">
+					<div class="col-sm-2">
+					<p:panel id="pMedioPago" rendered="true" style="border: 0px">
+					<h:outputText value="Forma de pago:"/>
+					<h:selectOneMenu id="txtMedioPagoIn" disabled="true"
+						value="#{devolucionesMb.listaCabDevEjecutar.get(0).formaPago}" styleClass="form-control">
+						<f:selectItem itemValue="EFECTIVO" itemLabel="EFECTIVO"/>
+						<f:selectItem itemValue="CHEQUE" itemLabel="CHEQUE"/>
+						<f:selectItem itemValue="NOTA CREDITO" itemLabel="NOTA CREDITO"/>
+					</h:selectOneMenu>
+					</p:panel>
+					</div>
+					<div class="col-sm-2">
+					<p:panel id="pValorDevolucion" rendered="true" style="border: 0px">
+						<h:outputText value="Total:"/>
+						<p:inputText value="#{devolucionesMb.listaCabDevEjecutar.get(0).valorPago}" disabled="true" id="txtValorTotal" styleClass="form-control">
+						<f:convertNumber pattern="0.00"/>
+						</p:inputText>
+					</p:panel>
+					</div>
+					<!--div class="col-sm-2">
+					<p:panel id="pIngresoCheque" style="border: 0px">
+						<h:outputText value="Número Cheque:" rendered="#{devolucionesMb.renderedCheque}"/>
+						<p:inputText value="#{devolucionesMb.numCheque}" rendered="#{devolucionesMb.renderedCheque}" disabled="false" id="txtNumeroCheque" styleClass="form-control">
+						</p:inputText>
+					</p:panel>
+					</div-->
+				</div>
+				</div>
+				<div class="row"><h:outputLabel style="color:#000000" value="."/></div>
+				<div class="form-group">
+					<div class="col-sm-1">
+					<p:commandButton icon="ui-icon-check" value="Ejecutar" id="btnAprobar"
+						update="@form"
+						actionListener="#{devolucionesMb.aprobarRechazarDevEjecutar('P')}">
+					</p:commandButton>
+					</div>
+					<div class="col-sm-1">
+					<p:commandButton icon="ui-icon-cancel" value="Rechazar" id="btnRechazar"
+						update="@form"
+						actionListener="#{devolucionesMb.aprobarRechazarDevEjecutar('R')}">
+					</p:commandButton>
+					</div>
+				</div>
+				</p:panel>
+							
+				
+				
+			</div>
+		</div>
+	</div>
+</section>
+</h:form>
+</ui:define>
+</ui:composition>

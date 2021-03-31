@@ -1,0 +1,135 @@
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:pm="http://primefaces.org/mobile"
+	xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:p="http://primefaces.org/ui" 
+	template="/WEB-INF/template.xhtml">
+	<ui:define name="head">
+
+	</ui:define>
+
+	<ui:define name="content">
+		<h:form>
+			<p:ajaxStatus onstart="PF('statusDialog').show()"
+				onsuccess="PF('statusDialog').hide()" />
+			<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+				closable="false" resizable="false" showHeader="false">
+				<p:graphicImage name="/imagenes/barra_ajax.gif" />
+			</p:dialog>
+			<p:messages globalOnly="false" id="msjGeneral" showDetail="false" />
+			<section class="content">
+				<div class="row">
+					<div class="col-md-5">
+						<div class="box box-info">
+							<div class="box-header with-border" style="width: 100%; height: 550px;">
+								<div class="box-header with-border">
+									<h:outputText value="Registro de Roles Por Aplicación" styleClass="FontBold Fs18 hardblue"/> 
+								</div>
+								<div class="box-body">
+									<p:outputLabel value="Rol:" styleClass="Container20" />
+									<p:inputText id="txtRol" maxlength="15" value="#{rolMb.code}"
+										disabled="#{rolMb.changeRol}" styleClass="Container90" style="text-transform:uppercase;">
+									</p:inputText>
+									<p:outputLabel value="Nombre:" styleClass="Container20" />
+									<p:inputText id="txtNombreRol" maxlength="50"
+										value="#{rolMb.nombre}" styleClass="Container90" style="text-transform:uppercase;">
+									</p:inputText>
+									<p:outputLabel value="Descripción:" styleClass="Container20" />
+									<p:inputText id="txtDescripcion" maxlength="50"
+										value="#{rolMb.descripcion}" styleClass="Container90" style="text-transform:uppercase;">
+									</p:inputText>
+									<p:outputLabel value="" style="color: #ffffff "
+										styleClass="Container100" />
+								</div>
+								<div class="box-footer">
+									<div class="row" align="center">
+										 
+											<h:commandButton value="Crear" icon="ui-icon-disk"
+												actionListener="#{rolMb.crearRol}" id="btnCrear"
+												title="Opcion para generar nuevos Roles" update="@form"
+												disabled="#{rolMb.crear}" styleClass="btn btn-primary" />
+										
+										 	<h:outputText value="&#160;&#160;" /> 
+											<h:commandButton value="Guardar" icon="ui-icon-alert"
+												id="btnModificar" update="@form"
+												actionListener="#{rolMb.modificarRol}"
+												disabled="#{rolMb.modificar}" styleClass="btn btn-primary" />
+										 	 <h:outputText value="&#160;&#160;" /> 
+											<h:commandButton value="Cancelar" icon="ui-icon-cancel"
+												id="btnCancelar"
+												actionListener="#{rolMb.cancelarModificacionRol}"
+												update="@form" disabled="#{rolMb.modificar}"
+												styleClass="btn btn-primary" />
+										 
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-7">
+						<div class="box box-info">
+							<div class="box-header with-border" style="width: 100%; height: 550px;">
+								<div class="ContainerIndent">
+									<h:outputText value="Usuarios Por Rol"
+										styleClass="FontBold Fs18 hardblue"></h:outputText>
+								</div>
+								<p:dataTable var="uRol" id="tblUsuariosRol"
+									emptyMessage="No se ha seleccionado Aplicación"
+									value="#{rolMb.usuariosPorRolYApp}" reflow="true" rows="10"
+									paginator="true">
+									<p:column headerText="" style="width:50px;">
+										<p:selectBooleanCheckbox value="#{uRol.seleccionado}" />
+									</p:column>
+									<p:column headerText="Usuario" filterBy="#{uRol.usuario}" filterMatchMode="contains" style="width:200px;">
+										<h:outputText value="#{uRol.usuario}" />
+									</p:column>
+									<p:column headerText="Nombre" filterBy="#{uRol.name} #{uRol.apellido}" filterMatchMode="contains">
+										<h:outputText value="#{uRol.name} #{uRol.apellido}" />
+									</p:column>
+								</p:dataTable>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-12">
+						<div class="box box-info">
+							<div class="box-header with-border" >
+							<p:dataTable var="usr" id="tblUsuarios" value="#{rolMb.roles}"
+								emptyMessage="No se ha seleccionado Aplicación" reflow="true"
+								rows="10" paginator="true">
+								<p:column headerText="Código">
+									<h:outputText value="#{usr.rol}" />
+								</p:column>
+								<p:column headerText="Nombre">
+									<h:outputText value="#{usr.name}" />
+								</p:column>
+								<p:column headerText="Descripción">
+									<h:outputText value="#{usr.descripcion}" />
+								</p:column>
+								<p:column headerText="Estado" style="align: center; width:60px;">
+									<center>
+										<p:graphicImage name="#{usr.imagenBloqueo}" id="grpEstadoRol" height="15px" />
+									</center>
+								</p:column>
+								<p:column headerText="Acciones">
+									<div align="center">
+										<h:commandButton icon="ui-icon-pencil" value="Editar" styleClass="btn btn-primary"
+											title="Permite editar los datos del rol" update="@form"
+											actionListener="#{rolMb.seleccionarRol(usr)}" />
+											<h:outputText value="&#160;&#160;" /> 
+										<h:commandButton icon="ui-icon-cancel" value="Inactivar" styleClass="btn btn-primary"
+											title="Permite inactivar un rol" update="@form"
+											actionListener="#{rolMb.seleccionarRol(usr)}" />
+									</div>
+								</p:column>
+							</p:dataTable>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section> 
+		</h:form>
+	</ui:define>
+</ui:composition>

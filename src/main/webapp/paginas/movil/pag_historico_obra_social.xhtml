@@ -1,0 +1,110 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	template="/WEB-INF/template.xhtml">
+	<ui:define name="head">
+
+		<style type="text/css">
+@media ( max-width : 640px) {
+	.ui-datatable-reflow .ui-datatable-data td[role="gridcell"] {
+		display: inline-flex;
+	}
+	.ui-datatable-reflow .ui-datatable-data td[role="gridcell"] .ui-column-title
+		{
+		min-width: 35%;
+		padding: initial;
+	}
+}
+
+@media ( max-width : 320px) {
+	.ui-datatable-reflow .ui-datatable-data td[role="gridcell"] .ui-column-title
+		{
+		font-size: smaller !important;
+	}
+}
+
+@media ( max-width : 375px) {
+	.ui-datatable-reflow .ui-datatable-data td[role="gridcell"] .ui-column-title
+		{
+		font-size: small;
+	}
+}
+
+td.centerColum {
+	text-align: center;
+}
+
+.ui-datatable .ui-datatable-header {
+	border: hidden;
+	background: linear-gradient(to bottom, #f4f4f4 0%, #fbfcfd 100%);
+}
+</style>
+
+	</ui:define>
+	<ui:define name="content">
+		<h:form id="form">
+			<section class="content-header">
+				<h1>
+					<h:outputLabel style="color:#000000"
+						value="Historico Obra Social, paciente: #{movilMb.nombrePaciente}" />
+				</h1>
+			</section>
+
+			<section class="container-fluid">
+				<div class="box-body">
+					<div class="box box-info">
+						<p:dataTable var="datosHist" id="tblDatosHist" dataLocale="es"
+							sortBy="#{datosHist.fecha}" sortOrder="descending"
+							widgetVar="tblDatosHist" paginator="true" rows="10"
+							emptyMessage="No se ha encontrado registros" reflow="true"
+							value="#{movilMb.listaHistObraSocial}">
+							<f:facet name="header">
+								<p:commandButton id="btnCancelar" value="Retornar"
+									icon="ui-icon-arrowreturnthick-1-w"
+									action="#{movilMb.redireccionaPagAproRechProf()}"
+									title="Permite retornar a la pantalla de proformas" />
+							</f:facet>
+							<p:column headerText="Número factura" styleClass="centerColum">
+								<h:outputText value="#{datosHist.numeroFactura}" />
+							</p:column>
+							<p:column headerText="Código S/N" styleClass="centerColum">
+								<h:outputText value="#{datosHist.codigoSocioNegocio}" />
+							</p:column>
+							<p:column headerText="Nombre S/N" styleClass="centerColum">
+								<h:outputText value="#{datosHist.nombre}" />
+							</p:column>
+							<p:column headerText="Descripción" styleClass="centerColum">
+								<h:outputText value="#{datosHist.descripcion}" />
+							</p:column>
+							<p:column headerText="Especialidad" styleClass="centerColum">
+								<h:outputText value="#{datosHist.especialidad}" />
+							</p:column>
+							<p:column headerText="Médico" styleClass="centerColum">
+								<h:outputText value="#{datosHist.medico}" />
+							</p:column>
+							<p:column headerText="Fecha" styleClass="centerColum">
+								<h:outputText value="#{datosHist.fechaCreaStr}" />
+							</p:column>
+							<p:column headerText="Val. Aprobado" styleClass="centerColum">
+								<h:outputText value="#{datosHist.valorProfAprobado}">
+									<f:convertNumber pattern="0.00" />
+								</h:outputText>
+							</p:column>
+							<p:column headerText="Val. Tot. Fact." styleClass="centerColum">
+								<h:outputText value="#{datosHist.valorTotalFact}">
+									<f:convertNumber pattern="0.00" />
+								</h:outputText>
+							</p:column>
+							<p:column headerText="Sucursal" styleClass="centerColum">
+								<h:outputText value="#{datosHist.sucursal}" />
+							</p:column>
+						</p:dataTable>
+					</div>
+				</div>
+			</section>
+		</h:form>
+	</ui:define>
+</ui:composition>

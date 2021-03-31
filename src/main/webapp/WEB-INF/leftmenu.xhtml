@@ -1,0 +1,47 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ps="http://primefaces.org/sentinel"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<style type="text/css">
+
+@media (min-width: 320px) and (max-width: 640px){
+	#layout-menubar, .slimmenu {
+	    position: fixed;
+	    background-color: #3D3D3D;
+	    width: 100%;
+	    min-height: 100px !important;
+	    max-height: 100px;
+	    overflow: hidden;
+	    z-index: 999;
+	}
+	
+	#layout-menubar.layout-menubar-open-fullscr {
+    height: 100%;
+    overflow-y: scroll;
+    max-height: 100%;
+}
+}
+</style>
+
+	<div id="layout-menubar" class="Unselectable fontRegular" style="background-color: #FFFFFF!important;border-bottom: #123D68!important;border-bottom-color: #F2F4F4!important;border-color: #F2F4F4!important;">
+		<div class="layout-menubarinner-box" id="buttonArea">
+			<a href="#" id="layout-menubar-resize" class="BordRad3" style="background-color: #FFFFFF!important;color: black!important;border-bottom: #F2F4F4!important;border-bottom-color: #F2F4F4!important;border-color: #F2F4F4!important;"
+				title="Menu Resize"><i class="icon-th-list-2"></i></a> <a href="#"
+				id="layout-menubar-resize2" class="BordRad3" title="Open Menu"><i
+				class="icon-menu"></i></a>
+		</div>
+
+
+		<h:form>
+<!-- 			<h:outputLabel value="#{loginMb.username}" style="color:black"></h:outputLabel> -->
+			<ps:menu id="sm_leftmenu" model="#{loginMb.model}"  style="higth:100%" >
+
+			</ps:menu>
+		</h:form>
+
+	</div>
+
+</ui:composition>

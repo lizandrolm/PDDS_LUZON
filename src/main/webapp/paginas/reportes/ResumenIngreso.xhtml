@@ -1,0 +1,154 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:pm="http://primefaces.org/mobile"
+	xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml">
+
+	<ui:define name="head">
+		<script type="text/javascript">
+			function autAjustePantalla(idDialog) {
+				document.getElementById(idDialog).style.height = Math
+						.floor(window.innerHeight * 0.4)
+						+ "px";
+				document.getElementById(idDialog).style.top = "90px";
+			}
+		</script>
+	</ui:define>
+
+	<ui:define name="content">
+		<h:form>
+			<p:ajaxStatus onstart="PF('statusDialog').show()"
+				onsuccess="PF('statusDialog').hide()" />
+			<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+				closable="false" resizable="false" showHeader="false">
+				<p:graphicImage name="/imagenes/barra_ajax.gif" />
+			</p:dialog>
+			<p:messages globalOnly="false" id="msjGeneral" showDetail="false" />
+
+			<section class="content">
+				<div class="row">
+					<div class="col-md-12">
+						<div class="box box-info">
+
+							<div class="box-body">
+								<div class="form-group">
+									<div class="row">
+										<BR />
+										<div class="col-lg-3 col-md-5">
+											<div class="col-lg-3">
+												<h:outputLabel style="color:#000000" value="Sucursal: " />
+											</div>
+											<div class="col-lg-8">
+												<p:selectOneMenu id="listaCat"
+													value="#{reportesMb.sucursal}" dynamic="true"
+													styleClass="ui-g-2 ui-md-2">
+													<f:selectItem itemLabel="Seleccione Uno" itemValue="" />
+													<f:selectItems value="#{reportesMb.listaSucursales}" />
+												</p:selectOneMenu>
+											</div>
+										</div>
+										<div class="col-lg-3 col-md-6 col-sm-6">
+											<div class="col-lg-3 col-md-3">
+												<h:outputLabel style="color:#000000" value="Fecha Desde: "
+													for="fechDesde" />
+											</div>
+											<div class="col-lg-9 col-md-9">
+												<p:calendar locale="es" id="fechaDesde"
+													value="#{reportesMb.fechaDesde}" pattern="yyyy/MM/dd" />
+											</div>
+										</div>
+										<div class="col-lg-3 col-md-6 col-sm-6">
+											<div class="col-lg-3 col-md-3">
+												<h:outputLabel style="color:#000000" value="Fecha Hasta: "
+													for="fechHasta" />
+											</div>
+											<div class="col-lg-9 col-md-9">
+												<p:calendar locale="es" id="fechaHasta"
+													value="#{reportesMb.fechaHasta}" pattern="yyyy/MM/dd" />
+											</div>
+										</div>
+										<div class="col-lg-3 col-md-5">
+											<div class="col-lg-3">
+												<h:outputLabel style="color:#000000" value="Tipo Pago:" />
+											</div>
+											<div class="col-lg-8"> 
+												<p:selectOneMenu id="listaPagos"
+													value="#{reportesMb.tipoPago}" dynamic="true"
+													styleClass="ui-g-2 ui-md-2">
+													<f:selectItem itemLabel="Seleccione Uno" itemValue="" />
+													<f:selectItems value="#{reportesMb.listaFormasPago}" var="fp" itemLabel="#{fp.formaPago}" itemValue="#{fp.formaPago}"/>
+												</p:selectOneMenu>
+											</div>
+										</div>
+										<div class="col-lg-3 col-md-5">
+											<div class="col-lg-3">
+												<h:outputLabel style="color:#000000" value="Caja Desde: " />
+											</div>
+											<div class="col-lg-8">
+												<p:selectOneMenu id="cajaDesde"
+													value="#{reportesMb.cajaDesde}" dynamic="true"
+													styleClass="ui-g-2 ui-md-2">
+													<f:selectItem itemLabel="Seleccione Uno" itemValue="" />
+													<f:selectItems value="#{reportesMb.listaDatosCajas}" var="caj" itemLabel="#{caj.nombreCaja}" itemValue="#{caj.idCaja}"/>
+												</p:selectOneMenu>
+											</div> 
+										</div>
+										<div class="col-lg-3 col-md-5">
+											<div class="col-lg-3">
+												<h:outputLabel style="color:#000000" value="Caja Hasta: " />
+											</div>
+											<div class="col-lg-8">
+												<p:selectOneMenu id="cajaHasta"
+													value="#{reportesMb.cajaHasta}" dynamic="true"
+													styleClass="ui-g-2 ui-md-2">
+													<f:selectItem itemLabel="Seleccione Uno" itemValue="" />
+													<f:selectItems value="#{reportesMb.listaDatosCajas}" var="caj" itemLabel="#{caj.nombreCaja}" itemValue="#{caj.idCaja}"/>
+												</p:selectOneMenu>
+											</div>
+										</div>
+										<div class="col-lg-3 col-md-5">
+											<div class="col-lg-3">
+												<h:outputLabel style="color:#000000" value="Tipo Caja: " />
+											</div>
+											<div class="col-lg-8">
+												<p:selectOneMenu id="tipoCaja"
+													value="#{reportesMb.tipoCaja}" dynamic="true"
+													styleClass="ui-g-2 ui-md-2">
+													<f:selectItem itemLabel="Seleccione Uno" itemValue="" />
+													<f:selectItem itemLabel="Farmacia" itemValue="FARMACIA" />
+													<f:selectItem itemLabel="Servicio Uno" itemValue="SERVICIO" />
+												</p:selectOneMenu>
+											</div>
+										</div>
+										<div class="col-lg-3 col-md-5" align="center">
+											<p:commandButton value="Generar Reporte"
+												title="Permite Genrar el reporte" class="btnn btnn-primary"
+												update="#{p:component('pnlPrintFactura')}"
+												actionListener="#{reportesMb.imprimirReporte('RI')}"
+												style="border:none; 
+												background:transparent;" />
+										</div>
+									</div>
+								</div> 
+								<fieldset>
+									<legend> </legend>
+								</fieldset>
+							</div>
+							<h:panelGroup id="pnlPrintFactura">
+								<div class="box-body" align="center">
+									<iframe frameborder="0" align="left"
+										src="#{reportesMb.rutaReporte}" name="someName"
+										id="printFactId" scrolling="auto" width="1000" height="750"
+										marginheight="0" marginwidth="0"> </iframe>
+								</div>
+							</h:panelGroup>
+
+						</div>
+					</div>
+				</div>
+			</section>
+		</h:form>
+	</ui:define>
+</ui:composition>

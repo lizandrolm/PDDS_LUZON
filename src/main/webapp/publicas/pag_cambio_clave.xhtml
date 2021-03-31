@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title>Cambio de Clave</title>
+	<meta name="viewport"
+		content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+
+	<h:outputScript name="js/layout.js" library="sentinel-layout" />
+	<h:outputStylesheet name="css/font-icon-layout.css"
+		library="sentinel-layout" />
+	<h:outputStylesheet name="css/sentinel-layout.css"
+		library="sentinel-layout" />
+	<h:outputStylesheet name="css/core-layout.css"
+		library="sentinel-layout" />
+</h:head>
+
+<h:body>
+	<h:form>
+		<div class="Container80 MaxWid500 white-back Fnone MarAuto BordRad10"
+			id="login-box">
+			<div class="Container100">
+			<p:growl id="msjPagCambioClave" showDetail="true" showSummary="true"
+			sticky="true" />
+				<div
+					class="Container100 TexAlCenter Animated05 BoxSizeBorder TabBtn left TabBtnActiveLeft"
+					role="1">
+					<div class="Container80 Fnone MarAuto FontBold">
+						<i class="icon-loop"></i> Cambio de Clave
+					</div>
+				</div>
+				<div class="Container90 Fnone MarAuto TexAlCenter TabContent"
+					id="TAB1">
+				<p:panelGrid columns="1" layout="grid">
+					<p:outputLabel value="Nueva Clave"></p:outputLabel>
+					<p:password value="#{loginMb.claveNueva}"
+						styleClass="Container80 Fnone MarAuto Fs18"
+						placeholder="Nueva Clave"></p:password>
+
+					<p:outputLabel value="Repita la Clave"></p:outputLabel>
+					<p:password value="#{loginMb.claveRepetida}"
+						styleClass="Container80 Fnone MarAuto Fs18"
+						placeholder="Repita la Clave"></p:password>
+
+					<p:commandButton value="Cambiar" styleClass="Fs16"
+						action="#{loginMb.doChangePassword}" update="@form"></p:commandButton>
+				</p:panelGrid>
+				</div>
+			</div>
+		</div>
+	</h:form>
+</h:body>
+
+</html>

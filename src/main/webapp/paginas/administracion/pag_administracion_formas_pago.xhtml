@@ -1,0 +1,180 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:pm="http://primefaces.org/mobile"
+	xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml">
+
+	<ui:define name="head">
+
+	</ui:define>
+
+	<ui:define name="content">
+		<h:form id="form">
+			<p:ajaxStatus onstart="PF('statusDialog').show()"
+				onsuccess="PF('statusDialog').hide()" />
+			<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+				closable="false" resizable="false" showHeader="false">
+				<p:graphicImage name="/imagenes/barra_ajax.gif" />
+			</p:dialog>
+			<p:messages globalOnly="false" id="msjGeneral" showDetail="false" />
+
+			<section class="content">
+				<div class="row">
+					<div class="col-md-12">
+						<div class="box box-info">
+							<div class="box-header with-border">
+								<div class="box-header with-border">
+									<h:outputText value="Registro de Forma de Pago"
+										styleClass="FontBold Fs18 hardblue"></h:outputText>
+								</div>
+								<div class="box-body form-horizontal">
+									<div class="col-sm-8">
+										<div class="form-group">
+											<div class="col-sm-2">
+												<h:outputText value="Forma de Pago:" />
+											</div>
+											<div class="col-sm-8">
+												<p:inputText value="#{formasPagoMb.formaPago.formaPago}"
+													style="text-transform:uppercase;" id="txtCodigo"
+													styleClass="form-control" />
+											</div>
+										</div>
+									</div>
+									<div class="col-sm-4">
+										<div class="col-sm-12">
+											<h:panelGrid columns="3" cellpadding="5">
+												<p:commandButton value="Guardar" id="cmbGuardar"
+													actionListener="#{formasPagoMb.guardarFormaPago}"
+													title="Opcion para generar nuevos usuarios" update="@form"
+													disabled="#{formasPagoMb.crear}"
+													styleClass="btn btn-primary"
+													style="border:none; background:transparent;">
+												</p:commandButton>
+
+												<p:commandButton value="Modificar"
+													actionListener="#{formasPagoMb.modificarFormaPago(formasPagoMb.formaPago)}"
+													title="Opcion para modificar usuarios" update="@form"
+													disabled="#{formasPagoMb.modificar}"
+													styleClass="btn btn-primary"
+													style="border:none; background:transparent;" />
+
+											</h:panelGrid>
+										</div>
+									</div>
+
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="box box-info">
+					<div class="box-header with-border">
+						<h3 class="box-title">Lista de Medios de Pago</h3>
+					</div>
+					<div class="box-body">
+						<div class="col-lg-12">
+							<p:dataTable var="formap" id="tblParametros"
+								value="#{formasPagoMb.listaFormasPago}" reflow="true" rows="10"
+								paginator="true" scrollable="true">
+								<p:column headerText="ID" style="width:70px;">
+									<center>
+										<h:outputText value="#{formap.idFormaPago}" />
+									</center>
+								</p:column>
+								<p:column headerText="Forma de Pago"
+									filterBy="#{formap.formaPago}" filterMatchMode="contains">
+									<center>
+										<h:outputText value="#{formap.formaPago}" />
+									</center>
+								</p:column>
+								<p:column headerText="Acciones" style="width:400px;">
+									<div align="center">
+										<p:commandButton class="btn btn-primary" value="Editar Nombre"
+											title="Permite editar forma de pago #{formap.formaPago}"
+											update="@form" style="border:none; background:transparent;"
+											actionListener="#{formasPagoMb.seleccionarParametro(formap)}" />
+										<p:commandButton class="btn btn-primary" value="Ver Detalle"
+											process="@this" partialSubmit="true"
+											title="Permite ver detalle forma de pago #{formap.formaPago}"
+											update=":#{p:component('tblFrmPagoDet1')}"
+											style="border:none; background:transparent;"
+											actionListener="#{formasPagoMb.verDetalleFormaPago}"
+											oncomplete="PF('dlgDetalle').show();">
+											<f:attribute name="datosFormaPago" value="#{formap}" />
+										</p:commandButton>
+
+										<p:commandButton class="btn btn-primary" value="Inactivar"
+											title="Permite eliminar la forma de pago #{formap.formaPago}"
+											update="@form" style="border:none; background:transparent;"
+											actionListener="#{formasPagoMb.eliminarFormaPago(formap)}">
+										</p:commandButton>
+
+
+									</div>
+								</p:column>
+							</p:dataTable>
+						</div>
+					</div>
+				</div>
+			</section>
+			<p:dialog widgetVar="dlgDetalle" width="1000" closable="true"
+				hideEffect="clip" modal="true" resizable="false" showEffect="clip">
+				<f:facet name="header">
+						Detalle Forma de Pago 
+				</f:facet>
+				<p:dataTable var="formaPagDet" id="tblFrmPagoDet1"
+					value="#{formasPagoMb.listaFormasPagoDet}" reflow="true"
+					widgetVar="tblFrmPagoDet" editable="true" editMode="cell"
+					emptyMessage="No se ha seleccionado medio de pago" rows="6"
+					paginator="true" scrollable="true">
+					<p:column headerText="Sucursal" filterBy="#{formaPagDet.sucursal}"
+						filterMatchMode="contains">
+						<center>
+							<h:outputText value="#{formaPagDet.sucursal}" />
+						</center>
+					</p:column>
+					<p:column headerText="Punto Emisión"
+						filterBy="#{formaPagDet.puntoEmision}" filterMatchMode="contains">
+						<center>
+							<h:outputText value="#{formaPagDet.puntoEmision}" />
+						</center>
+					</p:column>
+					<p:column headerText="Cuenta Contable"
+						filterBy="#{formaPagDet.cuentaContable}"
+						filterMatchMode="contains">
+						<p:cellEditor>
+							<f:facet name="output">
+								<center>
+									<h:outputText id="txtCtaContableOut"
+										value="#{formaPagDet.cuentaContable}" />
+								</center>
+							</f:facet>
+							<f:facet name="input">
+								<center>
+									<p:inputText id="txtCtaContableIn"
+										value="#{formaPagDet.cuentaContable}">
+										<p:ajax event="blur"
+											update="#{p:component('txtCtaContableOut')},#{p:component('cmbGuardarDet')}"
+											listener="#{formasPagoMb.activarBtonInDetalle(formaPagDet)}" />
+									</p:inputText>
+								</center>
+							</f:facet>
+						</p:cellEditor>
+					</p:column>
+					<p:column headerText="Acciones">
+						<center>
+							<p:commandButton value="Guardar" id="cmbGuardarDet"
+								actionListener="#{formasPagoMb.guardarDetalleCuentaContable(formaPagDet)}"
+								title="Opcion para modificar usuarios"
+								disabled="#{formasPagoMb.cuentaContable}" update="@form"
+								styleClass="btn btn-primary"
+								style="border:none; background:transparent;" />
+						</center>
+					</p:column>
+				</p:dataTable>
+			</p:dialog>
+		</h:form>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,320 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:pm="http://primefaces.org/mobile"
+	xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml">
+	<ui:define name="head">
+	
+	<style type="text/css">
+	@media ( max-width : 640px) {
+	.ui-datatable-reflow .ui-datatable-data td[role="gridcell"] {
+		display: inline-flex;
+	}
+	.ui-datatable-reflow .ui-datatable-data td[role="gridcell"] .ui-column-title
+		{
+		min-width: 35%;
+		padding: initial;
+	}
+	th.ui-column-p-6, td.ui-column-p-6 {
+		display: none !important;
+	}
+}
+
+@media ( max-width : 320px) {
+	.ui-datatable-reflow .ui-datatable-data td[role="gridcell"] .ui-column-title
+		{
+		font-size: smaller !important;
+	}
+}
+
+@media ( max-width : 375px) {
+	.ui-datatable-reflow .ui-datatable-data td[role="gridcell"] .ui-column-title
+		{
+		font-size: small;
+	}
+}
+</style>
+	
+	</ui:define>
+
+<ui:define name="content">
+<h:form>
+<p:ajaxStatus onstart="PF('statusDialog').show()"
+	onsuccess="PF('statusDialog').hide()" />
+<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+	closable="false" resizable="false" showHeader="false">
+	<p:graphicImage name="/imagenes/barra_ajax.gif" />
+</p:dialog>
+<p:messages globalOnly="false" id="msjGeneral" showDetail="false"/>
+
+
+<section class="content">
+	<div class="row">
+		<div class="col-md-12">
+			<div class="box box-primary">
+				<div class="box-header with-border">
+					<h3 class="box-title">Aprobación de Devoluciones</h3>
+				</div>
+				<p:panel id="panelDevoluciones" header="Devoluciones pendientes de Aprobación" rendered="#{devolucionesMb.renderedDevoluciones}"
+					toggleable="true" toggleSpeed="500" closeSpeed="500"
+					widgetVar="panel" style="margin-bottom:20px">
+				<div class="box-body">
+					<div class="form-group">
+					<div class="col-md-12">
+					<p:dataTable var="devAprob" id="tblDevPorAprob" reflow="true" rows="6"
+						value="#{devolucionesMb.obtieneListaAprob(devolucionesMb.sucursalLogin)}"
+						paginator="true">
+						<p:column headerText="ID Devolución" class="col-md-1" filterMatchMode="contains"
+							filterBy="#{devAprob.idDevolucion}" filterStyle="width: 80px">
+							<h:outputText value="#{devAprob.idDevolucion}"/>
+						</p:column>
+						<p:column headerText="Número Factura" class="col-md-2" filterMatchMode="contains"
+							filterBy="#{devAprob.numFactura}" filterStyle="width: 150px">
+							<h:outputText value="#{devAprob.numFactura}"/>
+						</p:column>
+						<p:column headerText="Fecha/Creacion Solicitud" class="col-md-2">
+							<h:outputText value="#{devAprob.fechaCreacion}">
+							<f:convertDateTime pattern="dd/MM/yyyy hh:mm:ss"/>
+							</h:outputText>
+						</p:column>
+						<p:column headerText="Ident. Cliente" class="col-md-2">
+                            <h:outputText value="#{devAprob.identificaCliente}"/>
+                        </p:column>
+                        <p:column headerText="Nombres Cliente" class="col-md-2">
+                            <h:outputText value="#{devAprob.nombresCliente}"/>
+                        </p:column>
+						<p:column headerText="Valor total" class="col-md-2">
+							<h:outputText value="#{devAprob.valorTotal}"/>
+						</p:column>
+						<p:column headerText="Estado" class="col-md-2">
+                            <h:outputText
+                                class="#{devAprob.estado eq 'I' ? 'label label-warning' : devAprob.estado eq 'P' ? 'label label-success' :  devAprob.estado eq 'R' ? 'label label-danger' : 'label label-danger'}"
+                                value="#{devAprob.estado eq 'I' ? 'Pendiente' : devAprob.estado eq 'P' ? 'Aprobado' : devAprob.estado eq 'R' ? 'Rechazado': 'Rechazado'}">
+                            </h:outputText>
+                        </p:column>
+						<p:column headerText="Acciones" class="col-md-2">
+							<div class="form-group">
+								<h:commandButton value="Detalle" id="btnDetalleDev"
+									styleClass="btn btn-primary"
+									update="#{p:component('panelCabDevol')}, #{p:component('tblDetalleDev')}"
+									action="#{devolucionesMb.seleccionarDevolucion(devAprob.idDevolucion)}"></h:commandButton>
+							</div>
+						</p:column>
+					</p:dataTable>
+					</div>
+					</div>
+				</div>
+				</p:panel>
+				<p:panel id="panelCabDevol" rendered="#{devolucionesMb.renderedDevolucionesDet}">
+					<div class="box-body">
+						<div class="form-group">
+							<div class="row">
+							<div class="col-sm-1">
+								<h:outputLabel style="color:#000000" value="ID Devolución:"/>
+							</div>
+							<div class="col-sm-2">
+								<h:inputText styleClass="form-control" disabled="true" style="text-align:center"
+									value="#{devolucionesMb.listaCabDevoluciones.get(0).getIdDevolucion()}"/>
+							</div>
+							<div class="col-sm-1">
+								<h:outputLabel style="color:#000000" value="No. Factura::"/>
+							</div>
+							<div class="col-sm-2">
+								<h:inputText styleClass="form-control" disabled="true" style="text-align:center"
+									value="#{devolucionesMb.listaCabDevoluciones.get(0).getNumFactura()}"/>
+							</div>
+							<div class="col-sm-1">
+								<h:outputLabel style="color:#000000" value="Fecha Devolucion:"/>
+							</div>
+							<div class="col-sm-2">
+								<h:inputText styleClass="form-control" disabled="true" style="text-align:center"
+									value="#{devolucionesMb.listaCabDevoluciones.get(0).getFechaCreacion()}"/>
+							</div>
+							<div class="col-sm-1">
+								<h:outputLabel style="color:#000000" value="Valor Factura:"/>
+							</div>
+							<div class="col-sm-2">
+								<h:inputText styleClass="form-control" disabled="true" style="text-align:center"
+									value="#{devolucionesMb.listaCabDevoluciones.get(0).getValorFactura()}"/>
+							</div>
+							</div>
+							<div class="row">
+							<div class="col-sm-1">
+								<h:outputLabel style="color:#000000" value="Aplica Penalidad" />
+							</div>
+							<div class="col-sm-2">
+								<h:selectOneMenu id="cmbAplicaPenalidad" disabled="false"
+                                    value="#{devolucionesMb.listaCabDevoluciones.get(0).aplicaPenalidad}" styleClass="form-control">
+                                <f:selectItem itemValue="NO" itemLabel="NO"/>
+                                <f:selectItem itemValue="SI" itemLabel="SI"/>
+                                <p:ajax event="change"
+                                listener="#{devolucionesMb.actualizarPenalidad()}"
+                                update="#{p:component('tblDetalleDev')},#{p:component('txtPorcPenal')},#{p:component('txtValorTotal')},#{p:component('txtSubTotal')},#{p:component('txtIvaDoce')},#{p:component('txtTotalFinal')},#{p:component('txtObraSocial')},#{p:component('txtPenalidad')}"/>
+                                </h:selectOneMenu>
+							</div>
+							<div class="col-sm-1">
+								<h:outputLabel style="color:#000000" value="Porcentaje Penalidad" />
+							</div>
+							<div class="col-sm-2">
+                                <h:inputText id="txtPorcPenal" styleClass="form-control" disabled="true"
+									style="text-align:center"
+                                    value="#{devolucionesMb.listaCabDevoluciones.get(0).porcentajePenal}"/>
+							</div>
+							<div class="col-sm-1">
+								<h:outputLabel style="color:#000000" value="Identificacion" />
+							</div>
+							<div class="col-sm-2">
+                                <h:inputText id="txtIdentifica" styleClass="form-control" disabled="true"
+									style="text-align:center"
+                                    value="#{devolucionesMb.listaCabDevoluciones.get(0).identificaCliente}"/>
+							</div>
+							<div class="col-sm-1">
+								<h:outputLabel style="color:#000000" value="Autorizado" />
+							</div>
+							<div class="col-sm-2">
+								<h:inputText styleClass="form-control" disabled="true"
+									style="text-align:center"
+									value="#{devolucionesMb.devolucionAutorizada}"/>
+							</div>
+							</div>
+							<div class="row">
+							<div class="col-sm-1">
+								<h:outputLabel style="color:#000000" value="Motivo:" />
+							</div>
+							<div class="col-sm-4">
+								<p:selectOneMenu id="txtMotivo" disabled="false"
+								filter="true" filterMatchMode="contains"
+								value="#{devolucionesMb.listaCabDevoluciones.get(0).motivo}" styleClass="form-control">
+								<f:selectItems value="#{devolucionesMb.obtenerMotivos()}"/>
+								</p:selectOneMenu>
+							</div>
+							<div class="col-md-1">
+								<h:outputText value="&#160;&#160;"/>
+							</div>
+							<div class="col-sm-1">
+								<h:outputLabel style="color:#000000" value="Observacion:" />
+							</div>
+							<div class="col-sm-5">
+							<h:inputTextarea id="txtNotas" class="col-sm-12"
+								value="#{devolucionesMb.listaCabDevoluciones.get(0).notas}"/>
+							</div>
+							</div>
+						</div>
+					</div>
+					<p:dataTable var="detalleDev" id="tblDetalleDev" reflow="true" rows="10"
+						value="#{devolucionesMb.listaDetDevoluciones}"
+						paginator="true">
+					<p:column headerText="Código" >
+						<h:outputText value="#{detalleDev.codigoItems}"/>
+					</p:column>
+					<p:column headerText="Descripcion" >
+						<h:outputText value="#{detalleDev.descripcionItems}"/>
+					</p:column>
+					<p:column headerText="Cantidad" >
+						<h:outputText value="#{detalleDev.cantidadDevuelta}"/>
+					</p:column>
+					<p:column headerText="% Penalidad" >
+                        <h:outputText value="#{detalleDev.porcentajePenalidad}"/>
+                    </p:column>
+					<p:column headerText="Valor Items" >
+						<h:outputText value="#{detalleDev.valorItems}"/>
+					</p:column>
+					<p:column headerText="Valor a Devolver" >
+						<h:outputText value="#{detalleDev.valorDevuelto}">
+						<f:convertNumber pattern="0.00"/>
+						</h:outputText>
+					</p:column>									
+					</p:dataTable>
+					<div class="row"><h:outputLabel style="color:#000000" value="."/></div>
+					<div class="row">
+					<div class="col-md-9">
+					<div class="form-group">
+						<div class="col-sm-3">
+						<p:panel id="pMedioPago" rendered="true" style="border: 0px">
+						<h:outputText value="Forma de pago:"/>
+						<h:selectOneMenu id="txtMedioPagoIn" disabled="true"
+							value="#{devolucionesMb.listaCabDevoluciones.get(0).formaPago}" styleClass="form-control">
+							<f:selectItem itemValue="EFECTIVO" itemLabel="EFECTIVO"/>
+							<f:selectItem itemValue="CHEQUE" itemLabel="CHEQUE"/>
+							<f:selectItem itemValue="SALDO A FAVOR" itemLabel="SALDO A FAVOR"/>
+						</h:selectOneMenu>
+						</p:panel>
+						</div>
+						<div class="col-sm-3">
+						<p:panel id="pValorDevolucion" rendered="false" style="border: 0px">
+							<h:outputText value="Total:"/>
+							<p:inputText value="#{devolucionesMb.listaCabDevoluciones.get(0).valorPago}" disabled="true" id="txtValorTotal" styleClass="form-control">
+							<f:convertNumber pattern="0.00"/>
+							</p:inputText>
+						</p:panel>
+						</div>
+					</div>
+					</div>
+					<div class="col-md-3">
+						<div class="col-sm-6">
+							<h:outputLabel style="color:#000000" value="Subtotal:"/>
+						</div>
+						<div class="col-sm-6">
+							<p:inputText value="#{devolucionesMb.listaCabDevoluciones.get(0).valorPago}" disabled="true" id="txtSubTotal" styleClass="form-control">
+							<f:convertNumber pattern="0.00"/>
+							</p:inputText>
+						</div>
+						<div class="col-sm-6">
+							<h:outputLabel style="color:#000000" value="Iva 12%:"/>
+						</div>
+						<div class="col-sm-6">
+							<p:inputText value="#{devolucionesMb.listaCabDevoluciones.get(0).valorIva}" disabled="true" id="txtIvaDoce" styleClass="form-control">
+							<f:convertNumber pattern="0.00"/>
+							</p:inputText>
+						</div>
+						<div class="col-sm-6">
+							<h:outputLabel style="color:#000000" value="Descuento Obra Social:"/>
+						</div>
+						<div class="col-sm-6">
+							<p:inputText value="#{devolucionesMb.listaCabDevoluciones.get(0).valorObraSocial}" disabled="true" id="txtObraSocial" styleClass="form-control">
+							<f:convertNumber pattern="0.00"/>
+							</p:inputText>
+						</div>
+						<div class="col-sm-6">
+							<h:outputLabel style="color:#000000" value="Descuento Penalidad:"/>
+						</div>
+						<div class="col-sm-6">
+								<p:inputText value="#{devolucionesMb.listaCabDevoluciones.get(0).valorTotalPenalidad}" disabled="true" id="txtPenalidad" styleClass="form-control" style="text-align:left">
+								<f:convertNumber pattern="0.00"/>
+								</p:inputText>
+						</div>
+						<div class="col-sm-6">
+							<h:outputLabel style="color:#000000" value="Total:"/>
+						</div>
+						<div class="col-sm-6">
+							<p:inputText value="#{devolucionesMb.listaCabDevoluciones.get(0).valorFinal}" disabled="true" id="txtTotalFinal" styleClass="form-control">
+							<f:convertNumber pattern="0.00"/>
+							</p:inputText>
+						</div>
+					</div>
+					</div>
+					<div class="row"><h:outputLabel style="color:#000000" value="."/></div>
+					<div class="form-group">
+						<div class="col-sm-1">
+						<p:commandButton icon="ui-icon-check" value="Aprobar" id="btnAprobar" disabled="#{devolucionesMb.disabledAprobar}"
+							update="@form"
+							actionListener="#{devolucionesMb.aprobarRechazarDevolucion(devolucionesMb.listaCabDevoluciones.get(0).idDevolucion,'A')}">
+						</p:commandButton>
+						</div>
+						<div class="col-sm-1">
+						<p:commandButton icon="ui-icon-cancel" value="Rechazar" id="btnRechazar" disabled="#{devolucionesMb.disabledRechazar}"
+							update="@form"
+							actionListener="#{devolucionesMb.aprobarRechazarDevolucion(devolucionesMb.listaCabDevoluciones.get(0).idDevolucion,'R')}">
+						</p:commandButton>
+						</div>
+					</div>
+				</p:panel>
+			</div>
+		</div>
+	</div>
+</section>
+</h:form>
+</ui:define>
+</ui:composition>

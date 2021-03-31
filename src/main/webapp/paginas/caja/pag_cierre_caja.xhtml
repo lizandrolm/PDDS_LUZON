@@ -1,0 +1,204 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:hf="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:h5="http://xmlns.jcp.org/jsf/passthrough"
+	template="/WEB-INF/template.xhtml">
+	<ui:define name="head">
+		<script type="text/javascript">
+           
+	    function autAjustePantalla(idDialog){   	
+	        document.getElementById(idDialog).style.height = Math.floor(window.innerHeight * 0.4)+"px";
+	        document.getElementById(idDialog).style.top= "90px";                         
+		}
+		
+		</script>
+
+	</ui:define>
+
+	<ui:define name="content">
+		<h:form id="form">
+			<p:ajaxStatus onstart="PF('statusDialog').show()"
+				onsuccess="PF('statusDialog').hide()" />
+
+			<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+				closable="false" resizable="false" showHeader="false">
+				<p:graphicImage name="/imagenes/barra_ajax.gif" />
+			</p:dialog>
+
+			<p:messages globalOnly="false" id="msjGeneral" showDetail="false" />
+
+			<section class="content-header"></section>
+
+			<!-- Main content -->
+			<section class="container-fluid">
+				<div class="row">
+					<div class="col-lg-2 col-md-3" />
+					<div class="col-lg-7 col-md-8">
+						<div class="box box-primary">
+							<div class="box-header with-border">
+								<h3 class="box-title">Cierre de Caja</h3>
+							</div>
+							<div class="box-body">
+								<div class="form-group">
+									<div class="row">
+										<div class="col-lg-2 col-md-6 col-sm-6 col-xs-6">
+											<h:outputLabel style="color:#000000" value="Caja ID:" />
+											<p:inputText id="cajaID" disabled="true"
+												style="text-align:center"
+												value="#{cierreCajaMb.cierreCaja.cajaID}"
+												styleClass="form-control" />
+										</div>
+										<div class="col-lg-4 col-md-6 col-sm-6 col-xs-6">
+											<h:outputLabel style="color:#000000" value="Nombre Caja:" />
+											<h:inputText id="nombCaja" disabled="true"
+												style="text-align:center"
+												value="#{cierreCajaMb.cierreCaja.nombreCaja}"
+												styleClass="form-control" />
+										</div>
+										<div class="col-lg-3 col-md-6 col-sm-6 col-xs-6">
+											<h:outputLabel style="color:#000000" value="Fecha Apertura:" />
+											<p:inputText styleClass="form-control"
+												value="#{cierreCajaMb.cierreCaja.fechaAperturaStr}"
+												disabled="true" />
+										</div>
+										<div class="col-lg-3 col-md-6 col-sm-6 col-xs-6">
+											<h:outputLabel style="color:#000000" value="Fecha Cierre:" />
+											<p:inputText styleClass="form-control"
+												value="#{cierreCajaMb.cierreCaja.fechaCierreStr}"
+												disabled="true" />
+										</div>
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="row">
+										<div class="col-lg-2 col-md-6 col-sm-6 col-xs-6">
+											<h:outputLabel style="color:#000000" value="Caja:" />
+											<p:inputText styleClass="form-control"
+												style="text-align:center" disabled="true"
+												value="#{cierreCajaMb.cierreCaja.numeroCaja}" />
+										</div>
+										<div class="col-lg-4 col-md-6 col-sm-6 col-xs-6">
+											<h:outputLabel style="color:#000000" value="Sucursal:" />
+											<p:inputText styleClass="form-control"
+												value="#{cierreCajaMb.cierreCaja.nombreSucursal}"
+												disabled="true" />
+										</div>
+									</div>
+								</div>
+								<div class="form-group">
+									<h:outputLabel style="color:#000000" value="Empleado:" />
+									<p:inputText styleClass="form-control"
+										value="#{cierreCajaMb.cierreCaja.nombresUsuario}"
+										disabled="true" />
+								</div>
+								<div class="form-group">
+									<div class="row">
+										<div class="col-lg-3 col-md-6 col-sm-6 col-xs-6">
+											<h:outputLabel style="color:#000000" value="Saldo Inicial:" />
+											<p:inputText styleClass="form-control" disabled="true"
+												value="#{cierreCajaMb.cierreCaja.saldoApert}">
+												<f:convertNumber type="number" minFractionDigits="2"
+													pattern="#0.00" />
+											</p:inputText>
+										</div>
+										<div class="col-lg-3 col-md-6 col-sm-6 col-xs-6">
+											<h:outputLabel style="color:#000000" value="Saldo Cierre:" />
+											<h:inputText disabled="#{cierreCajaMb.tieneCaja}"
+												styleClass="form-control" hf:type="number" hf:step="0.01"
+												value="#{cierreCajaMb.cierreCaja.saldoCierreManual}">
+											</h:inputText>
+										</div>
+										<div class="col-lg-3 col-md-6 col-sm-6 col-xs-6">
+											<h:outputLabel style="color:#000000"
+												value="Saldo Cierre Aut.:" />
+											<p:inputText styleClass="form-control"
+												value="#{cierreCajaMb.cierreCaja.saldoCierre}"
+												disabled="true">
+												<f:convertNumber type="number" minFractionDigits="2"
+													pattern="#0.00" />
+											</p:inputText>
+										</div>
+									</div>
+								</div>
+								<div class="form-group">
+									<h:outputLabel style="color:#000000"
+										value="Comentario Apertura:" />
+									<p:inputTextarea styleClass="form-control" disabled="true"
+										value="#{cierreCajaMb.cierreCaja.comentarioApert}" />
+								</div>
+								<div class="form-group">
+									<h:outputLabel style="color:#000000" value="Comentario" />
+									<p:inputTextarea styleClass="form-control"
+										disabled="#{cierreCajaMb.tieneCaja}"
+										value="#{cierreCajaMb.cierreCaja.comentarioCierr}" />
+								</div>
+								<div class="box-footer">
+									<div class="row">
+										<div class="col-lg-4 col-md-5 col-sm-5 col-xs-5">
+											<h:commandButton value="Cerrar Caja" disabled="#{cierreCajaMb.tieneCaja}"
+												styleClass="btn btn-block btn-primary" update="@form"
+												actionListener="#{cierreCajaMb.apruebaValor('C')}" />
+										</div>
+										<div class="col-lg-4 col-md-5 col-sm-5 col-xs-5">
+											<h:commandButton value="Entrega de Dinero"
+												disabled="#{cierreCajaMb.puedeEntrgrDnero}"
+												styleClass="btn btn-block btn-primary"
+												actionListener="#{cierreCajaMb.apruebaValor('E')}" />
+											<p:remoteCommand name="rcmdInicaliza"
+												actionListener="#{cierreCajaMb.inicializarPagina}"
+												style="display: none;"
+												update="@form"/>
+												
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section> 
+			<p:dialog widgetVar="dlgConfirmAdmin" hideEffect="clip" responsive="true"
+				id="idDlgAndmin" draggable="false" closeOnEscape="true" modal="true"
+				showEffect="clip" width="260" header="Credenciales Administradora"
+				height="30%" position="center center" resizable="false">
+				<p:panel style="text-align: -webkit-center;" >
+					<p:focus context="panelAdmin" />
+
+					<h:panelGrid id="panelAdmin" columns="1" cellpadding="2">
+
+						<h:inputText styleClass="form-control" style="font-size:16px" value="#{cierreCajaMb.userAdmin}"
+							h5:placeholder="Usuario Admin" onblur="upperCase(this);"
+							h5:autofocus="autofocus">
+						</h:inputText>
+
+						<h:inputSecret styleClass="form-control" value="#{cierreCajaMb.password}"
+							h5:placeholder="Contraseña" id="password2" placeholder="Clave"></h:inputSecret>
+
+						<p:commandButton id="submitButton" value="Aceptar" 
+							action="#{cierreCajaMb.apruebaAdministracion(cierreCajaMb.tipo)}"
+							styleClass="btn btn-block" update="@form"/>
+							 
+					</h:panelGrid>
+				</p:panel>
+			</p:dialog>
+			<p:dialog header="Cierre Caja" widgetVar="dlgImprimeFactura" id="idImprimeFact" closeOnEscape="true" 
+				showEffect="fade" width="50%" height="50%" responsive="true" 
+				onShow="autAjustePantalla('idImprimeFact')" onHide="rcmdInicaliza();">
+				<h:panelGroup id="pnlPrintFactura">
+					<div class="box-body">
+						<iframe frameborder="0" align="left"
+							src="#{cierreCajaMb.obtenerRutaFactura()}" name="someName"
+							id="printFactId" scrolling="auto" width="700" height="550"
+							marginheight="0" marginwidth="0"> </iframe>
+					</div>
+				</h:panelGroup>
+			</p:dialog>
+		
+		
+</h:form>
+	</ui:define>
+</ui:composition>

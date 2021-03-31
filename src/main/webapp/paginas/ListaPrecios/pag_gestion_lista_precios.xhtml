@@ -1,0 +1,559 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:hf="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+	template="/WEB-INF/template.xhtml"
+	>
+	<ui:define name="head">
+		<script type="text/javascript">
+			function validFormatNum(val) {
+				var input = $("#txtFactores");
+				var valor = input.val();
+			    var reg = new RegExp('^[0-9]{1,3}(,[0-9]{1,3})?$');
+			    document.getElementById("txtFactores").value = "9";
+			    if (!reg.test(val))
+			        return valor.val("2");
+			    return valor.val("5");
+			}
+		</script> 
+	</ui:define>
+
+	<ui:define name="content">
+		<h:form id="form">
+			<p:ajaxStatus onstart="PF('statusDialog').show()"
+				onsuccess="PF('statusDialog').hide()" />
+
+			<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+				closable="false" resizable="false" showHeader="false">
+				<p:graphicImage name="/imagenes/barra_ajax.gif" />
+			</p:dialog>
+
+			<p:messages globalOnly="false" id="msjGeneral" showDetail="false" />
+
+			<section class="content-header"></section>
+
+			<!-- Main content -->
+			<section class="content">
+				<div class="row">
+					<div class="col-md-12">
+						<div class="box box-info">
+							<p:panel id="toggleable" header="Creación de lista de precios"
+								toggleable="true" toggleSpeed="500" closeSpeed="500"
+								collapsed="true" widgetVar="panel">
+								<div class="box-body">
+									<div class="form-group">
+										<div class="row">
+											<div class="col-sm-1" />
+											<h:outputLabel style="color:#000000"
+												value="Nombre Lista de Precio:" class="col-sm-2" />
+											<div class="col-sm-3">
+												<p:inputText id="txtNameListPrec"
+													value="#{listaPreciosMb.nombreListPrecio}"
+													styleClass="form-control" />
+											</div>
+											<div class="col-sm-6" />
+										</div>
+									</div>
+									<div class="box-footer">
+										<div class="row">
+											<div class="col-lg-2">
+												<h:commandButton value="Nueva Lista de Precios"
+													actionListener="#{listaPreciosMb.addListaPrecio}"
+													styleClass="btn btn-block btn-primary" />
+											</div>
+										</div>
+									</div>
+								</div>
+							</p:panel>
+						</div>
+					</div>
+				</div>
+				<div class="box box-info">
+					<div class="box-header with-border">
+						<h3 class="box-title">Lista de Precios</h3>
+					</div>
+					<div class="box-body">
+						<div class="col-lg-12">
+							<p:dataTable var="listaPrecio" id="tblListaPrecios"
+								widgetVar="tblListaPrecios" editable="true" editMode="cell"
+								value="#{listaPreciosMb.listaPrecios}"
+								emptyMessage="No existe lista de precios" scrollable="true"
+								scrollHeight="150">
+	 
+	
+								<p:column style="width:100px;" headerText="Nombre de lista de precio">
+									<center>
+										<h:outputText value="#{listaPrecio.nombreListaPrecio}" />
+									</center>
+								</p:column>
+								<p:column style="width:150px;" headerText="Lista de precio base por defecto">
+									<p:cellEditor>
+										<f:facet name="output">
+											<center>
+												<h:outputText value="#{listaPrecio.nombreListBase}" />
+											</center>
+										</f:facet>
+										<f:facet name="input">
+											<center>
+												<h:selectOneMenu value="#{listaPrecio.nombreListBase}"
+													styleClass="form-control">
+													<f:selectItems value="#{listaPreciosMb.auxListaPrecioBase}" />
+													<p:ajax event="blur"
+														update="#{p:component('cmbGuardaList')}"
+														listener="#{listaPreciosMb.actualizaListaPrecio(listaPrecio)}" />
+												</h:selectOneMenu>
+											</center>
+										</f:facet>
+									</p:cellEditor>
+								</p:column>
+								<p:column headerText="#{listaPreciosMb.nombreSucursal}" style="width:100px;">
+									<p:cellEditor>
+										<f:facet name="output">
+											<center>
+												<h:outputText
+													value="#{loginMb.nombreSucursal eq 'SUR' ? listaPrecio.factorSur : loginMb.nombreSucursal eq 'DURAN' ? listaPrecio.factorDuran : listaPrecio.factorNorte}" />
+											</center>
+										</f:facet>
+										<f:facet name="input">
+											<center>
+												<p:inputText hf:type="number"
+													value="#{loginMb.nombreSucursal eq 'SUR' ? listaPrecio.factorSur : loginMb.nombreSucursal eq 'DURAN' ? listaPrecio.factorDuran : listaPrecio.factorNorte}">
+													<p:ajax event="blur"
+														update="#{p:component('cmbGuardaList')}"
+														listener="#{listaPreciosMb.actualizaListaPrecio(listaPrecio)}" />
+												</p:inputText>
+											</center>
+										</f:facet>
+									</p:cellEditor>
+	
+								</p:column>
+								<p:column style="width:150px;" headerText="Lista de precio SAP asociada">
+									<p:cellEditor>
+										<f:facet name="output">
+											<center>
+												<h:selectOneMenu value="#{listaPrecio.idListaPrecioSAP}"
+													styleClass="form-control">
+													<f:selectItems value="#{listaPreciosMb.listaPreciosDSAP}" />
+												</h:selectOneMenu>
+											</center>
+										</f:facet>
+										<f:facet name="input">
+											<center>
+												<h:selectOneMenu value="#{listaPrecio.idListaPrecioSAP}"
+													styleClass="form-control">
+													<f:selectItems value="#{listaPreciosMb.listaPreciosDSAP}" />
+												</h:selectOneMenu>
+											</center>
+										</f:facet>
+									</p:cellEditor>
+								</p:column>
+	
+								<p:column headerText="Acción" style="width:300px;">
+									<center> 
+											<p:commandButton value="Guardar" 
+											    icon="fa fa-fw fa-save"
+												id="cmbGuardaList" 
+												style="border:none;  background:transparent;"
+												disabled="#{listaPrecio.valorUpdate}"
+												actionListener="#{listaPreciosMb.updateListaPrecio(listaPrecio)}"
+												title="Permite guardar cambios de lista de precios"
+												update="@form" />
+											<p:commandButton  value="Detalle"
+												style="border:none; 
+												background:transparent;"
+												ajax="false"
+												icon="ui-icon-search"
+												actionListener="#{listaPreciosMb.queryListaPrecioDetalle(listaPrecio)}"
+												title="Permite ver detalle de la lista de precios"
+												update="#{p:component('tblListaDetPrecios')}, #{p:component('tblListaDetPrecios')}" />
+											<p:commandButton value="Exportar a Excel"  
+												class="btnn btnn-primary"
+												style="border:none; 
+												background:transparent;"
+												icon="fa fa-fw fa-file-excel-o"
+												actionListener="#{listaPreciosMb.exportarAExcelPorLista(listaPrecio,'NOADMIN')}"
+												title="Permite exportar a excel el detalle de la lista de precios" 
+												ajax="false"/>
+ 									</center>
+								</p:column> 
+							</p:dataTable>
+						</div> 
+					</div>
+				</div>
+				
+				<div class="box box-info">
+				<div class="row">
+					<br/>
+					<div class="col-lg-12" align="center">
+						<p:commandButton value="Importar Lista Precio"
+							onclick="PF('dlgImportarExcel').show();"
+							title="Permite leer archivo excel para actualización de datos" 
+							class="btnn btnn-primary"
+							style="border:none; 
+							background:transparent;"/>
+					 
+						<p:commandButton value="Guardar Todo" id="cmbGuardaTodo"
+							class="btnn btnn-primary"
+							style="border:none; 
+							background:transparent;"
+							actionListener="#{listaPreciosMb.addPrecioDetalleMasivo}"
+							title="Permite guardar los datos"
+							disabled="#{listaPreciosMb.bdraGuardaLinea}"
+							update="#{p:component('tblListaDetPrecios')}" />
+					 
+						<p:commandButton value="Criterio de Búsqueda"
+							title="Permite consultar datos"
+							disabled="#{listaPreciosMb.bdraCritSelec}"
+							update="#{p:component('txtItemD')},#{p:component('txtItemH')}"
+							onclick="PF('dlgListaPrecio').show();" 
+							class="btnn btnn-primary"
+							style="border:none; 
+							background:transparent;"
+							
+							/>
+					</div>
+					<div class="col-lg-12" align="center"/>
+				</div>
+				
+				
+					<div class="box-header with-border">
+						<h3 class="box-title">
+							<h:outputText value="#{listaPreciosMb.msjDetListPrecio}" />
+						</h3>
+					</div>
+					<div class="box-body">
+						<p:dataTable var="listaDetPrecio" id="tblListaDetPrecios" 
+						value="#{listaPreciosMb.detalleListPrecio}" paginator="true" 
+						rows="10" sortBy="#{listaDetPrecio.numeroArticulo}" emptyMessage="Debe seleccionar una lista de precios">
+							<p:columnGroup type="header">
+								<p:row>
+									<p:column rowspan="2" headerText="Código de artículo"
+										width="150" style="#{loginMb.styleTable}" />
+									<p:column rowspan="2" headerText="Descripción de artículo"
+										width="150" style="#{loginMb.styleTable}" />
+									<p:column rowspan="2" headerText="Lista precio base"
+										width="150" style="#{loginMb.styleTable}" />
+									<p:column colspan="5" headerText="#{loginMb.nombreSucursal}"
+										style="#{loginMb.styleTable}" />
+									<p:column rowspan="2" headerText="Acción" width="80"
+										style="#{loginMb.styleTable}" />
+								</p:row>
+								<p:row>
+									<p:column headerText="Factor" style="#{loginMb.styleTable}" />
+									<p:column headerText="Precio base"
+										style="#{loginMb.styleTable}" />
+									<p:column headerText="Donación Valor"
+										style="#{loginMb.styleTable}" />
+									<p:column headerText="Donación % "
+										style="#{loginMb.styleTable}"  />
+									<p:column headerText="Precio" />
+<!-- 									<p:column headerText="Manual" width="5" style="#{loginMb.styleTable}" /> -->
+								</p:row>
+							</p:columnGroup>
+							<p:column width="100">
+								<center>
+									<h:outputText value="#{listaDetPrecio.numeroArticulo}" />
+								</center>
+							</p:column>
+							<p:column width="200">
+								<center>
+									<h:outputText value="#{listaDetPrecio.nombreArticulo}" />
+								</center>
+							</p:column>
+							<p:column width="150">
+								 
+								<h:selectOneMenu value="#{listaDetPrecio.nombreListBase}" a:autofocus="true" styleClass="form-control">
+									<f:selectItems value="#{listaPreciosMb.auxListaPrecioBase}" />
+									<p:ajax event="change" global="false"
+										update="#{p:component('txtValorBaseNrt')},#{p:component('txtPrecioIn')},#{p:component('cmbOk')},#{p:component('cmbGuardaTodo')}"
+										listener="#{listaPreciosMb.selectListaPrecioBaseDistintaGenerico(listaDetPrecio)}" />
+								</h:selectOneMenu>
+							</p:column>
+							<p:column> 
+									 
+										<center>
+											<p:inputText id="txtFactor" hf:type="number" style="width:100%"
+												value="#{listaPreciosMb.nomSucursal eq 'SUR' ? listaDetPrecio.factorSur : listaPreciosMb.nomSucursal eq 'DURAN' ? listaDetPrecio.factorDuran : listaDetPrecio.factorNorte}">
+												<p:ajax event="change" listener="#{listaPreciosMb.valorPrecioBasePorFactorGenerico(listaDetPrecio)}"  global="false"
+													update="#{p:component('cmbOk')},#{p:component('cmbGuardaTodo')}, #{p:component('tblListaDetPrecios')}"
+													/>
+											</p:inputText>
+										</center> 
+							</p:column>
+							<p:column>
+								<center>
+									<h:outputText id="txtValorBaseNrt" style="width:100%"
+										value="#{listaPreciosMb.nomSucursal eq 'SUR' ? listaDetPrecio.precioBaseSur : listaPreciosMb.nomSucursal eq 'DURAN' ? listaDetPrecio.precioBaseDuran : listaDetPrecio.precioBaseNorte}">
+										<f:convertNumber type="number" minFractionDigits="2" pattern="#0.00" />
+									</h:outputText>
+								</center>
+							</p:column>
+							<p:column>
+								 
+										<center>
+											<p:inputText id="txtDonaNorteIn" hf:type="number" style="width:100%"
+												value="#{listaPreciosMb.nomSucursal eq 'SUR' ? listaDetPrecio.donacionSur : listaPreciosMb.nomSucursal eq 'DURAN' ? listaDetPrecio.donacionDuran : listaDetPrecio.donacionNorte}">
+												<p:ajax event="change" global="false"
+													update="#{p:component('txtDonaNorteIn')},#{p:component('pnlMsjError')},#{p:component('cmbOk')},#{p:component('cmbGuardaTodo')}"
+													listener="#{listaPreciosMb.valorDonacionGenerico(listaDetPrecio)}" />
+											</p:inputText>
+										</center>  
+							</p:column>
+							<p:column width="80"> 
+										<center>
+											<p:inputText id="txtPcntjNorteIn" hf:type="number" style="width:100%"
+												value="#{listaPreciosMb.nomSucursal eq 'SUR' ? listaDetPrecio.pcntjSur : listaPreciosMb.nomSucursal eq 'DURAN' ? listaDetPrecio.pcntjDuran : listaDetPrecio.pcntjNorte}">
+												<p:ajax event="change" global="false"
+													update="#{p:component('txtPcntjNorteIn')},#{p:component('pnlMsjError')},#{p:component('cmbOk')},#{p:component('cmbGuardaTodo')}"
+													listener="#{listaPreciosMb.valorDonacionGenerico(listaDetPrecio)}" />
+											</p:inputText>
+										</center> 
+							</p:column>
+							<p:column>
+								<center>
+								
+									<p:inputText id="txtPrecioIn" hf:type="number" style="width:100%" 
+										disabled="#{listaDetPrecio.bloqueaPrecio}"
+										value="#{listaPreciosMb.nomSucursal eq 'SUR' ? listaDetPrecio.precioSur : listaPreciosMb.nomSucursal eq 'DURAN' ? listaDetPrecio.precioDuran : listaDetPrecio.precioNorte}">
+										<p:ajax event="change" global="false"
+											update="#{p:component('cmbOk')},#{p:component('cmbGuardaTodo')},#{p:component('txtPrecioIn')}"
+											listener="#{listaPreciosMb.valorPrecioManualGenerico(listaDetPrecio)}" /> 
+									</p:inputText>
+								</center> 
+							</p:column>
+							<p:column width="80">
+								<center>
+									<div class="btn-group">
+										<h:commandButton icon="ui-icon-pencil" value="Ok"
+											styleClass="btn btn-primary" id="cmbOk"
+											disabled="#{listaDetPrecio.valorBandera}"
+											actionListener="#{listaPreciosMb.addPrecioDetallePorId(listaDetPrecio)}"
+											title="Permite guardar los datos de la linea"
+											update="#{p:component('tblListaDetPrecios')}" />
+									</div>
+								</center>
+							</p:column>
+						
+						</p:dataTable>
+					</div> 
+				</div>
+
+				<p:dialog header="Lista de Precios: criterio de selección" closable="true" hideEffect="clip" modal="true" resizable="false" 
+					widgetVar="dlgListaPrecio" showEffect="fade" width="700" height="220">
+					<h:panelGroup id="pnlDlgLstPrecio">
+						<div class="box-body">
+							<div class="form-group">
+								<div class="row">
+									<h:outputLabel style="color:#000000"
+										value="Código de proveedor desde:" styleClass="col-lg-3" />
+									<div class="col-lg-4">
+										<div class="input-group">
+											<p:inputText id="txtProveD"   value="#{listaPreciosMb.provedDesde}" />
+											<div class="input-group-btn">
+												<p:commandButton icon="ui-icon-contact"
+													styleClass="ui-priority-primary"
+													style="border:none;  background:transparent;"
+													actionListener="#{listaPreciosMb.queryListaProveedor('PD')}"
+													oncomplete="PF('tblProveedor').filter()" />
+											</div>
+										</div>
+									</div>
+									<h:outputLabel style="color:#000000" value="Hasta:"
+										styleClass="col-lg-1" />
+									<div class="col-lg-4">
+										<div class="input-group">
+											<p:inputText id="txtProveH" value="#{listaPreciosMb.provedHasta}" />
+											<div class="input-group-btn">
+												<p:commandButton icon="ui-icon-contact"
+													styleClass="ui-priority-primary"
+													actionListener="#{listaPreciosMb.queryListaProveedor('PH')}"
+													oncomplete="PF('tblProveedor').filter()" />
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="row">
+									<h:outputLabel style="color:#000000"
+										value="Número de Artículo desde:" styleClass="col-lg-3" />
+									<div class="col-lg-4">
+										<div class="input-group">
+											<p:inputText id="txtItemD" value="#{listaPreciosMb.itemDesde}" />
+											<div class="input-group-btn">
+												<p:commandButton icon="ui-icon-contact"
+													styleClass="ui-priority-primary"
+													actionListener="#{listaPreciosMb.queryListaArticulo('D')}"
+													oncomplete="PF('tblItems').clearFilters()" />
+											</div>
+										</div>
+									</div>
+									<h:outputLabel style="color:#000000" value="Hasta:"
+										styleClass="col-lg-1" />
+									<div class="col-lg-4">
+										<div class="input-group">
+											<p:inputText id="txtItemH" value="#{listaPreciosMb.itemHasta}" />
+											<div class="input-group-btn">
+												<p:commandButton icon="ui-icon-contact"
+												style="border:none;  background:transparent;"
+													actionListener="#{listaPreciosMb.queryListaArticulo('H')}"
+													oncomplete="PF('tblItems').clearFilters()" />
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="box-footer">
+							 <div align="center">
+							 
+									<p:commandButton value="Filtrar"
+										title="Permite filtrar los datos" styleClass="btn btn-primary"
+										style="border:none;  background:transparent;"
+										actionListener="#{listaPreciosMb.filterCriterioBusqueda}"
+										update="#{p:component('tblListaDetPrecios')}, #{p:component('msjError')}, #{p:component('pnlDlgLstPrecio')}" />
+							</div>	 
+						</div>
+					</h:panelGroup>
+				</p:dialog>
+
+				<p:dialog header="Items" widgetVar="dlgItems" showEffect="fade"
+					width="800" height="400">
+					<p:dataTable var="items" id="tblItems" widgetVar="tblItems" 
+						value="#{listaPreciosMb.listaItems}" selectionMode="single"
+						filteredValue="#{listaPreciosMb.listaFiltroItems}"
+						paginator="true" rows="10"
+						selection="#{listaPreciosMb.selectdItems}"
+						rowKey="#{items.codigoItem}">
+
+						<p:ajax event="rowSelect"
+							listener="#{listaPreciosMb.onRowSelectItem}"
+							update="#{p:component('txtItemD')},#{p:component('txtItemH')}" />
+
+						<p:column headerText="Código Articulo" filterStyle="width: 260px"
+							filterBy="#{items.codigoItem}" filterMatchMode="contains">
+							<h:outputText value="#{items.codigoItem}" />
+						</p:column> 
+						<p:column headerText="Descripción/Articulo" filterStyle="width: 260px"
+							filterBy="#{items.descripcion}"
+							filterFunction="#{listaPreciosMb.filterByName}">
+							<h:outputText value="#{items.descripcion}" />
+						</p:column>
+					</p:dataTable>
+				</p:dialog>
+
+				<p:dialog header="Proveedores" widgetVar="dlgProveedor"
+					showEffect="fade" width="800" height="400">
+					<p:dataTable var="proveedor" id="tblProveedor"
+						widgetVar="tblProveedor" value="#{listaPreciosMb.listaProveedor}"
+						selectionMode="single"
+						filteredValue="#{listaPreciosMb.listaFiltroItems}"
+						paginator="true" rows="10"
+						selection="#{listaPreciosMb.selectdItems}"
+						rowKey="#{proveedor.codigoItem}">
+
+						<p:ajax event="rowSelect"
+							listener="#{listaPreciosMb.onRowSelectProveedor}"
+							update="#{p:component('txtProveD')},#{p:component('txtProveH')}" />
+
+						<p:column headerText="Código Proveedor"
+							filterBy="#{proveedor.codigoItem}" filterMatchMode="contains">
+							<h:outputText value="#{proveedor.codigoItem}" />
+						</p:column>
+
+						<p:column headerText="Nombre Proveedor"
+							filterBy="#{proveedor.nombreProveedor}"
+							filterMatchMode="contains">
+							<h:outputText value="#{proveedor.nombreProveedor}" />
+						</p:column>
+					</p:dataTable>
+				</p:dialog>
+
+				<p:dialog header="Mensaje Error" modal="true" resizable="false"
+					showEffect="fade" widgetVar="dlgMsj">
+					<h:panelGrid columns="1" id="pnlMsjError">
+						<h:outputText styleClass="icon-warning red" value="#{listaPreciosMb.msjError}" id="msjError"/>
+					</h:panelGrid>
+				</p:dialog>
+
+				<p:dialog header="Lista de Precios: importar excel"
+					widgetVar="dlgImportarExcel1" showEffect="fade" width="700" modal="true" height="180" resizable="false">
+					<h:form>
+						<p:fileUpload mode="advanced" dragDropSupport="true" 
+							update=":#{p:component('msjGeneral')}, :#{p:component('tblErroresCarga')}"
+							sizeLimit="1000000" label="Buscar" 
+							invalidFileMessage="Tipo de archivo invalido, solo se acepta formato xls o xlsx" 
+							invalidSizeMessage="Tamaño del archivo invalido"
+							cancelLabel="Cancelar" uploadLabel="Cargar Archivo"
+							oncomplete="PF('dlgImportarExcel1').hide()"
+							allowTypes="/(\.|\/)(xls|xlsx)$/" />
+					</h:form>
+				</p:dialog>
+				<p:dialog header="Lista de Precios: importar excel"
+					widgetVar="dlgImportarExcel" showEffect="fade" width="700"
+					height="180" resizable="false" >
+					<h:form id="frmDetEjecucionExcel">
+						<p:panel id="pDetEjecucionesArchivoExcel"> 
+						<span style="color: red"> 
+							<h:outputText style="font-size: 15px;" value="Dar clic en el boton y elegir el archivo excel(.xlsx)" />
+						</span>
+						<br /><br />
+		 
+ 						<p:fileUpload skinSimple="true" uploadLabel="Subir" 
+							label="Seleccione" 
+							allowTypes="/(\.|\/)(xlsx)$/"  
+							invalidFileMessage="El tipo de archivo seleccionado no es válido, seleccione archivos con formato: xlsx"
+							multiple="false" 
+							mode="advanced" 
+							sizeLimit="6048000" 
+							showButtons="false" 
+							fileUploadListener="#{listaPreciosMb.importaAExcelPorLista}"
+							process="@this" 
+							update=":#{p:component('msjGeneral')}, :#{p:component('tblErroresCarga')}, #{p:component('tblListaDetPrecios')}"
+							immediate="true"
+							oncomplete="PF('dlgImportarExcel').hide()" />
+						  <p:growl id="messages" showDetail="true" />  
+						</p:panel>
+					</h:form>
+				</p:dialog>
+				<p:dialog header="Detalle de errores de la carga de excel" 
+					modal="true" 
+					resizable="false"
+					width="1000" 
+					height="400"
+					closable="true"
+					hideEffect="clip"  
+					showEffect="fade" 
+					widgetVar="dlgErroresCarga">
+					<p:dataTable var="listaDetPrecio" id="tblErroresCarga"
+							value="#{listaPreciosMb.detalleListPrecioError}"
+							widgetVar="tblListaDetPrecios"  
+							paginator="true" rows="6"
+							scrollable="true" >
+
+							<p:column width="70" headerText="Número Articulo">
+								<center>
+									<h:outputText value="#{listaDetPrecio.numeroArticulo}" />
+								</center>
+							</p:column>
+							<p:column width="200" headerText="Nombre Articulo">
+								<center>
+									<h:outputText value="#{listaDetPrecio.nombreArticulo}" />
+								</center>
+							</p:column>
+							<p:column width="300" headerText="Detalle de error">
+								<center>
+									<h:outputText value="#{listaDetPrecio.observacion}" style="color: red"/>
+								</center>
+							</p:column>
+							 
+						</p:dataTable>
+				</p:dialog>
+			</section>
+		</h:form>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,178 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:pm="http://primefaces.org/mobile"
+	xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml">
+	<ui:define name="head">
+	</ui:define>
+
+<ui:define name="content">
+<h:form>
+<p:ajaxStatus onstart="PF('statusDialog').show()"
+	onsuccess="PF('statusDialog').hide()" />
+<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+	closable="false" resizable="false" showHeader="false">
+	<p:graphicImage name="/imagenes/barra_ajax.gif" />
+</p:dialog>
+<p:messages globalOnly="false" id="msjGeneral" showDetail="false"/>
+
+
+<section class="content">
+	<div class="row">
+		<div class="col-md-12">
+			<div class="box box-primary">
+				<div class="box-header with-border">
+					<h3 class="box-title">Autorización de Reagendamientos de citas médicas</h3>
+				</div>
+				<p:panel id="pnlDtosCab" header="Búsqueda por Número de Factura" rendered="#{reagendaMb.renderedCabecera}"
+					toggleable="true" toggleSpeed="500" closeSpeed="500"
+					widgetVar="panel" style="margin-bottom:20px">
+					<div class="box-body">
+						<div class="form-group">
+						<div class="col-md-12">
+						<p:dataTable var="reagenda" id="tblReagenda" reflow="true" rows="6"
+							value="#{reagendaMb.consultaCitasReagendadas()}"
+							paginator="true">
+							<p:column headerText="ID Reagenda" class="col-md-2">
+								<h:outputText value="#{reagenda.idReagenda}"/>
+							</p:column>
+							<p:column headerText="Número Factura" class="col-md-2">
+								<h:outputText value="#{reagenda.numFactura}"/>
+							</p:column>
+							<p:column headerText="Cliente" class="col-md-2">
+								<h:outputText value="#{reagenda.nombresCliente}"/>
+							</p:column>
+							<p:column headerText="Fecha Cita Médica Factura" class="col-md-2">
+								<h:outputText value="#{reagenda.strFechaAtencion}"/>
+							</p:column>
+							<p:column headerText="Nueva Fecha Cita Médica" class="col-md-2">
+								<h:outputText value="#{reagenda.strFechaReagenda}"/>
+							</p:column>
+							<p:column headerText="Acciones" class="col-md-1">
+								<div class="form-group">
+									<h:commandButton value="Ver Detalle" id="btnVerDetalle"
+										styleClass="btn btn-primary"
+										update="#{p:component('pnlDtosCab')}, #{p:component('pnlDtosDet')}"
+										action="#{reagendaMb.seleccionarReagenda(reagenda)}"></h:commandButton>
+								</div>
+							</p:column>
+						</p:dataTable>
+						</div>
+						</div>
+					</div>
+				</p:panel>
+				<div class="box-body">
+					<div class="row">
+						<div class="col-md-12">
+							<div class="box box-info">
+								<p:panel id="pnlDtosDet" rendered="#{reagendaMb.renderedDetalle}">
+									<div class="box-body">
+										<div class="form-group">
+											<div class="row">
+											<div class="col-sm-1">
+												<h:outputLabel style="color:#000000" value="No. Factura:"/>
+											</div>
+											<div class="col-sm-3">
+												<h:inputText styleClass="form-control" disabled="true"
+													style="text-align:center"
+													value="#{reagendaMb.reagendaDetalle.numFactura}" />
+											</div>
+											<div class="col-sm-1">
+												<h:outputLabel style="color:#000000" value="Cliente:"/>
+											</div>
+											<div class="col-sm-3">
+												<h:inputText styleClass="form-control" disabled="true"
+													style="text-align:center"
+													value="#{reagendaMb.reagendaDetalle.nombresCliente}" />
+											</div>
+											<div class="col-sm-1">
+												<h:outputLabel style="color:#000000" value="Fecha Solicitud Reagenda:"/>
+											</div>
+											<div class="col-sm-3">
+												<h:inputText styleClass="form-control" disabled="true"
+													style="text-align:center"
+													value="#{reagendaMb.reagendaDetalle.fechaCreacion}" />
+											</div>
+											</div>
+											<div class="row">
+											<div class="col-sm-1">
+												<h:outputLabel style="color:#000000" value="Especialidad:"/>
+											</div>
+											<div class="col-sm-3">
+												<h:inputText styleClass="form-control" disabled="true"
+													style="text-align:center"
+													value="#{reagendaMb.reagendaDetalle.especialidadInicial}" />
+											</div>
+											<div class="col-sm-1">
+												<h:outputLabel style="color:#000000" value="Servicio:"/>
+											</div>
+											<div class="col-sm-3">
+												<h:inputText styleClass="form-control" disabled="true"
+													style="text-align:center"
+													value="#{reagendaMb.reagendaDetalle.servicioInicial}" />
+											</div>
+											<div class="col-sm-1">
+												<h:outputLabel style="color:#000000" value="Fecha Consulta:"/>
+											</div>
+											<div class="col-sm-3">
+												<h:inputText styleClass="form-control" disabled="true"
+													style="text-align:center"
+													value="#{reagendaMb.reagendaDetalle.strFechaAtencion}" />
+											</div>
+											</div>
+											<div class="row">
+											<div class="col-sm-1">
+												<h:outputLabel style="color:#000000" value="Nueva Especialidad:"/>
+											</div>
+											<div class="col-sm-3">
+												<h:inputText styleClass="form-control" disabled="true"
+													style="text-align:center"
+													value="#{reagendaMb.reagendaDetalle.especialidadReagenda}" />
+											</div>
+											<div class="col-sm-1">
+												<h:outputLabel style="color:#000000" value="Nuevo Servicio:"/>
+											</div>
+											<div class="col-sm-3">
+												<h:inputText styleClass="form-control" disabled="true"
+													style="text-align:center"
+													value="#{reagendaMb.reagendaDetalle.servicioReagenda}" />
+											</div>
+											<div class="col-sm-1">
+												<h:outputLabel style="color:#000000" value="Nueva Fecha Consulta:"/>
+											</div>
+											<div class="col-sm-3">
+												<h:inputText styleClass="form-control" disabled="true"
+													style="text-align:center"
+													value="#{reagendaMb.reagendaDetalle.strFechaReagenda}" />
+											</div>
+											</div>
+										</div>
+										<div class="form-group">
+										<div class="col-sm-2">
+										<p:commandButton icon="ui-icon-check" value="Aprobar" id="btnAprueba"
+											update="@form"
+											actionListener="#{reagendaMb.actualizarReagenda('A')}">
+										</p:commandButton>
+										</div>
+										<div class="col-sm-2">
+										<p:commandButton icon="ui-icon-close" value="Rechazar" id="btnRechaza"
+											update="@form"
+											actionListener="#{reagendaMb.actualizarReagenda('R')}">
+										</p:commandButton>
+										</div>
+										</div>
+									</div>
+								</p:panel>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+</h:form>
+</ui:define>
+</ui:composition>

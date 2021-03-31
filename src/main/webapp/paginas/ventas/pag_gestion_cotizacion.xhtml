@@ -1,0 +1,1850 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:h5="http://xmlns.jcp.org/jsf/passthrough"
+	template="/WEB-INF/template.xhtml">
+	<ui:define name="head">
+		<script type="text/javascript">
+    function handleLocalesDialogComplete(xhr, status, args) {
+    	if (args) {
+    		var isValid = args.isValid;
+    		var isValidChq = args.isValidChq;
+    		if(isValid) {
+    			$('#form\\:cmbAgrFrmPgo').click();
+    		}
+    	}  
+    }
+
+    function autAjustePantalla(idDialog){   	
+        document.getElementById(idDialog).style.height = Math.floor(window.innerHeight * 0.4)+"px";
+        document.getElementById(idDialog).style.top= "90px";                         
+}
+
+    function autAjustePantallaListPC(idDialog){   	
+        document.getElementById(idDialog).style.height = Math.floor(window.innerHeight * 0.6)+"px";
+        document.getElementById(idDialog).style.top= "120px";                         
+}
+
+    function autAjustePantallaFact(idDialogFact){   	
+        document.getElementById(idDialogFact).style.height = Math.floor(window.innerHeight * 0.7)+"px";
+        document.getElementById(idDialogFact).style.top= "104px";                        
+}
+
+    function autAjustePantallaCheq(idDialog){   	
+        document.getElementById(idDialog).style.height = Math.floor(window.innerHeight * 0.4)+"px";
+        document.getElementById(idDialog).style.top= "104px";                        
+}
+    
+    function setUrlFactura(url){ 
+        document.getElementById("printFactId").src=url;
+    }
+    </script>
+
+		<style type="text/css">
+td.centerColum {
+	text-align: center;
+}
+
+.anchoInputChequ {
+	width: 130px;
+}
+
+.ui-inputfield {
+	color: black !important
+}
+
+.ui-row-editor-outline {
+	outline: dotted thin !important;
+	color: blue !important;
+}
+
+.tab1 {
+	background-color: #3c8dbc !important;
+}
+
+.ui-tabs-top .ui-tabs-nav {
+	border-bottom: solid 1px #1578c9;
+	border-bottom-right-radius: 0px;
+	border-bottom-left-radius: 0px;
+	border: solid 0px #175787 !important;
+	font-weight: normal;
+	background: #1578c9;
+	background: -moz-linear-gradient(top, #1578c9 0%, #0b66b1 100%);
+	background: -webkit-gradient(left top, left bottom, color-stop(0%, #1578c9),
+		color-stop(100%, #0b66b1));
+	background: -webkit-linear-gradient(top, #f4f4f4 0%, #f4f4f4 100%);
+	background: -o-linear-gradient(top, #1578c9 0%, #0b66b1 100%);
+	background: -ms-linear-gradient(top, #1578c9 0%, #0b66b1 100%);
+	background: linear-gradient(to bottom, #f4f4f4 0%, #fbfcfd 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1578c9',
+		endColorstr='#0b66b1', GradientType=0);
+}
+
+.form-control1 {
+	width: 30%;
+	padding: 6px 12px;
+	font-size: 12px;
+	line-height: 1.42857143;
+	color: #555;
+	background-color: #fff;
+	background-image: none;
+	border: 1px solid #ccc;
+	-webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+	box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+	-webkit-transition: border-color ease-in-out .15s, box-shadow
+		ease-in-out .15s;
+	-o-transition: border-color ease-in-out .15s, box-shadow ease-in-out
+		.15s;
+	-webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow
+		ease-in-out .15s;
+	transition: border-color ease-in-out .15s, -webkit-box-shadow
+		ease-in-out .15s;
+	transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+	transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s,
+		-webkit-box-shadow ease-in-out .15s;
+}
+
+.ui-tabs-top .ui-tabs-panels {
+	background-color: transparent;
+	margin: -1px 0px 3px 0px;
+	border: solid 1px #9fadb5;
+	color: #9fadb5;
+	background-image: none !important;
+}
+
+.ui-chkbox .ui-chkbox-box {
+	border: solid 3px #3a3942;
+	border-width: thin;
+	width: 19px;
+	height: 19px;
+}
+
+.yes {
+    background-color: #FDFEFE !important;
+}
+
+.no {
+    background-color: #EFF2FB !important;
+    font-weight:bold;
+}
+
+.ui-datepicker-trigger.ui-button-icon-only .ui-button-text {
+    display: none;
+}
+</style>
+	</ui:define>
+
+	<ui:define name="content">
+		<h:form id="form">
+			<p:ajaxStatus onstart="PF('statusDialog').show()"
+				onsuccess="PF('statusDialog').hide()" />
+
+			<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+				closable="false" resizable="false" showHeader="false">
+				<p:graphicImage name="/imagenes/barra_ajax.gif" />
+			</p:dialog>
+
+			<p:messages globalOnly="false" id="msjGeneral" showDetail="false" />
+
+	 
+
+			<section class="content-header"></section>
+
+			<section class="container-fluid">
+
+				<div class="row">
+					<!-- left column -->
+					<div class="col-lg-12 col-md-12 col-sm-12">
+						<!-- general form elements -->
+						<div class="box box-primary">
+							<div class="box-header with-border">
+								<h3 class="box-title">Datos Proforma Rapida</h3>
+							</div>
+							<p:panel id="pnlDtosFact" header=""
+								toggleable="true" toggleSpeed="500" closeSpeed="500"
+								widgetVar="panel" style="margin-bottom:20px">
+								<div class="box-body form-horizontal">
+									<div class="form-group">
+										<div class="col-lg-3 col-md-3 col-sm-5">
+											<div class="row">
+												<div class="col-lg-3 col-md-3 col-sm-4">
+													<h:outputLabel style="color:#000000" value="Sucursal:" />
+												</div>
+												<div class="col-lg-7 col-md-7 col-sm-8">
+													<p:selectOneMenu id="listSucurs" disabled="true"
+														value="#{cotizacionMb.proformas.idSucursalProf}"
+														dynamic="true" styleClass="form-control"
+														placeholder="Sucursal">
+														<f:selectItems
+															value="#{cotizacionMb.obtenerListSucursales(loginMb.username)}" />
+													</p:selectOneMenu>
+												</div>
+											</div>
+										</div>
+										 									
+										<div class="col-lg-5 col-md-5 col-sm-10">
+											<div class="row">
+												<div class="col-lg-2 col-md-2 col-sm-2">
+													<h:outputLabel style="color:#000000"
+														value="Fecha Creación:" />
+												</div>
+												<div class="col-lg-4 col-md-4 col-sm-4">
+													<h:inputText styleClass="form-control" disabled="true"
+														style="text-align:center"
+														value="#{cotizacionMb.proformas.fechaCreacionStr}" />
+												</div>
+												 
+											</div>
+										</div>
+									</div>
+								</div>
+							</p:panel>
+
+							<div class="box-body">
+								<div class="row">
+									<div class="col-md-6">
+										<div class="box box-info">
+											<div class="box-header with-border">
+												<h3 class="box-title">Datos Pacientes</h3>
+											</div>
+											<div class="box-body form-horizontal">
+												<div class="form-group">
+													<div class="col-sm-1" />
+													<h:outputLabel style="color:#000000"
+														value="Número de identificación:" class="col-sm-3" />
+													<div class="col-sm-1" />
+													<div class="col-sm-6">
+														<div class="input-group">
+															<p:inputText id="txtNumDocPac"  maxlength="15" onblur="if (cotizacionMb.proformas.idPacienteProf.numDocumento == NULL) {return false; onchange();}"
+																value="#{cotizacionMb.proformas.idPacienteProf.numDocumento}"
+																styleClass="form-control">
+																<p:ajax event="change"
+																	listener="#{cotizacionMb.consultaPaciente}"
+																	update="#{p:component('txtNombresPac')},#{p:component('btnNuevoPac')}, #{p:component('msjGeneral')},#{p:component('btnReplicaPac')},#{p:component('txtMedioPagoIn')},#{p:component('cmbIcnCtct')}, #{p:component('txtNumDocPac')}" />
+															</p:inputText>
+															<div class="input-group-btn">
+																<p:commandButton icon="ui-icon-contact" id="cmbIcnCtct"
+																	disabled="#{cotizacionMb.quemaCamposProf eq false ? !cotizacionMb.creaPaciente : true}"
+																	actionListener="#{cotizacionMb.datoGeneralesUsuario(cotizacionMb.proformas.idPacienteProf.numDocumento)}"
+																	update="#{p:component('pnlDialog')}" />
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="form-group">
+													<div class="col-sm-1" />
+													<h:outputLabel style="color:#000000" value="Paciente:"
+														class="col-sm-3" />
+													<div class="col-sm-1" />
+													<div class="col-sm-6">
+														<div class="input-group">
+															<p:inputText id="txtNombresPac" style="text-transform:uppercase;" onblur="if (cotizacionMb.proformas.idPacienteProf.nombresCompletos == NULL) {return false; onchange();}"
+																value="#{cotizacionMb.proformas.idPacienteProf.nombresCompletos}"
+																styleClass=" form-control"  >
+																<p:ajax event="change"
+																	listener="#{cotizacionMb.consultaPacientePorNombres(cotizacionMb.proformas.idPacienteProf.nombresCompletos)}"
+																	update="#{p:component('txtNumDocPac')},#{p:component('txtNombresPac')},#{p:component('btnNuevoPac')}, #{p:component('msjGeneral')},#{p:component('btnReplicaPac')},#{p:component('txtMedioPagoIn')},#{p:component('cmbIcnCtct')},#{p:component('cmbSearchPac')}" />
+																	</p:inputText>
+															<div class="input-group-btn">
+																<p:commandButton icon="ui-icon-search" id="cmbSearchPac"
+																	disabled="#{cotizacionMb.consultaPacientNombr}"
+																	actionListener="#{cotizacionMb.consultaListaPaciente}"
+																	oncomplete="PF('tblPaciente').filter()" />
+															</div>
+														</div>
+													</div>
+												</div>
+											 
+													<div class="form-group">
+													<div class="col-sm-4">
+														<h:outputLabel style="color:#000000" value="   " class="col-sm-3" />
+													</div>
+													<BR /><BR />
+													<div class="col-sm-4">
+														<h:outputLabel style="color:#000000" value="   " class="col-sm-3" />
+													</div>
+													 
+													<div class="col-sm-1" />
+												</div>
+												<div class="form-group">
+													<div class="col-sm-4">
+														<p:commandButton value="Nuevo Paciente" id="btnNuevoPac"
+															rendered="#{cotizacionMb.ocultaCamposProf}"
+															disabled="#{cotizacionMb.creaPaciente}"
+															styleClass="btn btn-block btn-primary"
+															style="border:none; background:transparent;"
+															action="#{cotizacionMb.redireccionaPagina('P')}" />
+													</div>
+													<div class="col-sm-4">
+														<p:commandButton value="Replicar" id="btnReplicaPac"
+															rendered="#{cotizacionMb.ocultaCamposProf eq false ? !cotizacionMb.quemaCamposProf : true}"
+															styleClass="btn btn-block btn-primary"
+															style="border:none; background:transparent;"
+															actionListener="#{cotizacionMb.replicarPacienteACliente}"
+															update="#{p:component('txtNombres')},#{p:component('txtNumDoc')},#{p:component('txtMail')}" />
+													</div>
+													 
+													<div class="col-sm-1" />
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="box box-info">
+											<div class="box-header with-border">
+												<h3 class="box-title">Datos Clientes</h3>
+											</div>
+											<div class="box-body form-horizontal">
+												<div class="form-group">
+													<div class="col-sm-1" />
+													<h:outputLabel style="color:#000000"
+														value="Número de identificación:" class="col-sm-3" />
+													<div class="col-sm-1" />
+													<div class="col-sm-6">
+														<div class="input-group">
+															<p:inputText id="txtNumDoc"  maxlength="15" onblur="if (cotizacionMb.proformas.idClienteProf.numDocumento == NULL) {return false; onchange();}"
+																value="#{cotizacionMb.proformas.idClienteProf.numDocumento}"
+																 
+																styleClass="form-control">
+																<p:ajax event="change"
+																	listener="#{cotizacionMb.consultaCliente}"
+																	update="#{p:component('txtNombres')},#{p:component('btnNuevoCli')}, #{p:component('msjGeneral')},#{p:component('txtMail')},#{p:component('tblDetalleProforma')},#{p:component('txtSubtotal')},#{p:component('txtIva')},#{p:component('txtValorTotal')}, #{p:component('txtValrPagFal')}, #{p:component('lblValrPagFal')}" />
+
+															</p:inputText>
+															<div class="input-group-btn">
+																<p:commandButton icon="ui-icon-contact"
+																	disabled="#{cotizacionMb.quemaCamposProf}"
+																	actionListener="#{cotizacionMb.datoGeneralesUsuario(cotizacionMb.proformas.idClienteProf.numDocumento)}"
+																	update="#{p:component('pnlDialog')}" />
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="form-group">
+													<div class="col-sm-1" />
+													<h:outputLabel style="color:#000000" value="Cliente:"
+														class="col-sm-3" />
+													<div class="col-sm-1" />
+													<div class="col-sm-6">
+														<div class="input-group">
+															<p:inputText id="txtNombres" style="text-transform:uppercase;" onblur="if (cotizacionMb.proformas.idClienteProf.nombresCompletos == NULL) {return false; onchange();}"
+																value="#{cotizacionMb.proformas.idClienteProf.nombresCompletos}"
+																styleClass=" form-control"  >
+																<p:ajax event="change"
+																	listener="#{cotizacionMb.consultaClientePorNombres(cotizacionMb.proformas.idClienteProf.nombresCompletos)}"
+																	update="#{p:component('txtNumDoc')},#{p:component('txtNombres')},#{p:component('btnNuevoCli')}, #{p:component('msjGeneral')},#{p:component('txtMail')},#{p:component('tblDetalleProforma')},#{p:component('txtSubtotal')},#{p:component('txtIva')},#{p:component('txtValorTotal')}, #{p:component('txtValrPagFal')}, #{p:component('lblValrPagFal')},#{p:component('cmbSearchCli')}" />
+																</p:inputText>
+															<div class="input-group-btn">
+																<p:commandButton icon="ui-icon-search" id="cmbSearchCli"
+																	disabled="#{cotizacionMb.consultaClientNombr}"
+																	actionListener="#{cotizacionMb.consultaListaClientes}"
+																	oncomplete="PF('tblCliente').filter()" />
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="form-group">
+													<div class="col-sm-1" />
+													<h:outputLabel style="color:#000000"
+														value="Correo Electrónico:" class="col-sm-3" />
+													<div class="col-sm-1" />
+													<div class="col-sm-6">
+														<p:inputText id="txtMail"
+															value="#{cotizacionMb.proformas.idClienteProf.email}"
+															styleClass="form-control" disabled="true" />
+													</div>
+												</div>
+												<div class="form-group" align="center">
+													<div class="col-sm-4">
+														<p:commandButton value="Nuevo Cliente" id="btnNuevoCli"
+															rendered="#{cotizacionMb.ocultaCamposProf}"
+															disabled="#{cotizacionMb.creaCliente}"
+															styleClass="btn btn-block btn-primary"
+															style="border:none; background:transparent;"
+															action="#{cotizacionMb.redireccionaPagina('C')}" />
+													</div>
+													<div class="col-sm-4" />
+													<div class="col-sm-4">
+														<p:commandButton value="Cliente Final" id="btnCliFinal"
+															rendered="#{cotizacionMb.ocultaCamposProf}"
+															styleClass="btn btn-block btn-primary"
+															style="border:none; background:transparent;"
+															actionListener="#{cotizacionMb.facturaClienteFinal()}"
+															update="#{p:component('txtNombres')},#{p:component('txtNumDoc')},#{p:component('txtMail')},#{p:component('msjGeneral')}" />
+														<div class="form-group" />
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="nav-tabs-custom">
+										<div class="row">
+											<div class="col-sm-6">
+												<div class="box-body form-horizontal">
+													<div class="form-group">
+														<div class="col-sm-1" />
+														<h:outputLabel style="color:#000000" value="   " class="col-sm-3" />
+														<div class="col-sm-1" />
+														<div class="col-sm-6">
+															<h:outputLabel style="color:#000000" value="   " class="col-sm-3" />
+														</div>
+													</div>
+												</div>
+											</div>
+											<div class="col-sm-6">
+												<div class="box-body form-horizontal">
+													<div class="form-group">
+														<div class="col-sm-1" />
+														<h:outputLabel style="color:#000000"
+															value="Lista de Precios:" class="col-sm-3" />
+														<div class="col-sm-1" />
+														<div class="col-sm-6">
+															<p:selectOneMenu id="listaPrecio"
+																disabled="true"
+																value="#{cotizacionMb.proformas.idListaPrecio}"
+																styleClass="ui-g-12 ui-md-7">
+																<f:selectItems value="#{cotizacionMb.listListaDePrecios}" />
+																<p:ajax
+																	update="#{p:component('tblDetalleProforma')},#{p:component('txtSubtotal')},#{p:component('txtIva')},#{p:component('txtValorTotal')},#{p:component('tblActivoFijo')}, #{p:component('tblFormaPago')},  #{p:component('tblDetalleFarmacia')}"
+																	listener="#{cotizacionMb.cambioManualListaPrecios(cotizacionMb.proformas.idListaPrecio)}" />
+															</p:selectOneMenu>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+										<p:tabView dynamic="true" cache="true"
+											activeIndex="#{cotizacionMb.idxTabView}">
+											<p:ajax event="tabChange"
+												listener="#{cotizacionMb.onTabChange}"
+												update=":form:listaPrecio" />
+											<p:tab id="tab0" title="Servicios" titleStyleClass="tab1"
+												disabled="cotizacionMb.esOptica">
+												<div class="row no-gutters">
+													<div class="ui-g-12 ui-lg-6 ui-md-6 ui-sm-6">
+														<p:spacer width="5" height="0" />
+														<p:commandButton value="Agregar Servicio"
+															id="cmbAgrgrServ"
+															style="border:none; background:transparent;"
+															 
+															actionListener="#{cotizacionMb.obtenerListServicioSinTurnos()}"
+															oncomplete="PF('tblEspecialidades').filter()" />
+														<p:commandButton value="Agregar Insumo"
+															id="cmbAgrgrInsumo"
+															style="border:none; background:transparent;"
+															actionListener="#{cotizacionMb.consultaListaItems(cotizacionMb.proformas.idListaPrecio,'S')}"
+															oncomplete="PF('tblItemsProc').filter()" />
+														 
+													</div>
+												</div>
+												<p:dataTable var="profrma" id="tblDetalleProforma"
+													widgetVar="tblDetalleProforma"
+													emptyMessage="No se ha seleccionado Servicio Médico"
+													value="#{cotizacionMb.ventasEspecialidad}" editable="true"
+													scrollHeight="150" editMode="cell" scrollable="true"
+													style="margin-bottom:20px">
+
+													<p:columnGroup type="header">
+														<p:column headerText="Servicio"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="Médico"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="Fecha de Atención"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="Turno" style="#{loginMb.styleTable}" />
+														<p:column headerText="Valor Unitario"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="Cantidad"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="Precio Sin IVA"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="% Descuento"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="Eliminar"
+															style="#{loginMb.styleTable}; width: 65px" />
+													</p:columnGroup>
+
+													<p:column>
+														<center>
+															<h:outputText value="#{profrma.especialidad}" />
+														</center>
+													</p:column>
+													<p:column>
+														<center>
+															<h:outputText
+																value="#{profrma.idMedicoProf.nombreCompleto}" />
+														</center>
+													</p:column>
+													<p:column>
+														<center>
+															<h:outputText value="#{profrma.fechaAtencionStr}">
+																<f:convertDateTime pattern="dd/MM/yyyy" />
+															</h:outputText>
+														</center>
+													</p:column>
+													<p:column>
+														<center>
+															<h:outputText value="#{profrma.turno}" />
+														</center>
+													</p:column>
+													<p:column>
+														<center>
+															<h:outputText value="#{profrma.precio}">
+																<f:convertNumber pattern="0.00" />
+															</h:outputText>
+														</center>
+													</p:column>
+													<p:column>
+														<center>
+															<h:outputText value="#{profrma.cantidad}" />
+														</center>
+													</p:column>
+													<p:column>
+														<center>
+															<h:outputText value="#{profrma.precioTotal}">
+																<f:convertNumber pattern="0.00" />
+															</h:outputText>
+														</center>
+													</p:column>
+													<p:column>
+														<center>
+															<h:outputText value="#{profrma.porcentajeDescuento}">
+																<f:convertNumber pattern="0.00" />
+															</h:outputText>
+														</center>
+													</p:column>
+													<p:column>
+														<center>
+															<p:commandButton icon="ui-icon-close" id="cmbEliminaServ"
+																disabled="#{cotizacionMb.quemaCamposProf eq false ? profrma.donacion : true}"
+																title="Eliminar servicio"
+																actionListener="#{cotizacionMb.eliminaArticulo(profrma,'m')}"
+																update="#{p:component('tblDetalleProforma')} , #{p:component('txtSubtotal')} , #{p:component('txtIva')} , #{p:component('txtValorTotal')}, #{p:component('tblFormaPago')}" />
+														</center>
+													</p:column>
+												</p:dataTable>
+											</p:tab>
+											<p:tab id="tab1" title="Farmacia" titleStyleClass="tab1"
+												disabled="cotizacionMb.esOptica">
+												<div class="row no-gutters">
+													<div class="col-12 col-sm-6 col-md-6">
+														<p:spacer width="5" height="0" />
+														<p:commandButton value="Agregar Artículo"
+															style="border:none; background:transparent;"
+															disabled="#{cotizacionMb.quemaCamposProf}"
+															actionListener="#{cotizacionMb.consultaListaItems(cotizacionMb.proformas.idListaPrecio,'F')}"
+															oncomplete="PF('tblItems').filter()" />
+														 
+													</div>
+													<div class="col-6 col-md-6">
+														<div class="col-sm-1" />
+														<p:spacer width="13" height="0" />
+														 
+														<p:spacer width="13" height="0" />
+														 
+
+													</div>
+												</div>
+												<p:dataTable var="farmacia" id="tblDetalleFarmacia"
+													widgetVar="tblDetalleFarmacia" scrollRows="2"
+													scrollHeight="150"
+													emptyMessage="No se ha seleccionado Items"
+													value="#{cotizacionMb.ventasFarmacia}" scrollable="true"
+													style="margin-bottom:20px">
+
+													<p:columnGroup type="header">
+														<p:column headerText="Cod. Item"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="Descripción"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="Asignación de Ubicación"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="Asignación de Lote"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="Valor Unitario"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="Cantidad"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="Precio Sin IVA"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="IVA" style="#{loginMb.styleTable}" />
+														<p:column headerText="% Descuento"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="Eliminar"
+															style="#{loginMb.styleTable}; width:65px" />
+													</p:columnGroup>
+													<p:column>
+														<center>
+															<h:outputText value="#{farmacia.codigoItems}" />
+														</center>
+													</p:column>
+													<p:column>
+														<center>
+															<h:outputText value="#{farmacia.descripcionItems}" />
+														</center>
+													</p:column>
+													<p:column>
+														<center>
+															<h:outputText value="#{farmacia.ubicacionSap}" />
+														</center>
+													</p:column>
+													<p:column>
+														<center>
+															<div class="input-group">
+																<h:outputText value="#{farmacia.loteUbicacion}" />
+																<div class="input-group-btn">
+																	<p:commandButton icon="ui-icon-search"
+																		id="btnUbicacion"
+																		disabled="#{cotizacionMb.quemaCamposProf}"
+																		actionListener="#{cotizacionMb.getObtieneListaUbicaciones(farmacia)}"
+																		title="Permite modificar la ubicación del item por defecto"
+																		oncomplete="PF('tblDtoLotes').filter()" />
+																</div>
+															</div>
+														</center>
+													</p:column>
+													<p:column>
+														<center>
+															<h:outputText value="#{farmacia.precio}">
+																<f:convertNumber pattern="0.00" />
+															</h:outputText>
+														</center>
+													</p:column>
+													<p:column>
+														<div align="center">
+															<p:inputNumber id="cantidad" value="#{farmacia.cantidad}"
+																decimalPlaces="0"
+																disabled="#{cotizacionMb.quemaCamposProf}">
+
+																<p:ajax event="change"
+																	listener="#{cotizacionMb.onCellEdit(farmacia)}"
+																	update="#{p:component('tblDetalleFarmacia')}, #{p:component('txtSubtotal')} , #{p:component('txtIva')} , #{p:component('txtValorTotal')},#{p:component('tblFormaPago')}" />
+															</p:inputNumber>
+														</div>
+													</p:column>
+													<p:column>
+														<center>
+															<h:outputText value="#{farmacia.precioTotal}">
+																<f:convertNumber pattern="0.00" />
+															</h:outputText>
+														</center>
+													</p:column>
+													<p:column>
+														<center>
+															<h:outputText value="#{farmacia.valorIva}">
+																<f:convertNumber pattern="0.00" />
+															</h:outputText>
+														</center>
+													</p:column>
+													<p:column>
+														<center>
+															<h:outputText value="#{farmacia.porcentajeDescuento}">
+																<f:convertNumber pattern="0.00" />
+															</h:outputText>
+														</center>
+													</p:column>
+													<p:column style="width:65px">
+														<center>
+															<p:commandButton icon="ui-icon-closethick"
+																disabled="#{cotizacionMb.quemaCamposProf}"
+																id="btnEliminar" title="Permite eliminar el item"
+																actionListener="#{cotizacionMb.eliminaArticulo(farmacia,'f')}"
+																update="#{p:component('tblDetalleFarmacia')} , #{p:component('txtSubtotal')} , #{p:component('txtIva')} , #{p:component('txtValorTotal')}, #{p:component('tblFormaPago')}" />
+														</center>
+													</p:column>
+												</p:dataTable>
+											</p:tab>
+											<p:tab id="tab2" title="Activo Fijo" titleStyleClass="tab1"
+												disabled="cotizacionMb.esOptica">
+												<div class="row no-gutters">
+													<div class="col-12 col-sm-6 col-md-6">
+														<p:spacer width="5" height="0" />
+														<p:commandButton value="Agregar Activo"
+															style="border:none; background:transparent;"
+															disabled="#{cotizacionMb.quemaCamposProf}"
+															actionListener="#{cotizacionMb.consultaListaActivosFijos(cotizacionMb.proformas.idListaPrecio)}"
+															oncomplete="PF('tblSelActivoFijo').filter()" />
+													</div>
+												</div>
+												<p:dataTable var="datoAF" id="tblActivoFijo"
+													widgetVar="tblActivoFijo" scrollHeight="150"
+													emptyMessage="No se ha seleccionado Items"
+													value="#{cotizacionMb.ventasActivoFijo}" scrollable="true"
+													style="margin-bottom:20px">
+
+													<p:columnGroup type="header">
+														<p:column headerText="Número de artículo"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="Descripción artículo"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="Valor Unitario"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="Cantidad"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="Baja Parcial"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="Eliminar"
+															style="#{loginMb.styleTable}; width:65px" />
+													</p:columnGroup>
+
+													<p:column styleClass="centerColum">
+														<h:outputText value="#{datoAF.codigoItems}" />
+													</p:column>
+													<p:column styleClass="centerColum">
+														<h:outputText value="#{datoAF.descripcionItems}" />
+													</p:column>
+													<p:column styleClass="centerColum">
+														<h:outputText value="#{datoAF.precio}">
+															<f:convertNumber pattern="0.00" />
+														</h:outputText>
+													</p:column>
+													<p:column styleClass="centerColum">
+														<p:inputNumber id="cantidad" value="#{datoAF.cantidad}"
+															decimalPlaces="0" inputStyleClass="centerColumn"
+															disabled="#{cotizacionMb.quemaCamposProf}">
+
+															<p:ajax event="change"
+																listener="#{cotizacionMb.onCellEdit(datoAF)}"
+																update="#{p:component('tblActivoFijo')}, #{p:component('txtSubtotal')} , #{p:component('txtIva')} , #{p:component('txtValorTotal')},#{p:component('tblFormaPago')}" />
+														</p:inputNumber>
+													</p:column>
+													<p:column styleClass="centerColum">
+														<p:selectBooleanCheckbox
+															value="#{datoAF.actFijoBajaParcial}" disabled="true" />
+													</p:column>
+													<p:column style="width:65px" styleClass="centerColum">
+														<p:commandButton icon="ui-icon-closethick"
+															disabled="#{cotizacionMb.quemaCamposProf}"
+															id="btnEliminarAF" title="Permite eliminar el item"
+															actionListener="#{cotizacionMb.eliminaArticulo(datoAF,'af')}"
+															update="#{p:component('tblActivoFijo')} , #{p:component('txtSubtotal')} , #{p:component('txtIva')} , #{p:component('txtValorTotal')}, #{p:component('tblFormaPago')}" />
+													</p:column>
+												</p:dataTable>
+											</p:tab>
+											 
+										</p:tabView>
+
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="row">
+										<div class="col-lg-6">
+											<p:panel style="border: 0px">
+												<div class="box-body form-horizontal">
+													<div class="form-group">
+														<h:outputLabel style="color:#000000" value="Notas: "
+															class="col-sm-1" />
+														<div class="col-sm-11">
+															<p:inputTextarea id="txtNotas" maxlength="250"
+																value="#{cotizacionMb.auxNotas}"
+																styleClass="form-control">
+																<p:ajax event="blur"
+																	listener="#{cotizacionMb.almacenaDescpNota()}" />
+															</p:inputTextarea>
+
+														</div>
+													</div>
+
+												</div>
+												<div class="box box-info">
+													<p:panel id="pnlFormaPago">
+														<p:remoteCommand name="nameEditCancel" update="#{p:component('tblFormaPago')}"/>
+														<p:dataTable var="formaPago" id="tblFormaPago"
+															widgetVar="tblFormaPago" scrollRows="3" scrollHeight="80"
+															scrollable="true" editable="true" editingRow="false"
+															expandableRowGroups="true" expandedRow="0"
+															rowExpandMode="single"
+															emptyMessage="No se ha seleccionado forma de pago"
+															value="#{cotizacionMb.listaFormaPago}"
+															style="margin-bottom:20px">
+
+															<p:ajax event="rowEditInit"
+																update="#{p:component('msjGeneral')}"
+																listener="#{cotizacionMb.validaCambioManualListaPrecio('txtMedioPagoIn')}" />
+															<p:ajax event="rowEdit"
+																update="#{p:component('txtValrPagFal')}"
+																listener="#{cotizacionMb.validaDarClickInBtnPlus(formaPago.valorFrmPago,formaPago.medioPago)}"
+																oncomplete="handleLocalesDialogComplete(xhr, status, args)" />
+															<p:ajax event="rowEditCancel"
+																listener="#{cotizacionMb.onRowCancel(formaPago)}" oncomplete="nameEditCancel()"
+																update=":form:msjGeneral,#{p:component('txtValrPagFal')}" />
+
+															<p:column headerText="Medio de Pago">
+																<p:cellEditor
+																	disabled="#{formaPago.banderaChqFormMedPgo}">
+																	<f:facet name="output">
+																		<center>
+																			<h:outputText id="txtMedioPagoOut"
+																				value="#{formaPago.medioPago}" />
+																		</center>
+																	</f:facet>
+																	<f:facet name="input">
+																		<center>
+																			<h:selectOneMenu id="txtMedioPagoIn"
+																				disabled="#{formaPago.banderaChqFormMedPgo}"
+																				value="#{formaPago.medioPago}"
+																				styleClass="form-control">
+																				<f:selectItems
+																					value="#{cotizacionMb.auxListaFormaPago}" />
+																				<p:ajax event="blur"
+																					update="#{p:component('txtVlrFrmPagoIn')},#{p:component('txtMedioPagoOut')},#{p:component('txtVlrFrmPagoIn')},#{p:component('txtVlrFrmPagoOut')},#{p:component('msjGeneral')},#{p:component('pnlNotaCredito')},#{p:component('tblDtoChq')}"
+																					listener="#{cotizacionMb.validaTipoMedioDPago(formaPago)}" />
+																			</h:selectOneMenu>
+																		</center>
+																	</f:facet>
+																</p:cellEditor>
+															</p:column>
+
+															<p:column headerText="Valor Recibido">
+																<p:cellEditor
+																	disabled="#{formaPago.banderaChqFormMedPgo}">
+																	<f:facet name="output">
+																		<center>
+																			<h:outputText id="txtVlrFrmPagoOut"
+																				value="#{formaPago.valorFrmPago}">
+																				<f:convertNumber pattern="0.00" />
+																			</h:outputText>
+																		</center>
+																	</f:facet>
+																	<f:facet name="input">
+																		<center>
+																			<p:inputText id="txtVlrFrmPagoIn"
+																				disabled="#{formaPago.banderaChqFormMedPgo}"
+																				value="#{formaPago.valorFrmPago}">
+																			</p:inputText>
+																		</center>
+																	</f:facet>
+																</p:cellEditor>
+															</p:column>
+															<p:column style="width:35px">
+																<p:rowEditor />
+															</p:column>
+														</p:dataTable>
+
+														<div class="form-group">
+															 
+														<div class="col-lg-1 col-md-1 col-sm-1" />
+															<h:outputLabel style="color:#000000" id="lblValrPagFal"
+																value="Valor a Pagar Faltante"
+																rendered="#{cotizacionMb.quemaCamposProf eq true ? cotizacionMb.tieneCheque eq true ? false : true : cotizacionMb.valorFaltanteFact eq true ? true : false}"
+																class="col-lg-3 col-md-3 col-sm-3" />
+															<div class="col-lg-2 col-md-3 col-sm-3">
+																<h:inputText id="txtValrPagFal" disabled="true"
+																	styleClass="form-control"
+																	rendered="#{cotizacionMb.quemaCamposProf eq true ? cotizacionMb.tieneCheque eq true ? false : true : cotizacionMb.valorFaltanteFact eq true ? true : false}"
+																	value="#{cotizacionMb.valorFaltntObrScial}">
+																	<f:convertNumber pattern="0.00" />
+																</h:inputText>
+															</div>
+															<div class="col-lg-1 col-md-1 col-sm-1" />
+															 
+														</div>
+													</p:panel>
+												</div>
+											</p:panel>
+										</div>
+										<div class="col-lg-6">
+											<div class="row">
+												<div class="col-lg-5" />
+												<div class="col-lg-6">
+													<div class="row">
+														<div class="col-lg-1" />
+														<div class="col-lg-11">
+															<p:panel>
+																<div class="box-body form-horizontal">
+																	<div class="form-group" />
+																	<div class="form-group">
+																		<div class="col-sm-1" />
+																		<h:outputLabel style="color:#000000"
+																			value="Subtotal: " class="col-sm-4" />
+																		<div class="col-sm-6">
+																			<h:inputText id="txtSubtotal"
+																				style="text-align: center"
+																				value="#{cotizacionMb.proformas.subtotal}"
+																				styleClass="form-control" disabled="true">
+																				<f:convertNumber pattern="0.00" />
+																			</h:inputText>
+																		</div>
+																	</div>
+																	<div class="form-group" />
+																	<div class="form-group">
+																		<div class="col-sm-1" />
+																		<h:outputLabel style="color:#000000" class="col-sm-4"
+																			value="IVA #{cotizacionMb.txtValorIVA}%: " />
+																		<div class="col-sm-6">
+																			<h:inputText id="txtIva" style="text-align: center"
+																				value="#{cotizacionMb.proformas.iva}"
+																				styleClass="form-control" disabled="true">
+																				<f:convertNumber pattern="0.00" />
+																			</h:inputText>
+																		</div>
+																	</div>
+																	<div class="form-group" />
+																	<div class="form-group">
+																		<div class="col-sm-1" />
+																		<h:outputLabel style="color:#000000" value="IVA 0%: "
+																			class="col-sm-4" />
+																		<div class="col-sm-6">
+																			<h:inputText id="txtIvaCero"
+																				style="text-align: center"
+																				value="#{cotizacionMb.proformas.ivaCero}"
+																				styleClass="form-control" disabled="true">
+																				<f:convertNumber pattern="0.00" />
+																			</h:inputText>
+																		</div>
+																	</div>
+																	<div class="form-group" />
+																	<div class="form-group">
+																		<div class="col-sm-1" />
+																		<h:outputLabel style="color:#000000"
+																			value="Valor a Pagar: " class="col-sm-4" />
+																		<div class="col-sm-6">
+																			<h:inputText id="txtValorTotal"
+																				style="text-align: center"
+																				value="#{cotizacionMb.proformas.valorTotal}"
+																				styleClass="form-control" disabled="true">
+																				<f:convertNumber pattern="0.00" />
+																			</h:inputText>
+																		</div>
+																	</div>
+																</div>
+															</p:panel>
+														</div>
+													</div>
+												</div>
+											</div> 
+										</div>
+									</div>
+								</div>
+								<div class="box-footer">
+									<div class="row">
+										<div class="col-lg-6" align="center">
+											 
+												<p:commandButton value="Cotización Rápida."
+												styleClass="btn btn-primary"
+												style="border:none; background:transparent;"											
+												id="cmbCotizar" update="@form"
+												actionListener="#{cotizacionMb.creaCotizacionRapida}" />
+										 <p:spacer height="60" />
+											 
+											<p:remoteCommand name="rcmdInicaliza"
+												actionListener="#{cotizacionMb.inicializaPagina}"
+												style="display: none;"
+												update="@form"/>
+											<p:remoteCommand name="rcmdInicalizaCotizacion"
+												actionListener="#{cotizacionMb.inicializaPaginaCotizacion}"
+												style="display: none;"
+												update="@form"/>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<p:dialog header="Items" widgetVar="dlg" showEffect="fade" position="center center"
+								draggable="false" closeOnEscape="true" modal="true" width="70%" id="idDlgItems"
+								resizable="false" height="90%" onShow="autAjustePantallaFact('form:idDlgItems')">
+								<p:scrollPanel mode="native" style="width:100%;height:68%">
+								<p:dataTable var="items" id="tblItems" widgetVar="tblItems"
+									value="#{itemsMb.listaItems}" selectionMode="single"
+									filteredValue="#{itemsMb.listaFiltroItems}" paginator="true"
+									rows="9" selection="#{itemsMb.selectdItems}"
+									rowKey="#{items.codigoItems}">
+
+									<p:ajax event="rowSelect" listener="#{cotizacionMb.onRowSelect}"
+										update="#{p:component('tblDetalleFarmacia')} ,#{p:component('txtSubtotal')} #{p:component('txtIva')} #{p:component('txtValorTotal')}  #{p:component('tblFormaPago')}" />
+
+									<p:column headerText="Código Articulo" styleClass="centerColum"
+										filterBy="#{items.codigoItems}" filterMatchMode="contains">
+										<h:outputText value="#{items.codigoItems}" />
+									</p:column>
+
+									<p:column headerText="Descripción/Articulo"
+										filterBy="#{items.descripcionItems}"
+										filterMatchMode="contains" filterStyle="width: 90%">
+										<h:outputText value="#{items.descripcionItems}" />
+									</p:column>
+
+									<p:column headerText="Principios Activos"
+										filterMatchMode="contains" filterBy="#{items.principioActivo}"
+										filterStyle="width: 90%">
+										<h:outputText value="#{items.principioActivo}" />
+									</p:column>
+
+									<p:column headerText="Precio" filterMatchMode="contains"
+										styleClass="centerColum">
+										<h:outputText value="#{items.precio}">
+											<f:convertNumber type="number" minFractionDigits="2"
+												pattern="#0.00" />
+										</h:outputText>
+									</p:column>
+
+									<p:column headerText="Stock" filterMatchMode="contains"
+										styleClass="centerColum">
+										<h:outputText value="#{items.stockUniMed}" />
+									</p:column>
+								</p:dataTable>
+							</p:scrollPanel>
+							</p:dialog>
+
+							<p:dialog header="Clientes" widgetVar="cliente" hideEffect="clip"
+								id="idDlgClient" closeOnEscape="true" modal="true"
+								draggable="false" showEffect="clip" width="35%" height="60%"
+								onShow="autAjustePantallaListPC('form:idDlgClient')"
+								position="center center" resizable="false">
+								<p:scrollPanel mode="native" style="width:100%;height:90%">
+									<p:dataTable var="clientes" id="tblCliente"
+										widgetVar="tblCliente" value="#{cotizacionMb.listaClientes}"
+										selectionMode="single" paginator="true" rows="10"
+										filteredValue="#{cotizacionMb.listaFiltroClientes}"
+										selection="#{cotizacionMb.selectedCliente}"
+										rowKey="#{clientes.cardCode}">
+
+										<p:ajax event="rowSelect"
+											listener="#{cotizacionMb.onRowSelectCliente}"
+											update="#{p:component('txtNumDoc')}, #{p:component('txtNombres')}, #{p:component('msjGeneral')}, #{p:component('txtMail')},#{p:component('listaPrecio')},#{p:component('tblDetalleProforma')},#{p:component('txtSubtotal')},#{p:component('txtIva')},#{p:component('txtValorTotal')}, #{p:component('txtValrPagFal')}, #{p:component('lblValrPagFal')}" />
+
+										<p:column headerText="Número de identificación"
+											styleClass="centerColum" filterStyle="width: 150px"
+											filterBy="#{clientes.numDocumento}">
+											<h:outputText value="#{clientes.numDocumento}" />
+										</p:column>
+
+										<p:column headerText="Nombres" filterStyle="width: 260px"
+											filterBy="#{clientes.nombresCompletos}"
+											filterFunction="#{cotizacionMb.filterByName}">
+											<h:outputText value="#{clientes.nombresCompletos}" />
+										</p:column>
+									</p:dataTable>
+								</p:scrollPanel>
+							</p:dialog>
+
+							<p:dialog header="Pacientes" widgetVar="paciente"
+								draggable="false" id="idDlgPacient" closeOnEscape="true"
+								hideEffect="clip" modal="true" height="60%" showEffect="clip"
+								width="35%" position="center center"
+								onShow="autAjustePantallaListPC('form:idDlgPacient')"
+								resizable="false">
+
+								<p:ajax event="close"
+									listener="#{cotizacionMb.envioFocus('txtNumDoc')}" />
+								<p:scrollPanel mode="native" style="width:100%;height:90%">
+									<p:dataTable var="pacientes" id="tblPaciente"
+										widgetVar="tblPaciente" value="#{cotizacionMb.listaPacientes}"
+										selectionMode="single" paginator="true" rows="10"
+										filteredValue="#{cotizacionMb.listaFiltroClientes}"
+										selection="#{cotizacionMb.selectedCliente}"
+										rowKey="#{pacientes.cardCode}">
+
+										<p:ajax event="rowSelect"
+											listener="#{cotizacionMb.onRowSelectPaciente}"
+											update="#{p:component('txtNumDocPac')},#{p:component('txtNombresPac')}, #{p:component('cmbSearchPac')}" />
+
+										<p:column headerText="Número de identificación"
+											filterBy="#{pacientes.numDocumento}" styleClass="centerColum"
+											filterStyle="width: 160px" filterMatchMode="contains">
+											<h:outputText value="#{pacientes.numDocumento}" />
+										</p:column>
+
+										<p:column headerText="Nombres" filterStyle="width: 260px"
+											filterBy="#{pacientes.nombresCompletos}"
+											filterFunction="#{cotizacionMb.filterByName}">
+											<h:outputText value="#{pacientes.nombresCompletos}" />
+										</p:column>
+									</p:dataTable>
+								</p:scrollPanel>
+							</p:dialog>
+
+							<p:dialog header="Datos de Usuario" widgetVar="usuario"
+								resizable="false" hideEffect="clip" modal="true"
+								draggable="false" showEffect="clip" width="40%"
+								position="center center" closeOnEscape="true">
+								<p:panel>
+									<h:panelGroup id="pnlDialog">
+										<div class="box-body">
+											<div class="form-group">
+												<div class="row">
+													<div class="col-lg-4">
+														<h:outputLabel style="color:#000000"
+															value="Tipo de documento: *" />
+														<h:selectOneMenu disabled="true"
+															value="#{cotizacionMb.consultaDatosCliente.tipoDocumento}"
+															styleClass="form-control">
+															<f:selectItem itemValue="C"
+																itemLabel="Cédula de Identidad" />
+															<f:selectItem itemValue="R"
+																itemLabel="Registro Unico Contribuyente" />
+															<f:selectItem itemValue="P" itemLabel="Pasaporte" />
+														</h:selectOneMenu>
+													</div>
+													<div class="col-lg-4">
+														<h:outputLabel style="color:#000000" value="Código SAP: *" />
+														<p:inputText class="form-control" disabled="true"
+															value="#{cotizacionMb.consultaDatosCliente.cardCode}" />
+													</div>
+													<div class="col-lg-4">
+														<h:outputLabel style="color:#000000"
+															value="Número de documento: *" />
+														<p:inputText class="form-control" disabled="true"
+															value="#{cotizacionMb.consultaDatosCliente.numDocumento}"
+															title="#{clientesMb.clienteFacturado eq true ? 'El usuario ya se ha realizado consultas' : ''}" />
+													</div>
+												</div>
+											</div>
+
+											<div class="form-group">
+												<div class="row">
+													<div class="col-lg-8">
+														<h:outputLabel style="color:#000000"
+															value="#{clientesMb.nombreCompltRzonSocial}" />
+														<p:inputText id="txtNombreCP" class="form-control"
+															disabled="true" style="text-transform:uppercase;"
+															value="#{cotizacionMb.consultaDatosCliente.nombresCompletos}" />
+													</div>
+													<div class="col-lg-4">
+														<h:outputLabel style="color:#000000"
+															value="Subtipo Cliente: *" />
+														<h:selectOneMenu
+															value="#{cotizacionMb.tipoClientePaciente}"
+															styleClass="form-control" disabled="true">
+															<f:selectItem itemValue="A" itemLabel="Cliente/Paciente" />
+															<f:selectItem itemValue="C" itemLabel="Cliente" />
+															<f:selectItem itemValue="P" itemLabel="Paciente" />
+														</h:selectOneMenu>
+													</div>
+												</div>
+											</div>
+
+											<div class="form-group">
+												<div class="row">
+													<div class="col-lg-8">
+														<h:outputLabel style="color:#000000" value="Dirección: *" />
+														<p:inputText id="txtDireccion" styleClass="form-control"
+															disabled="true"
+															value="#{cotizacionMb.consultaDatosCliente.direccion}" />
+													</div>
+												</div>
+											</div>
+											<div class="form-group">
+												<div class="row">
+													<div class="col-lg-8">
+														<h:outputLabel style="color:#000000"
+															value="Correo electrónico: " />
+														<h:inputText id="txtCorreo" styleClass="form-control"
+															style="text-transform:uppercase;" disabled="true"
+															value="#{cotizacionMb.consultaDatosCliente.email}" />
+													</div>
+												</div>
+											</div>
+											<div class="form-group">
+												<div class="row">
+													<div class="col-lg-4">
+														<h:outputLabel style="color:#000000" id="txtTelefono"
+															value="Número de Teléfono: " />
+														<h:inputText styleClass="form-control" disabled="true"
+															onkeypress="if(event.which &lt; 48 || event.which &gt; 57) return false;"
+															value="#{cotizacionMb.consultaDatosCliente.numTelefono}" />
+													</div>
+													<div class="col-lg-4">
+														<h:outputLabel style="color:#000000"
+															value="Número Celular: "
+															onkeypress="if(event.which &lt; 48 || event.which &gt; 57) return false;" />
+														<h:inputText styleClass="form-control" disabled="true"
+															value="#{cotizacionMb.consultaDatosCliente.numeroCelular}" />
+													</div>
+													<div class="col-lg-4">
+														<h:outputLabel style="color:#000000"
+															value="Número de teléfono 2: " />
+														<p:inputText class="form-control" disabled="true"
+															onkeypress="if(event.which &lt; 48 || event.which &gt; 57) return false;"
+															value="#{cotizacionMb.consultaDatosCliente.numeroTelefono2}">
+														</p:inputText>
+													</div>
+												</div>
+											</div>
+											<div class="form-group"></div>
+											<div class="form-group"></div>
+										</div>
+									</h:panelGroup>
+								</p:panel>
+							</p:dialog>
+
+							<p:dialog header="Medios de Pagos" widgetVar="dlgChq" draggable="false"
+								 id="idDlgChq" closable="false"  responsive="true"
+								hideEffect="clip" modal="true" showEffect="clip"
+								resizable="false" width="86%" height="58%"
+								onShow="autAjustePantallaCheq('form:idDlgChq')">
+
+								<p:ajax event="close"
+									listener="#{cotizacionMb.envioFocus('txtNotas')}" />
+								<p:scrollPanel mode="native" style="width:100%;height:90%">
+									<p:dataTable var="datosChques" id="tblDtoChq"
+										widgetVar="tblDtoChq" editable="true" editingRow="false"
+										emptyMessage="No se ha seleccionado forma de pago"
+										value="#{cotizacionMb.listaFormaPago}">
+
+										<p:ajax event="rowEditInit"
+											listener="#{cotizacionMb.envioFocus('txtDlgVlrChqIn')}" />
+										<p:ajax event="rowEdit"
+											listener="#{cotizacionMb.aceptarDtosCheque(datosChques)}"
+											update="#{p:component('tblFormaPago')},#{p:component('txtValrPagFal')}" />
+										<p:ajax event="rowEditCancel"
+											listener="#{cotizacionMb.cancelarDtosCheque(datosChques)}"
+											update="#{p:component('tblFormaPago')},#{p:component('txtValrPagFal')}" />
+
+										<p:columnGroup type="header">
+											<p:column headerText="Fecha Recibido"
+												style="#{loginMb.styleTable}" />
+											<p:column headerText="Valor"
+												style="#{loginMb.styleTable};width:67px" />
+											<p:column headerText="Nombre Banco"
+												style="#{loginMb.styleTable};width:210px" />
+											<p:column headerText="No. de Cuenta"
+												style="#{loginMb.styleTable}" styleClass="anchoInputChequ" />
+											<p:column headerText="No. de Cheque"
+												style="#{loginMb.styleTable}" styleClass="anchoInputChequ" />
+											<p:column headerText="Nom. Completo / Razón Social"
+												style="#{loginMb.styleTable};width:200px" />
+											<p:column headerText="RUC / CI" style="#{loginMb.styleTable}"
+												styleClass="anchoInputChequ" />
+											<p:column headerText="Dirección"
+												style="#{loginMb.styleTable};width:230px" />
+											<p:column headerText="Teléfono" style="#{loginMb.styleTable}"
+												styleClass="anchoInputChequ" />
+											<p:column style="#{loginMb.styleTable};width:35px" />
+										</p:columnGroup>
+
+										<p:column>
+											<center>
+												<h:outputText value="#{datosChques.fechaRecepcionChqStr}" />
+											</center>
+										</p:column>
+
+										<p:column>
+											<p:cellEditor disabled="#{datosChques.banderaChq}">
+												<f:facet name="output">
+													<center>
+														<h:outputText id="txtDlgVlrChqOut"
+															value="#{datosChques.valorFrmPago}" />
+													</center>
+												</f:facet>
+												<f:facet name="input">
+													<center>
+														<p:inputText id="txtDlgVlrChqIn" style="width:65px"
+															disabled="#{datosChques.banderaChq}"
+															value="#{datosChques.valorFrmPago}">
+															<p:ajax event="blur"
+																update="#{p:component('pnlMsjError')}"
+																listener="#{cotizacionMb.validaVlrFrmPgo(datosChques.valorFrmPago)}" />
+														</p:inputText>
+													</center>
+												</f:facet>
+											</p:cellEditor>
+										</p:column>
+
+										<p:column>
+											<p:cellEditor disabled="#{datosChques.banderaChq}">
+												<f:facet name="output">
+													<center>
+														<h:outputText value="#{datosChques.nomBanco}"
+															id="txtDlgNomCheqOut" />
+													</center>
+												</f:facet>
+												<f:facet name="input">
+													<center>
+														<h:selectOneMenu value="#{datosChques.nomBanco}"
+															disabled="#{datosChques.banderaChq}" id="txtDlgNomCheqIn"
+															styleClass="form-control">
+															<f:selectItems value="#{cotizacionMb.listaBancos}" />
+														</h:selectOneMenu>
+													</center>
+												</f:facet>
+											</p:cellEditor>
+										</p:column>
+
+										<p:column>
+											<p:cellEditor disabled="#{datosChques.banderaChq}">
+												<f:facet name="output">
+													<center>
+														<h:outputText value="#{datosChques.numeroCuenta}"
+															id="txtDlgNumCtaOut" />
+													</center>
+												</f:facet>
+												<f:facet name="input">
+													<center>
+														<p:inputText value="#{datosChques.numeroCuenta}"
+															styleClass="anchoInputChequ"
+															disabled="#{datosChques.banderaChq}" required="true"
+															id="txtDlgNumCtaIn"
+															onkeypress="if(event.which &lt; 48 || event.which &gt; 57) return false;">
+															<p:ajax event="blur"
+																update="#{p:component('pnlMsjError')}"
+																listener="#{cotizacionMb.validaNumCuenta(datosChques.numeroCuenta)}" />
+														</p:inputText>
+													</center>
+												</f:facet>
+											</p:cellEditor>
+										</p:column>
+
+										<p:column>
+											<p:cellEditor disabled="#{datosChques.banderaChq}">
+												<f:facet name="output">
+													<center>
+														<h:outputText value="#{datosChques.numeroCheque}"
+															id="txtDlgNumChqOut" />
+													</center>
+												</f:facet>
+												<f:facet name="input">
+													<center>
+														<p:inputText id="txtDlgNumChqIn"
+															styleClass="anchoInputChequ" required="true"
+															value="#{datosChques.numeroCheque}"
+															disabled="#{datosChques.banderaChq}"
+															onkeypress="if(event.which &lt; 48 || event.which &gt; 57) return false;">
+														</p:inputText>
+													</center>
+												</f:facet>
+											</p:cellEditor>
+										</p:column>
+
+										<p:column>
+											<p:cellEditor disabled="#{datosChques.banderaChq}">
+												<f:facet name="output">
+													<center>
+														<h:outputText value="#{datosChques.nombreRznSocialChq}"
+															id="txtDlgNomRznOut" style="text-transform:uppercase;" />
+													</center>
+												</f:facet>
+												<f:facet name="input">
+													<center>
+														<p:inputText value="#{datosChques.nombreRznSocialChq}"
+															required="true"
+															style="text-transform:uppercase;width:200px"
+															id="txtDlgNomRznIn" disabled="#{datosChques.banderaChq}">
+															<p:ajax event="blur"
+																update="#{p:component('pnlMsjError')},#{p:component('txtDlgNomRznOut')}"
+																listener="#{cotizacionMb.validaRznSocial(datosChques.nombreRznSocialChq)}" />
+														</p:inputText>
+													</center>
+												</f:facet>
+											</p:cellEditor>
+										</p:column>
+
+										<p:column>
+											<p:cellEditor disabled="#{datosChques.banderaChq}">
+												<f:facet name="output">
+													<center>
+														<h:outputText value="#{datosChques.numeroCI_RUCChq}"
+															id="txtDlgNumCIOut" />
+													</center>
+												</f:facet>
+												<f:facet name="input">
+													<center>
+														<p:inputText value="#{datosChques.numeroCI_RUCChq}"
+															styleClass="anchoInputChequ" id="txtDlgNumCIIn"
+															disabled="#{datosChques.banderaChq}" required="true"
+															onkeypress="if(event.which &lt; 48 || event.which &gt; 57) return false;">
+															<p:ajax event="blur" update="#{p:component('txtDlgNumCIOut')}, #{p:component('pnlMsjError')}" listener="#{cotizacionMb.validaNumeroDocumento(datosChques.numeroCI_RUCChq)}"/>
+														</p:inputText>
+													</center>
+												</f:facet>
+											</p:cellEditor>
+										</p:column>
+
+										<p:column>
+											<p:cellEditor disabled="#{datosChques.banderaChq}">
+												<f:facet name="output">
+													<center>
+														<h:outputText value="#{datosChques.direccionChq}"
+															id="txtDlgAddressIn" />
+													</center>
+												</f:facet>
+												<f:facet name="input">
+													<center>
+														<p:inputText value="#{datosChques.direccionChq}"
+															style="text-transform:uppercase;width:230px"
+															id="txtDlgAddressOut"
+															disabled="#{datosChques.banderaChq}" />
+													</center>
+												</f:facet>
+											</p:cellEditor>
+										</p:column>
+
+										<p:column>
+											<p:cellEditor disabled="#{datosChques.banderaChq}">
+												<f:facet name="output">
+													<center>
+														<h:outputText value="#{datosChques.telefono}"
+															id="txtDlgTelefIn" />
+													</center>
+												</f:facet>
+												<f:facet name="input">
+													<center>
+														<p:inputText value="#{datosChques.telefono}"
+															disabled="#{datosChques.banderaChq}"
+															styleClass="anchoInputChequ" id="txtDlgTelefOut"
+															onkeypress="if(event.which &lt; 48 || event.which &gt; 57) return false;" />
+													</center>
+												</f:facet>
+											</p:cellEditor>
+										</p:column>
+
+										<p:column style="width:35px">
+											<p:rowEditor disabled="#{datosChques.banderaChq}" />
+										</p:column>
+									</p:dataTable>
+								</p:scrollPanel>
+							</p:dialog>
+
+							<p:dialog header="Mensaje Error" resizable="false"
+								draggable="false" hideEffect="clip" modal="true"
+								showEffect="clip" widgetVar="dlgMsj" closeOnEscape="true">
+								<h:panelGrid columns="1" id="pnlMsjError">
+									<h:outputText styleClass="icon-warning red"
+										value="#{cotizacionMb.msjError}" />
+								</h:panelGrid>
+							</p:dialog>
+
+							<p:dialog header="Selección de Lotes" widgetVar="dlgLotes"
+								draggable="false" showEffect="fade" width="700" height="280"
+								modal="true">
+
+
+								<p:dataTable var="datosUbiLotes" id="tblDtoLotes"
+									widgetVar="tblDtoLotes"
+									value="#{cotizacionMb.auxUbicacionLotes}" selectionMode="single"
+									filteredValue="#{cotizacionMb.listaFiltroUbicLot}"
+									paginator="true" rows="10"
+									selection="#{cotizacionMb.selectedLotsStock}"
+									rowKey="#{datosUbiLotes.contador}">
+
+									<p:ajax event="rowSelect"
+										listener="#{cotizacionMb.onRowSelectUbicacion}"
+										update="#{p:component('tblDetalleFarmacia')},#{p:component('txtSubtotal')}, #{p:component('txtIva')}, #{p:component('txtValorTotal')}" />
+
+									<p:column headerText="Lotes" filterBy="#{datosUbiLotes.lote}"
+										filterMatchMode="contains">
+										<center>
+											<h:outputText id="txtUbiLote" value="#{datosUbiLotes.lote}" />
+										</center>
+									</p:column>
+									<p:column headerText="Ubicación"
+										filterBy="#{datosUbiLotes.codigoDescrpUbicacion}"
+										filterMatchMode="contains">
+										<center>
+											<h:outputText id="txtUbicacionLote"
+												value="#{datosUbiLotes.codigoDescrpUbicacion}" />
+										</center>
+									</p:column>
+									<p:column headerText="Cantidad Disponible">
+										<center>
+											<h:outputText id="txtUbiCantLot"
+												value="#{datosUbiLotes.cantidadLote}" />
+										</center>
+									</p:column>
+								</p:dataTable>
+							</p:dialog>
+
+							<p:dialog header="Lista Servicios" widgetVar="dlgEspecialidades"
+								draggable="false" hideEffect="clip" modal="true"
+								showEffect="clip" width="800" height="460" resizable="false">
+
+								<p:ajax event="close"
+									listener="#{cotizacionMb.envioFocus('txtNotas')}" />
+
+								<p:dataTable var="especialidad" id="tblEspecialidades"
+									widgetVar="tblEspecialidades"
+									value="#{cotizacionMb.listaServicios}" selectionMode="single"
+									filteredValue="#{cotizacionMb.listaFiltroServicios}"
+									paginator="true" rows="10"
+									selection="#{cotizacionMb.selectedServicios}"
+									rowKey="#{especialidad.idEspecialidad}">
+
+									<p:ajax event="rowSelect"
+										listener="#{cotizacionMb.onRowSelectItemServ}"
+										update="#{p:component('tblDetalleProforma')},#{p:component('txtSubtotal')},#{p:component('txtIva')},#{p:component('txtIvaCero')},#{p:component('txtValorTotal')},#{p:component('tblFormaPago')}" />
+
+									<p:column headerText="Código Especialidad"
+										filterStyle="width: 160px" styleClass="centerColum"
+										filterBy="#{especialidad.codigoItem}"
+										filterMatchMode="contains">
+										<h:outputText value="#{especialidad.codigoItem}" />
+									</p:column>
+
+									<p:column headerText="Especialidad" styleClass="centerColum"
+										filterBy="#{especialidad.descripcion}"
+										filterStyle="width: 260px" filterMatchMode="contains">
+										<h:outputText value="#{especialidad.descripcion}" />
+									</p:column>
+								</p:dataTable>
+							</p:dialog>
+
+							<p:dialog header="Mensaje Afiliación Paciente" resizable="false"
+								hideEffect="clip" modal="true" showEffect="clip"
+								draggable="false" widgetVar="dlgMsjAfiliacion"
+								closeOnEscape="true">
+								<div class="box-body">
+									<div class="row">
+										<div class="col-md-12">
+											<h:outputText styleClass="icon-warning red"
+												value="Paciente no posee Tarjeta de afiliación, ¿Desea adquirirla?" />
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-1">.</div>
+									</div>
+									<div class="row">
+										<div class="col-md-4"></div>
+										<div class="col-md-1">
+											<p:commandButton value="Si" styleClass="ui-priority-primary"
+												actionListener="#{cotizacionMb.aceptaValorTarjeta()}"
+												oncomplete="PF('tblEspecialidades').filter()"
+												update="#{p:component('tblDetalleProforma')},#{p:component('txtSubtotal')},#{p:component('txtIva')},#{p:component('txtIvaCero')},#{p:component('txtValorTotal')},#{p:component('tblFormaPago')}">
+											</p:commandButton>
+										</div>
+										<div class="col-md-2"></div>
+										<div class="col-md-1">
+											<p:commandButton value="No" styleClass="ui-priority-primary"
+												actionListener="#{cotizacionMb.rechazaValorTarjeta()}">
+											</p:commandButton>
+										</div>
+										<div class="col-md-4"></div>
+									</div>
+								</div>
+							</p:dialog>
+
+							<p:dialog header="Tarjeta Afiliacion" widgetVar="dlgImprTarjeta"
+								draggable="false" showEffect="fade" width="650" height="70%"
+								onShow="autAjustePantallaFact('idImprimeFact')" onHide="">
+								<div class="box-body">
+									<iframe frameborder="0" align="left"
+										src="#{cotizacionMb.obtenerRuta()}" name="someName" id="someId"
+										scrolling="auto" width="550" height="550" marginheight="0"
+										marginwidth="0"> </iframe>
+								</div>
+							</p:dialog>
+
+							<p:dialog header="Notas de Crédito"
+								draggable="false" resizable="false" hideEffect="clip"
+								modal="true" showEffect="clip" widgetVar="dlgNotaCredito"
+								closeOnEscape="true">
+								<p:panel id="pnlNotaCredito" style="border: 0px">
+								<div class="box-body">
+									<div class="row">
+										<div class="col-md-12">
+											<h:outputText styleClass="icon-warning red"
+												value="#{cotizacionMb.obtenerMensajeNotaCredito()}"/>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-1">.</div>
+									</div>
+									<div class="row">
+										<div class="col-md-5"></div>
+										<div class="col-md-2">
+											<p:commandButton value="Salir" styleClass="ui-priority-primary"
+												actionListener="#{cotizacionMb.cerrarDialogo('dlgNotaCredito')}"
+												oncomplete="PF('tblEspecialidades').filter()"
+												update="#{p:component('tblDetalleProforma')}">
+											</p:commandButton>
+										</div>
+									</div>
+								</div>
+								</p:panel>
+							</p:dialog>
+
+							<p:dialog header="Mensaje Reposición Tarjeta Afiliación"
+								draggable="false" resizable="false" hideEffect="clip"
+								modal="true" showEffect="clip" widgetVar="dlgReponeTarjeta"
+								closeOnEscape="true">
+								<div class="box-body">
+									<div class="row">
+										<div class="col-md-12">
+											<h:outputText styleClass="icon-warning red"
+												value="Se realizará el cobro de la reposición de Tarjeta de afiliación" />
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-1">.</div>
+									</div>
+									<div class="row">
+										<div class="col-md-5"></div>
+										<div class="col-md-2">
+											<p:commandButton value="Aceptar" styleClass="ui-priority-primary"
+												actionListener="#{cotizacionMb.aceptaCobroReposicion('S')}"
+												oncomplete="PF('tblEspecialidades').filter()"
+												update="#{p:component('tblDetalleProforma')},#{p:component('txtSubtotal')},#{p:component('txtIva')},#{p:component('txtIvaCero')},#{p:component('txtValorTotal')},#{p:component('tblFormaPago')}">
+											</p:commandButton>
+										</div>
+									</div>
+								</div>
+							</p:dialog>
+						</div>
+					</div>
+				</div>
+			</section>
+		</h:form>
+
+		<h:form id="formItemsProced">
+			<p:dialog header="Items" widgetVar="dlgItemsProced" showEffect="clip"
+				draggable="false" closeOnEscape="true" modal="true" width="70%"
+				resizable="false" height="100%">
+				<p:dataTable var="items" id="tblItemsProc" widgetVar="tblItemsProc"
+					value="#{cotizacionMb.listaItems}" selectionMode="single"
+					filteredValue="#{cotizacionMb.listaFiltroItems}" paginator="true"
+					rows="9" selection="#{cotizacionMb.selectdItems}"
+					rowKey="#{items.codigoItems}">
+
+					<p:ajax event="rowSelect"
+						listener="#{cotizacionMb.onRowSelectProcedimiento}"
+						update="#{p:component('tblDetalleProforma')}, #{p:component('txtSubtotal')}, #{p:component('txtIva')}, #{p:component('txtValorTotal')},   #{p:component('tblFormaPago')}" />
+
+					<p:column headerText="Código Articulo" styleClass="centerColum"
+						filterStyle="width: 150px" filterBy="#{items.codigoItems}"
+						filterMatchMode="contains">
+						<h:outputText value="#{items.codigoItems}" />
+					</p:column>
+
+					<p:column headerText="Descripción/Articulo"
+						filterStyle="width: 200px"
+						filterFunction="#{cotizacionMb.filterByName}"
+						filterBy="#{items.descripcionItems}" filterMatchMode="contains">
+						<h:outputText value="#{items.descripcionItems}" />
+					</p:column>
+
+					<p:column headerText="Principios Activos" filterBy=""
+						filterMatchMode="contains">
+						<h:outputText value="" />
+					</p:column>
+
+					<p:column headerText="Precio" filterMatchMode="contains"
+						styleClass="centerColum">
+						<h:outputText value="#{items.precio}">
+							<f:convertNumber type="number" minFractionDigits="2"
+								pattern="#0.00" />
+						</h:outputText>
+					</p:column>
+
+					<p:column headerText="Stock" filterMatchMode="contains"
+						styleClass="centerColum">
+						<h:outputText value="#{items.stockUniMed}" />
+					</p:column>
+				</p:dataTable>
+			</p:dialog>
+		</h:form>
+
+		<h:form id="formItemsSinStock">
+			<p:dialog header="Items sin stock" widgetVar="dlgItemsSStock"
+				draggable="false" showEffect="clip" closeOnEscape="true"
+				modal="true" width="50%" resizable="false" height="100%">
+				<h:outputText style="color:#000000"
+					value="Los siguientes items no se encuentran disponibles por falta de stock." />
+				<p:spacer height="50" />
+				<p:dataTable var="items" id="tblItemsSStock"
+					widgetVar="tblItemsSStock" value="#{cotizacionMb.listaItems}"
+					paginator="true" rows="5">
+
+					<p:column headerText="Código Articulo" styleClass="centerColum">
+						<h:outputText value="#{items.codigoItems}" />
+					</p:column>
+
+					<p:column headerText="Descripción/Articulo"
+						styleClass="centerColum">
+						<h:outputText value="#{items.descripcionItems}" />
+					</p:column>
+				</p:dataTable>
+			</p:dialog>
+		</h:form>
+
+		<h:form id="idFrmRecetas">
+			<p:dialog header="Lista de Recetas" widgetVar="dlgRecetas"
+				draggable="false" showEffect="clip" closeOnEscape="true"
+				modal="true" width="70%" resizable="false" height="100%">
+
+				<div class="ui-g" align="left">
+					<div class="ui-g-12 ui-md-6 ui-lg-1">
+						<h:outputLabel style="color:#000000" styleClass="ui-md-3"
+							value="Médico " />
+					</div>
+					<div class="ui-g-12 ui-md-6 ui-lg-4">
+						<p:selectOneMenu id="medicoRecetaSimec" autoWidth="false"
+							styleClass="ui-g-12 ui-md-12" filter="true"
+							filterMatchMode="contains"
+							value="#{cotizacionMb.medicoRecetaSimec}">
+							<f:selectItem itemLabel="Todos" itemValue="" />
+							<f:selectItems value="#{cotizacionMb.listaMedicos}" />
+
+						</p:selectOneMenu>
+					</div>
+					<div class="ui-g-12 ui-md-6 ui-lg-1">
+						<h:outputLabel style="color:#000000" value="Fecha: " />
+					</div>
+					<div class="ui-lg-6">
+						<p:calendar locale="es" id="dateRecetaD"
+							value="#{cotizacionMb.fechaEmisionReceta}" pattern="dd/MM/yyyy" />
+						<p:spacer height="5" />
+						<p:commandButton icon="ui-icon-search" id="btnBuscaRec"
+							value="Buscar"
+							actionListener="#{cotizacionMb.consultaRecetaSIMEC(cotizacionMb.proformas.idListaPrecio)}"
+							update="#{p:component('idTblRecetas')}" />
+
+
+					</div>
+				</div>
+				<div align="center">
+
+					<p:dataTable var="items" id="idTblRecetas" widgetVar="tblRecetas"
+						value="#{cotizacionMb.listaReceta}" selectionMode="single"
+						paginator="true" rows="10"
+						selection="#{cotizacionMb.selectedReceta}"
+						rowKey="#{items.idReceta}" sortBy="#{items.fechaReceta}"
+						sortOrder="DESCENDING">
+
+						<p:ajax event="rowSelect"
+							listener="#{cotizacionMb.selecionaReceta}"
+							update="#{p:component('tblDetalleFarmacia')} ,#{p:component('idTblRecetasNoDisponible')} ,#{p:component('txtSubtotal')} #{p:component('txtIva')} #{p:component('txtValorTotal')}  #{p:component('tblFormaPago')}" />
+
+						<p:column headerText="ID RECETA" styleClass="centerColum"
+							style="width:10%;">
+							<h:outputText value="#{items.idReceta}" />
+						</p:column>
+						<p:column headerText="SUCURSAL" styleClass="centerColum"
+							style="width:15%;">
+							<h:outputText value="#{items.nombreOficina}" />
+						</p:column>
+						<p:column headerText="FECHA RECETA" styleClass="centerColum"
+							style="width:15%;">
+							<h:outputText value="#{items.fechaRecetaStr}" />
+						</p:column>
+
+						<p:column headerText="ESPECIALIDAD" styleClass="centerColum"
+							style="width:25%;">
+							<h:outputText value="#{items.especialidad}" />
+						</p:column>
+						<p:column headerText="NOMBRE DOCTOR" styleClass="centerColum">
+							<h:outputText value="#{items.nombreDoctor}" style="width:20%;" />
+						</p:column>
+						
+					</p:dataTable>
+				</div>
+
+			</p:dialog>
+		</h:form>
+		<p:dialog header="Articulos no disponibles"
+			widgetVar="dlgRecetasNoDisponible" showEffect="clip"
+			closeOnEscape="true" modal="true" width="50%" draggable="false"
+			resizable="false" height="100%">
+			<div align="center">
+				<p:dataTable var="items" id="idTblRecetasNoDisponible"
+					widgetVar="tblRecetasNoDisponible"
+					value="#{cotizacionMb.listaErrorReceta}" paginator="true" rows="10">
+					<p:column headerText="Codigo SAP">
+						<h:outputText value="#{items.codigoItems}" />
+					</p:column>
+					<p:column headerText="Descripción" styleClass="centerColum">
+						<h:outputText value="#{items.descripcionItems}" />
+					</p:column>
+					<p:column headerText="Detalle" styleClass="centerColum">
+						<h:outputText value="#{items.infoAdicional}" />
+					</p:column>
+
+				</p:dataTable>
+			</div>
+		</p:dialog> 
+
+		<p:dialog header="" widgetVar="dlgImprimeFactura" 
+			draggable="false" id="idImprimeFact" closeOnEscape="true" modal="true"
+			showEffect="fade" width="67%" height="57%" resizable="false"
+			onShow="autAjustePantallaFact('idImprimeFact')" onHide="rcmdInicaliza();">
+			<h:panelGroup id="pnlPrintFactura">
+				<div class="box-body">
+					<div align="center">
+						<iframe frameborder="0" align="left"
+							src="#{cotizacionMb.obtenerRutaFactura()}" name="someName"
+							id="printFactId" scrolling="auto" width="810" height="595"
+							marginheight="0" marginwidth="0"> </iframe>
+					</div>
+				</div>
+			</h:panelGroup>
+		</p:dialog>
+		<p:dialog header="" widgetVar="dlgImprimeCotizacion"
+			draggable="false" id="idImprimeCot" modal="true"
+			showEffect="fade" width="1500"  onHide="rcmdInicaliza();">
+			<h:panelGroup id="pnlPrintCotizacion">
+				<div class="box-body">
+					<iframe frameborder="0" align="left"
+						src="#{cotizacionMb.obtenerRutaFactura()}" name="someName"
+						id="printCotId" scrolling="auto" width="30" height="30" 
+						marginheight="0" marginwidth="0"> </iframe>
+				</div>
+			</h:panelGroup>
+		</p:dialog>
+		 
+		<h:form id="formActivosFijo">
+			<p:dialog header="Activos Fijos" widgetVar="dlgActivoFijo"
+				draggable="false" showEffect="clip" closeOnEscape="true"
+				modal="true" width="50%" resizable="false" height="100%">
+				<p:dataTable var="activoFijo" id="tblSelActivoFijo"
+					emptyMessage="No existe items disponible para la venta"
+					widgetVar="tblSelActivoFijo" paginator="true" rows="10"
+					value="#{cotizacionMb.listaActivosFijos}" selectionMode="single"
+					selection="#{cotizacionMb.selectdItems}"
+					rowKey="#{activoFijo.codigoItems}">
+
+					<p:ajax event="rowSelect"
+						listener="#{cotizacionMb.onRowSelectActivoFijo}"
+						update="#{p:component('tblActivoFijo')}, #{p:component('txtSubtotal')}, #{p:component('txtIva')}, #{p:component('txtValorTotal')}, #{p:component('tblFormaPago')}" />
+
+					<p:column headerText="Código Articulo" styleClass="centerColum"
+						filterStyle="width: 150px" filterBy="#{activoFijo.codigoItems}"
+						filterMatchMode="contains">
+						<h:outputText value="#{activoFijo.codigoItems}" />
+					</p:column>
+
+					<p:column headerText="Descripción/Articulo"
+						styleClass="centerColum" filterStyle="width: 200px"
+						filterFunction="#{cotizacionMb.filterByName}"
+						filterBy="#{activoFijo.descripcionItems}">
+						<h:outputText value="#{activoFijo.descripcionItems}" />
+					</p:column>
+
+					<p:column headerText="Precio" styleClass="centerColum">
+						<h:outputText value="#{activoFijo.precio}">
+							<f:convertNumber type="number" minFractionDigits="2"
+								pattern="#0.00" />
+						</h:outputText>
+					</p:column>
+				</p:dataTable>
+			</p:dialog>
+		</h:form>
+		 
+		<h:form id="formItemsNExiste">
+			<p:dialog header="Items no existe" widgetVar="dlgItemsNExiste"
+				draggable="false" showEffect="clip" closeOnEscape="true"
+				modal="true" width="50%" resizable="false" height="100%">
+				<h:outputText style="color:#000000"
+					value="El/Los siguiente(s) no existe en SAP o no tiene precio asignado, por favor revisar" />
+				<p:spacer height="50" />
+				<p:dataTable var="itemsNE" id="tblItemsNoExist"
+					widgetVar="tblItemsNoExist"
+					value="#{cotizacionMb.listaItemsNoExiste}" paginator="true" rows="5">
+
+					<p:column headerText="Código Articulo" styleClass="centerColum">
+						<h:outputText value="#{itemsNE.codigoItems}" />
+					</p:column>
+
+					<p:column headerText="Descripción/Articulo"
+						styleClass="centerColum">
+						<h:outputText value="#{itemsNE.descripcionItems}" />
+					</p:column>
+				</p:dataTable>
+			</p:dialog>
+		</h:form>
+
+		 
+	</ui:define>
+</ui:composition>

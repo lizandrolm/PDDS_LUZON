@@ -1,0 +1,44 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:pm="http://primefaces.org/mobile"
+	xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml">
+
+	<ui:define name="head">
+	</ui:define>
+
+<ui:define name="content">
+<h:form>
+<p:ajaxStatus onstart="PF('statusDialog').show()"
+	onsuccess="PF('statusDialog').hide()" />
+<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+	closable="false" resizable="false" showHeader="false">
+	<p:graphicImage name="/imagenes/barra_ajax.gif" />
+</p:dialog>
+<p:messages globalOnly="false" id="msjGeneral" showDetail="false"/>
+
+<section class="content">
+	<div class="row">
+		<div class="box box-info">
+			<div class="box-header with-border">
+				<div class="box-header with-border">
+					<h3 class="box-title">Notas de Creditos</h3>
+				</div>
+				<div class="box-body">
+				<div class="form-group">
+					<p:outputLabel value="Valor Factura:" style="color:#000000"
+						class="col-sm-4" />
+					<p:inputText value="#{creditosMb.idFactura}"
+						id="txtValor" styleClass="form-control" />
+				</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+</h:form>
+</ui:define>
+</ui:composition>

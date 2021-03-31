@@ -1,0 +1,159 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:pm="http://primefaces.org/mobile"
+	xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml">
+
+	<ui:define name="head">
+	</ui:define>
+
+	<ui:define name="content">
+		<h:form>
+			<p:ajaxStatus onstart="PF('statusDialog').show()"
+				onsuccess="PF('statusDialog').hide()" />
+			<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+				closable="false" resizable="false" showHeader="false">
+				<p:graphicImage name="/imagenes/barra_ajax.gif" />
+			</p:dialog>
+			<p:messages globalOnly="false" id="msjGeneral" showDetail="false" />
+
+			<section class="content">
+				<div class="row">
+					<div class="col-md-12">
+						<div class="box box-info">
+							<div class="box-header with-border">
+								<div class="box-header with-border">
+									<h:outputText value="Registro de Motivos de Devoluciones"
+										styleClass="FontBold Fs18 hardblue"></h:outputText>
+								</div>
+								<div class="box-body">
+									<div class="col-md-3">
+										<div class="form-group">
+											<p:outputLabel value="Nombre:" styleClass="Container20" />
+											<p:inputText value="#{devolucionesMotivosMb.motivoD.nombreMotivo}" style="text-transform:uppercase;"
+												id="txtNombre" styleClass="form-control"/>
+										</div>
+									</div>
+									<div class="col-md-3">
+										<div class="form-group">
+											<p:outputLabel value="Descripcion:" styleClass="Container20"/>
+											<p:inputText value="#{devolucionesMotivosMb.motivoD.descripcionMotivo}" maxlength="250"
+												id="txtDescripcion" styleClass="form-control" style="text-transform:uppercase;" />
+										</div>
+									</div>
+									<div class="col-md-3">
+										<div class="form-group">
+										<p:outputLabel value="Motivos SAP:" styleClass="Container30" />
+										<h:selectOneMenu id="listMotivos" disabled="false"
+											value="#{devolucionesMotivosMb.motivoD.motivoSap}"
+											dynamic="true" styleClass="form-control">
+											<f:selectItems value="#{devolucionesMotivosMb.listaMotivosSap}"/>
+										</h:selectOneMenu>
+										</div>
+									</div>
+									<div class="col-md-3">
+										<div class="col-md-12" align="center">
+											<h:commandButton value="Guardar" disabled="#{devolucionesMotivosMb.crear}"
+												actionListener="#{devolucionesMotivosMb.guardarMotivo()}"
+												title="Opcion para guardar motivo" update="@form"
+												styleClass="btn btn-primary"/>
+											<h:outputText value="&#160;&#160;"/>
+											<h:commandButton value="Actualizar" disabled="#{devolucionesMotivosMb.modificar}"
+												actionListener="#{devolucionesMotivosMb.modificarMotivo()}"
+												title="Opcion para modificar el motivo" update="@form"
+												styleClass="btn btn-primary"/>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-12">
+						<div class="box box-info">
+							<div class="box-header with-border">
+								<p:panel>
+									<p:dataTable var="motivo" id="tblMotivos" widgetVar="tblMotivos"
+										value="#{devolucionesMotivosMb.listaMotivosAux}" reflow="true" rows="8"
+										paginator="true">
+										<p:column headerText="ID Motivo">
+											<h:outputText value="#{motivo.idMotivo}"/>
+										</p:column>
+										<p:column headerText="Nombre" filterBy="#{motivo.nombreMotivo}"
+											filterMatchMode="contains" filterStyle="width: 200px">
+											<h:outputText value="#{motivo.nombreMotivo}"/>
+										</p:column>
+										<p:column headerText="Motivo SAP" filterBy="#{motivo.motivoSap}"
+											filterMatchMode="contains" filterStyle="width: 200px">
+											<h:outputText value="#{motivo.motivoSap}"/>
+										</p:column>
+										<p:column headerText="Estado">
+											<h:outputText value="#{motivo.estado eq 'A' ? 'Activo' : 'Inactivo'}"/>
+										</p:column>
+										<p:column headerText="Aplica Penalidad" rendered="false">
+											<h:outputText value="#{motivo.aplicaPenalidad}"/>
+										</p:column>
+										<p:column headerText="Acciones">
+											<div align="center">
+												<h:commandButton class="btn btn-primary" value="Editar"
+													disabled="#{motivo.estado eq 'A' ? false : true}"
+													title="Permite editar los datos del motivo #{motivo.nombreMotivo}"
+													update="@form"
+													actionListener="#{devolucionesMotivosMb.seleccionarMotivo(motivo)}"></h:commandButton>
+												<h:outputText value="&#160;&#160;"/> 
+												<h:commandButton class="btn btn-primary" value="Inactivar"
+													disabled="#{motivo.estado eq 'A' ? false : true}"
+													title="Permite Inactivar los datos del motivo #{motivo.nombreMotivo}"
+													update="tblMotivos"
+													actionListener="#{devolucionesMotivosMb.eliminarMotivo(motivo)}"></h:commandButton>
+												<h:outputText value="&#160;&#160;"/>
+												<h:commandButton class="btn btn-primary" value="Activar"
+													disabled="#{motivo.estado eq 'A' ? true : false}"
+													title="Permite Activar los datos del motivo #{motivo.nombreMotivo}"
+													update="tblMotivos"
+													actionListener="#{devolucionesMotivosMb.activarMotivo(motivo)}"></h:commandButton>
+											</div>
+										</p:column>																			
+									</p:dataTable>
+								</p:panel>
+							</div>
+						</div>
+					</div>
+					<p:dialog header="Inactivacion de Motivos de Devolucion" resizable="false"
+						hideEffect="clip" modal="true" showEffect="clip"
+						draggable="false" widgetVar="dlgMsjInactiva" closeOnEscape="true">
+						<div class="box-body">
+							<div class="row">
+								<div class="col-md-12">
+									<h:outputText styleClass="icon-warning red"
+										value="Existen devoluciones ingresados con este motivo, ¿Desea continuar?" />
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-1">.</div>
+							</div>
+							<div class="row">
+								<div class="col-md-4"></div>
+								<div class="col-md-1">
+									<p:commandButton value="Si" styleClass="ui-priority-primary"
+										actionListener="#{devolucionesMotivosMb.procesaInactivacion('S')}"
+										oncomplete="PF('tblEspecialidades').filter()"
+										update="@form">
+									</p:commandButton>
+								</div>
+								<div class="col-md-2"></div>
+								<div class="col-md-1">
+									<p:commandButton value="No" styleClass="ui-priority-primary"
+										actionListener="#{devolucionesMotivosMb.procesaInactivacion('N')}">
+									</p:commandButton>
+								</div>
+								<div class="col-md-4"></div>
+							</div>
+						</div>
+					</p:dialog>
+				</div>
+			</section>
+		</h:form>
+	</ui:define>
+</ui:composition>

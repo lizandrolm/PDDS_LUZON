@@ -1,0 +1,705 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	template="/WEB-INF/template.xhtml">
+	<ui:define name="head">
+
+	</ui:define>
+
+	<ui:define name="content">
+		<h:form id="form">
+			<p:ajaxStatus onstart="PF('statusDialog').show()"
+				onsuccess="PF('statusDialog').hide()" />
+
+			<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+				closable="false" resizable="false" showHeader="false">
+				<p:graphicImage name="/imagenes/barra_ajax.gif" />
+			</p:dialog>
+
+			<p:messages globalOnly="false" id="msjGeneral" showDetail="false" />
+
+			<section class="content-header"></section>
+
+			<!-- Main content -->
+			<section class="content">
+				<div class="row">
+					<!-- left column -->
+					<div class="col-md-12">
+						<!-- general form elements -->
+						<div class="box box-primary">
+							<div class="box-header with-border">
+								<h3 class="box-title">Farmacia</h3>
+							</div>
+							<p:panel id="toggleable" header="Número de serie de Factura"
+								toggleable="true" toggleSpeed="500" closeSpeed="500"
+								widgetVar="panel" style="margin-bottom:20px">
+								<div class="box-body">
+									<div class="form-group">
+										<div class="col-sm-1">
+											<h:outputLabel style="color:#000000" value="No. Factura:" />
+										</div>
+										<div class="col-sm-2">
+											<h:inputText styleClass="form-control" disabled="true"
+												style="text-align:center"
+												value="#{farmaciasMb.ptoEmisionEstablecimiento}" />
+										</div>
+										<div class="col-sm-2">
+											<h:inputText styleClass="form-control" disabled="true"
+												style="text-align:center"
+												value="#{farmaciasMb.secuenciaFactura}" />
+										</div>
+										<div class="col-sm-1" />
+										<div class="col-sm-3">
+											<div class="row">
+												<div class="col-sm-2">
+													<h:outputLabel style="color:#000000" value="Sucursal:" />
+												</div>
+												<div class="col-sm-8">
+													<h:selectOneMenu id="listSucurs" disabled="true"
+														value="#{farmaciasMb.facturaCab.idSucursalFact}"
+														dynamic="true" styleClass="form-control"
+														placeholder="Sucursal">
+														<f:selectItems
+															value="#{loginMb.obtenerListSucursal(loginMb.username)}" />
+													</h:selectOneMenu>
+												</div>
+											</div>
+										</div>
+										<div class="col-sm-1">
+											<h:outputLabel style="color:#000000" value="Fecha Emisión:" />
+										</div>
+										<div class="col-sm-2">
+											<h:inputText styleClass="form-control" disabled="true"
+												style="text-align:center"
+												value="#{farmaciasMb.facturaCab.fechaCreacionStr}" />
+										</div>
+									</div>
+								</div>
+							</p:panel>
+
+							<div class="box-body">
+								<div class="row">
+									<div class="col-md-6">
+										<div class="box box-info">
+											<div class="box-header with-border">
+												<h3 class="box-title">Datos Pacientes</h3>
+											</div>
+											<div class="box-body form-horizontal">
+												<div class="form-group">
+													<div class="col-sm-1" />
+													<h:outputLabel style="color:#000000"
+														value="Número de identificación:" class="col-sm-3" />
+													<div class="col-sm-1" />
+													<div class="col-sm-6">
+														<p:inputText id="txtNumDocPac"
+															value="#{farmaciasMb.facturaCab.idPacienteFact.numDocumento}"
+															styleClass="form-control">
+															<p:ajax event="blur"
+																listener="#{farmaciasMb.consultaPaciente2}"
+																update="#{p:component('txtNombresPac')}, #{p:component('txtMailPac')}" />
+														</p:inputText>
+													</div>
+												</div>
+												<div class="form-group">
+													<div class="col-sm-1" />
+													<h:outputLabel style="color:#000000" value="Paciente:"
+														class="col-sm-3" />
+													<div class="col-sm-1" />
+													<div class="col-sm-6">
+														<p:inputText id="txtNombresPac"
+															value="#{farmaciasMb.facturaCab.idPacienteFact.nombresCompletos}"
+															styleClass=" form-control" disabled="true" />
+													</div>
+												</div>
+												<div class="form-group">
+													<div class="col-sm-1" />
+													<h:outputLabel style="color:#000000"
+														value="Correo Electrónico:" class="col-sm-3" />
+													<div class="col-sm-1" />
+													<div class="col-sm-6">
+														<p:inputText id="txtMailPac"
+															value="#{farmaciasMb.facturaCab.idPacienteFact.email}"
+															styleClass="form-control" disabled="true" />
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="box box-info">
+											<div class="box-header with-border">
+												<h3 class="box-title">Datos Cliente</h3>
+											</div>
+											<div class="box-body form-horizontal">
+												<div class="form-group">
+													<div class="col-sm-1" />
+													<h:outputLabel style="color:#000000"
+														value="Número de identificación:" class="col-sm-3" />
+													<div class="col-sm-1" />
+													<div class="col-sm-6">
+														<p:inputText id="txtNumDocCli"
+															value="#{farmaciasMb.facturaCab.idClienteFact.numDocumento}"
+															styleClass="form-control">
+															<p:ajax event="blur"
+																listener="#{farmaciasMb.consultaPaciente}"
+																update="#{p:component('txtNombresCli')}, #{p:component('txtMailPacEc')}" />
+														</p:inputText>
+													</div>
+												</div>
+												<div class="form-group">
+													<div class="col-sm-1" />
+													<h:outputLabel style="color:#000000" value="Nombres:"
+														class="col-sm-3" />
+													<div class="col-sm-1" />
+													<div class="col-sm-6">
+														<p:inputText id="txtNombresCli"
+															value="#{farmaciasMb.facturaCab.idClienteFact.nombresCompletos}"
+															styleClass=" form-control" disabled="true" />
+
+													</div>
+												</div>
+												<div class="form-group">
+													<div class="col-sm-1" />
+													<h:outputLabel style="color:#000000"
+														value="Correo Electrónico:" class="col-sm-3" />
+													<div class="col-sm-1" />
+													<div class="col-sm-6">
+														<p:inputText id="txtMailPacEc"
+															value="#{farmaciasMb.facturaCab.idClienteFact.email}"
+															styleClass="form-control" disabled="true" />
+													</div>
+												</div>
+												<div class="form-group">
+													<div class="col-sm-1" />
+													<h:outputLabel style="color:#000000" value="Médico:"
+														class="col-sm-3" />
+													<div class="col-sm-1" />
+													<div class="col-sm-6">
+														<p:inputText id="txtDoctor" value="#{farmaciasMb.doctor}"
+															styleClass="form-control" disabled="true" />
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="row">
+										<div class="col-sm-1">
+											<h:outputLabel style="color:#000000"
+												value="Lista de Precios:" />
+										</div>
+										<div class="col-sm-2">
+											<h:selectOneMenu id="listaPrecio"
+												value="#{farmaciasMb.facturaCab.idListaPrecio}"
+												dynamic="true" disabled="true" styleClass="form-control">
+												<f:selectItems var="precio" itemValue="#{precio}"
+													value="#{farmaciasMb.obtenerTipoListaPrecio()}" />
+											</h:selectOneMenu>
+										</div>
+										<div class="col-sm-4">
+											<div class="ui-g">
+												<div class="ui-g-12">
+													<p:commandButton value="Agregar articulo"
+														styleClass="ui-priority-primary"
+														actionListener="#{farmaciasMb.consultaListaItems(farmaciasMb.facturaCab.idListaPrecio)}"
+														oncomplete="PF('tblItems').filter()" />
+												</div>
+											</div>
+										</div>
+									</div>
+									<p:dataTable var="farmacia" id="tblDetalleFarmacia"
+										widgetVar="tblDetalleFarmacia" scrollRows="2"
+										emptyMessage="No se ha seleccionado Items" scrollHeight="100"
+										value="#{farmaciasMb.ventasFarmacia}" scrollable="true"
+										style="margin-bottom:20px">
+
+										<p:columnGroup type="header">
+											<p:column headerText="Descripción"
+												style="#{loginMb.styleTable}" />
+											<p:column headerText="Asignación de Ubicación"
+												style="#{loginMb.styleTable}" />
+											<p:column headerText="Valor Unitario"
+												style="#{loginMb.styleTable}" />
+											<p:column headerText="Cantidad" style="#{loginMb.styleTable}" />
+											<p:column headerText="Precio Sin IVA"
+												style="#{loginMb.styleTable}" />
+											<p:column headerText="Eliminar"
+												style="#{loginMb.styleTable}; width:65px" />
+										</p:columnGroup>
+
+										<p:column>
+											<center>
+												<h:outputText value="#{farmacia.descripcionItems}" />
+											</center>
+										</p:column>
+										<p:column>
+											<center>
+												<div class="input-group">
+													<h:outputText value="#{farmacia.ubicacionSap}" />
+													<div class="input-group-btn">
+														<p:commandButton icon="ui-icon-search" id="btnUbicacion"
+															disabled="#{farmacia.banderaTipoUbic}"
+															actionListener="#{farmaciasMb.getObtieneListaUbicaciones(farmacia)}"
+															title="Permite modificar la ubicación del item por defecto"
+															oncomplete="PF('tblDtoLotes').filter()" />
+													</div>
+												</div>
+											</center>
+										</p:column>
+										<p:column>
+											<center>
+												<h:outputText value="#{farmacia.precio}">
+													<f:convertNumber pattern="0.00" />
+												</h:outputText>
+											</center>
+										</p:column>
+										<p:column>
+											<center>
+												<p:spinner id="cantidad" value="#{farmacia.cantidad}">
+													<p:ajax event="change"
+														listener="#{farmaciasMb.onCellEdit(farmacia)}"
+														update="#{p:component('tblDetalleFarmacia')}, #{p:component('txtSubtotal')} , #{p:component('txtIva')} , #{p:component('txtValorTotal')}" />
+												</p:spinner>
+											</center>
+										</p:column>
+										<p:column>
+											<center>
+												<h:outputText value="#{farmacia.precioTotal}">
+													<f:convertNumber pattern="0.00" />
+												</h:outputText>
+											</center>
+										</p:column>
+										<p:column style="width:65px">
+											<center>
+												<p:commandButton icon="ui-icon-closethick" id="btnEliminar"
+													title="Permite eliminar el item"
+													actionListener="#{farmaciasMb.eliminaArticulo(farmacia)}"
+													update="#{p:component('tblDetalleFarmacia')} , #{p:component('txtSubtotal')} , #{p:component('txtIva')} , #{p:component('txtValorTotal')}, #{p:component('cmbCrearFactura')}" />
+											</center>
+										</p:column>
+									</p:dataTable>
+								</div>
+								<div class="form-group">
+									<div class="row">
+										<div class="col-lg-6">
+											<h:outputLabel style="color:#000000" value="Notas: " />
+											<h:inputTextarea id="txtNotas"
+												value="#{farmaciasMb.facturaCab.notas}"
+												styleClass="form-control" />
+										</div>
+										<div class="col-lg-3" />
+										<div class="col-lg-3">
+											<h:outputLabel style="color:#000000" value="Subtotal: " />
+											<h:inputText id="txtSubtotal"
+												value="#{farmaciasMb.facturaCab.subtotal}"
+												styleClass="form-control" disabled="true">
+												<f:convertNumber pattern="0.00" />
+											</h:inputText>
+										</div>
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="row">
+										<div class="col-lg-6">
+											<div class="box box-info">
+												<div class="box-body">
+													<p:panel>
+														<div class="row">
+															<p:dataTable var="formaPago" id="tblFormaPago"
+																widgetVar="tblFormaPago" scrollRows="3" editable="true"
+																editMode="cell"
+																emptyMessage="No se ha seleccionado forma de pago"
+																scrollHeight="80" value="#{farmaciasMb.listaFormaPago}"
+																scrollable="true" style="margin-bottom:20px">
+																<p:columnGroup type="header">
+																	<p:column headerText="Medio de Pago"
+																		style="#{loginMb.styleTable}" />
+																	<p:column headerText="Valor Recibido"
+																		style="#{loginMb.styleTable}" />
+																</p:columnGroup>
+																<p:column>
+																	<p:cellEditor>
+																		<f:facet name="output">
+																			<center>
+																				<h:outputText value="#{formaPago.medioPago}" />
+																			</center>
+																		</f:facet>
+																		<f:facet name="input">
+																			<center>
+																				<h:selectOneMenu value="#{formaPago.medioPago}"
+																					styleClass="form-control">
+																					<f:selectItems
+																						value="#{farmaciasMb.auxListaFormaPago}" />
+																					<p:ajax event="blur"
+																						listener="#{farmaciasMb.validaTipoMedioDPago(formaPago)}" />
+																				</h:selectOneMenu>
+																			</center>
+																		</f:facet>
+																	</p:cellEditor>
+																</p:column>
+																<p:column>
+																	<p:cellEditor>
+																		<f:facet name="output">
+																			<center>
+																				<h:outputText id="txtVlrFrmPagoOut"
+																					value="#{formaPago.valorFrmPago}" />
+																			</center>
+																		</f:facet>
+																		<f:facet name="input">
+																			<center>
+																				<p:inputText id="txtVlrFrmPagoIn"
+																					value="#{formaPago.valorFrmPago}">
+																					<p:ajax event="blur"
+																						listener="#{farmaciasMb.calculaVuelto()}"
+																						update="#{p:component('txtvuelto')}" />
+																				</p:inputText>
+																			</center>
+																		</f:facet>
+																	</p:cellEditor>
+																</p:column>
+															</p:dataTable>
+														</div>
+														<div class="form-group">
+															<div class="row">
+																<div class="col-sm-1">
+																	<p:commandButton id="cmbAgrFrmPgo" icon="ui-icon-plus"
+																		ajax="false"
+																		actionListener="#{farmaciasMb.agregaFormaPago()}"
+																		update="#{p:component('txtvuelto')},#{p:component('tblFormaPago')}" />
+																</div>
+																<div class="col-sm-6" />
+																<h:outputLabel style="color:#000000" value="Vuelto"
+																	class="col-md-1" />
+																<div class="col-sm-3">
+																	<h:inputText id="txtvuelto" disabled="true"
+																		styleClass="form-control"
+																		value="#{farmaciasMb.facturaCab.valorVuelto}">
+																		<f:convertNumber pattern="0.00" />
+																	</h:inputText>
+																</div>
+															</div>
+														</div>
+													</p:panel>
+												</div>
+											</div>
+										</div>
+										<div class="col-lg-3" />
+										<div class="col-lg-3">
+											<div class="form-group">
+												<h:outputLabel style="color:#000000" value="IVA 12%: " />
+												<h:inputText id="txtIva"
+													value="#{farmaciasMb.facturaCab.iva}"
+													styleClass="form-control" disabled="true">
+													<f:convertNumber pattern="0.00" />
+												</h:inputText>
+											</div>
+											<div class="form-group">
+												<h:outputLabel style="color:#000000" value="IVA 0%: " />
+												<h:inputText id="txtIvaCero"
+													value="#{farmaciasMb.facturaCab.ivaCero}"
+													styleClass="form-control" disabled="true">
+													<f:convertNumber pattern="0.00" />
+												</h:inputText>
+											</div>
+											<div class="form-group">
+												<h:outputLabel style="color:#000000" value="Valor a Pagar: " />
+												<h:inputText id="txtValorTotal"
+													value="#{farmaciasMb.facturaCab.valorTotal}"
+													styleClass="form-control" disabled="true">
+													<f:convertNumber pattern="0.00" />
+												</h:inputText>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="box-footer">
+									<div class="row">
+										<div class="col-lg-3">
+											<h:commandButton value="Pago Factura"
+												title="#{farmaciasMb.verificaCaja eq true ? 'Caja no se encuentra abierta o esta abierta en otra sucursal' : ''}"
+												styleClass="btn btn-block btn-primary" id="cmbCrearFactura"
+												disabled="#{farmaciasMb.verificaCaja}"
+												actionListener="#{farmaciasMb.creaFactura()}">
+
+											</h:commandButton>
+										</div>
+									</div>
+								</div>
+							</div>
+							<p:dialog header="Items" widgetVar="items" showEffect="fade"
+								width="800" height="500">
+								<p:dataTable var="items" id="tblItems" widgetVar="tblItems"
+									value="#{farmaciasMb.listaItems}" selectionMode="single"
+									filteredValue="#{farmaciasMb.listaFiltroItems}"
+									paginator="true" rows="10"
+									selection="#{farmaciasMb.selectdItems}"
+									rowKey="#{items.codigoItems}">
+
+									<f:facet name="header">
+										<p:outputPanel style="text-align:right">
+											<h:outputText value="Buscar texto: " />
+											<p:inputText id="globalFilter"
+												onkeyup="PF('tblItems').filter()" style="width:150px"
+												placeholder="Dato a buscar" />
+										</p:outputPanel>
+									</f:facet>
+									<p:ajax event="rowSelect" listener="#{farmaciasMb.onRowSelect}"
+										update="#{p:component('tblDetalleFarmacia')},#{p:component('txtSubtotal')}, #{p:component('txtIva')}, #{p:component('txtValorTotal')}, #{p:component('cmbCrearFactura')}" />
+									<p:column headerText="Código Articulo"
+										filterBy="#{items.codigoItems}" filterMatchMode="contains">
+										<center>
+											<h:outputText value="#{items.codigoItems}" />
+										</center>
+									</p:column>
+
+									<p:column headerText="Descripción/Articulo"
+										filterBy="#{items.descripcionItems}"
+										filterMatchMode="contains">
+										<h:outputText value="#{items.descripcionItems}" />
+									</p:column>
+
+									<p:column headerText="Precio" filterMatchMode="contains">
+										<center>
+											<h:outputText value="#{items.precio}">
+												<f:convertNumber type="number" minFractionDigits="3"
+													pattern="#0.000" />
+											</h:outputText>
+										</center>
+									</p:column>
+
+									<p:column headerText="Stock" filterMatchMode="contains">
+										<center>
+											<h:outputText value="#{items.stockUniMed}" />
+										</center>
+									</p:column>
+								</p:dataTable>
+							</p:dialog>
+							<p:dialog header="Datos del Cheque" widgetVar="dlgChq"
+								showEffect="fade" width="1400" height="130" modal="true">
+								<p:dataTable var="datosChques" id="tblDtoChq"
+									widgetVar="tblDtoChq" editable="true" editMode="cell"
+									emptyMessage="No se ha seleccionado forma de pago"
+									value="#{farmaciasMb.listaFormaPago}">
+
+									<p:columnGroup type="header">
+										<p:column headerText="Valor" style="#{loginMb.styleTable}" />
+										<p:column headerText="Nombre Banco"
+											style="#{loginMb.styleTable}" />
+										<p:column headerText="No. de Cuenta"
+											style="#{loginMb.styleTable}" />
+										<p:column headerText="No. de Cheque"
+											style="#{loginMb.styleTable}" />
+										<p:column headerText="Fecha Recibido"
+											style="#{loginMb.styleTable}" />
+										<p:column headerText="Nom. Completo / Razón Social"
+											style="#{loginMb.styleTable}" />
+										<p:column headerText="RUC / CI" style="#{loginMb.styleTable}" />
+										<p:column headerText="Dirección" style="#{loginMb.styleTable}" />
+										<p:column headerText="Teléfono" style="#{loginMb.styleTable}" />
+										<p:column headerText="Acción" style="#{loginMb.styleTable}" />
+									</p:columnGroup>
+
+									<p:column>
+										<p:cellEditor disabled="#{datosChques.banderaChq}">
+											<f:facet name="output">
+												<center>
+													<h:outputText id="txtDlgVlrChqOut"
+														value="#{datosChques.valorFrmPago}" />
+												</center>
+											</f:facet>
+											<f:facet name="input">
+												<center>
+													<p:inputText id="txtDlgVlrChqIn"
+														disabled="#{datosChques.banderaChq}"
+														value="#{datosChques.valorFrmPago}">
+													</p:inputText>
+												</center>
+											</f:facet>
+										</p:cellEditor>
+									</p:column>
+
+									<p:column>
+										<p:cellEditor disabled="#{datosChques.banderaChq}">
+											<f:facet name="output">
+												<center>
+													<h:outputText value="#{datosChques.nomBanco}"
+														id="txtDlgNomCheqOut" />
+												</center>
+											</f:facet>
+											<f:facet name="input">
+												<center>
+													<h:selectOneMenu value="#{datosChques.nomBanco}"
+														disabled="#{datosChques.banderaChq}"
+														styleClass="form-control" id="txtDlgNomCheqIn">
+														<f:selectItems value="#{proformasMb.listaBancos}" />
+													</h:selectOneMenu>
+												</center>
+											</f:facet>
+										</p:cellEditor>
+									</p:column>
+
+									<p:column>
+										<p:cellEditor disabled="#{datosChques.banderaChq}">
+											<f:facet name="output">
+												<center>
+													<h:outputText value="#{datosChques.numeroCuenta}"
+														id="txtDlgNumCtaOut" />
+												</center>
+											</f:facet>
+											<f:facet name="input">
+												<center>
+													<p:inputText value="#{datosChques.numeroCuenta}"
+														disabled="#{datosChques.banderaChq}" required="true"
+														id="txtDlgNumCtaIn" />
+												</center>
+											</f:facet>
+										</p:cellEditor>
+									</p:column>
+
+									<p:column>
+										<p:cellEditor disabled="#{datosChques.banderaChq}">
+											<f:facet name="output">
+												<center>
+													<h:outputText value="#{datosChques.numeroCheque}"
+														id="txtDlgNumChqOut" />
+												</center>
+											</f:facet>
+											<f:facet name="input">
+												<center>
+													<p:inputText value="#{datosChques.numeroCheque}"
+														id="txtDlgNumChqIn" disabled="#{datosChques.banderaChq}" />
+												</center>
+											</f:facet>
+										</p:cellEditor>
+									</p:column>
+
+									<p:column>
+										<center>
+											<h:outputText value="#{datosChques.fechaRecepcionChqStr}" />
+										</center>
+									</p:column>
+
+									<p:column>
+										<p:cellEditor disabled="#{datosChques.banderaChq}">
+											<f:facet name="output">
+												<center>
+													<h:outputText value="#{datosChques.nombreRznSocialChq}"
+														id="txtDlgNomRznOut" />
+												</center>
+											</f:facet>
+											<f:facet name="input">
+												<center>
+													<p:inputText value="#{datosChques.nombreRznSocialChq}"
+														id="txtDlgNomRznIn" disabled="#{datosChques.banderaChq}" />
+												</center>
+											</f:facet>
+										</p:cellEditor>
+									</p:column>
+
+									<p:column>
+										<p:cellEditor disabled="#{datosChques.banderaChq}">
+											<f:facet name="output">
+												<center>
+													<h:outputText value="#{datosChques.numeroCI_RUCChq}"
+														id="txtDlgNumCIOut" />
+												</center>
+											</f:facet>
+											<f:facet name="input">
+												<center>
+													<p:inputText value="#{datosChques.numeroCI_RUCChq}"
+														id="txtDlgNumCIIn"
+														onkeypress="if(event.which &lt; 48 || event.which &gt; 57) return false;"
+														disabled="#{datosChques.banderaChq}" />
+												</center>
+											</f:facet>
+										</p:cellEditor>
+									</p:column>
+
+									<p:column>
+										<p:cellEditor disabled="#{datosChques.banderaChq}">
+											<f:facet name="output">
+												<center>
+													<h:outputText value="#{datosChques.direccionChq}" />
+												</center>
+											</f:facet>
+											<f:facet name="input">
+												<center>
+													<p:inputText value="#{datosChques.direccionChq}"
+														disabled="#{datosChques.banderaChq}" />
+												</center>
+											</f:facet>
+										</p:cellEditor>
+									</p:column>
+
+									<p:column>
+										<p:cellEditor disabled="#{datosChques.banderaChq}">
+											<f:facet name="output">
+												<center>
+													<h:outputText value="#{datosChques.telefono}" />
+												</center>
+											</f:facet>
+											<f:facet name="input">
+												<center>
+													<p:inputText value="#{datosChques.telefono}"
+														disabled="#{datosChques.banderaChq}" onkeypress="if(event.which &lt; 48 || event.which &gt; 57) return false;"  />
+												</center>
+											</f:facet>
+										</p:cellEditor>
+									</p:column>
+									<p:column>
+										<p:commandButton value="Aceptar" id="cmbAceptChq"
+											disabled="#{datosChques.banderaChq}"
+											actionListener="#{farmaciasMb.aceptarDtosCheque(datosChques)}"
+											ajax="false"
+											update="#{p:component('tblFormaPago')}, #{p:component('txtvuelto')}, #{p:component('contentidoDlg')}" />
+									</p:column>
+								</p:dataTable>
+							</p:dialog>
+							<p:dialog header="Mensaje Error" modal="true" resizable="false"
+								showEffect="fade" widgetVar="dlgMsj">
+								<h:panelGrid columns="1" id="pnlMsjError">
+									<h:outputText styleClass="icon-warning red" id="contentidoDlg"
+										value="#{farmaciasMb.msjError}" />
+								</h:panelGrid>
+							</p:dialog>
+							<p:dialog header="Selección de Lotes" widgetVar="dlgLotes"
+								showEffect="fade" width="700" height="260" modal="true">
+
+								<p:dataTable var="datosUbiLotes" id="tblDtoLotes"
+									widgetVar="tblDtoLotes" paginator="true" rows="5"
+									emptyMessage="No se ha seleccionado lotes"
+									value="#{farmaciasMb.auxUbicacionLotes}"
+									filteredValue="#{farmaciasMb.listaFiltroUbicLot}"
+									selectionMode="single"
+									selection="#{farmaciasMb.selectedLotsStock}"
+									rowKey="#{datosUbiLotes.lote}">
+
+									<p:ajax event="rowSelect"
+										listener="#{farmaciasMb.onRowSelectUbicacion}"
+										update="#{p:component('tblDetalleFarmacia')},#{p:component('txtSubtotal')}, #{p:component('txtIva')}, #{p:component('txtValorTotal')}, #{p:component('cmbCrearFactura')}" />
+
+									<p:column headerText="Lotes" filterBy="#{datosUbiLotes.lote}"
+										filterMatchMode="contains">
+										<center>
+											<h:outputText id="txtUbiLote" value="#{datosUbiLotes.lote}" />
+										</center>
+									</p:column>
+									<p:column headerText="Cantidad Disponible">
+										<center>
+											<h:outputText id="txtUbiCantLot"
+												value="#{datosUbiLotes.cantidadLote}" />
+										</center>
+									</p:column>
+								</p:dataTable>
+							</p:dialog>
+						</div>
+					</div>
+				</div>
+			</section>
+		</h:form>
+	</ui:define>
+</ui:composition>

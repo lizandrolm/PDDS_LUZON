@@ -1,0 +1,57 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<h:form>
+
+		<div id="layout-header" class="Unselectable fontRegular">
+
+			<a href="#" id="layout-logo"> <span class="softblue" style="font-size: 20px;color:#5A8DEE;"><h:outputLabel
+						value="#{loginMb.nombreSucursal}" /></span>
+			</a>
+			<ul id="sm-topmenu" class="layout-header-widgets white Fs14">
+
+				<li class="Fleft BordRadHalf TexAlCenter"><i
+					class="icon-home"></i>
+					<ul
+						class="layout-header-widgets-submenu BordRad5 shadows white Animated05">
+						<li class="Animated05"><a class="white Unselectable"> <i
+								class="icon-home Fs26 OvHidden"></i> <span class="Fs18"><h:outputText
+										value="#{loginMb.nombreSucursal}" /> <br /> </span>
+						</a></li>
+					</ul></li>
+
+				<li class="Fleft BordRadHalf TexAlCenter"><i
+					class="icon-user-male"></i>
+					<ul
+						class="layout-header-widgets-submenu BordRad5 shadows white Animated05">
+						<li class="Animated05"><a class="white Unselectable"> <i
+								class="icon-user-male Fs26 OvHidden"></i> <span class="Fs18"><h:outputText
+										value="#{loginMb.username}" /> <br /> </span>
+						</a></li>
+					</ul></li>
+
+
+				<li class="Fleft BordRadHalf TexAlCenter"><i class="icon-power"></i>
+					<ul
+						class="layout-header-widgets-submenu BordRad5 shadows white Animated05">
+
+						<li class="Animated05"><h:commandLink
+								action="#{loginMb.doLogout}" styleClass="white Unselectable">
+								<i class="icon-logout"></i>Salir </h:commandLink></li>
+					</ul></li>
+			</ul>
+			<!-- NEVER REMOVE FOLLOWING 'UL' TAG ! BECAUSE THIS CONTAINS RESPONSIVE MODE HEADER MENU OPEN-CLOSE BUTTON -->
+			<ul id="sm-mobiletopmenu" class="layout-header-widgets white Fs14">
+				<li
+					class="Fleft BordRadHalf TexAlCenter Animated05 DisplayOnResponsive"><i
+					class="icon-th-1"></i></li>
+			</ul>
+			<!-- ****** -->
+		</div>
+
+	</h:form>
+
+</ui:composition>

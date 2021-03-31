@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<link rel="shortcut icon" type="image/png"
+		href="#{request.contextPath}/resources/imagenes/LOWO_ICONO.png" />
+	<f:facet name="first">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<meta name="viewport"
+			content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+	</f:facet>
+	<title>POS WEB</title>
+
+	<!-- Bootstrap 3.3.7 -->
+	<h:outputStylesheet
+		name="css/bower_components/bootstrap/dist/css/bootstrap.min.css" />
+	<!-- Font Awesome -->
+	<h:outputStylesheet
+		name="css/bower_components/font-awesome/css/font-awesome.min.css" />
+	<!-- Ionicons -->
+	<h:outputStylesheet
+		name="css/bower_components/Ionicons/css/ionicons.min.css" />
+	<!-- jvectormap -->
+	<h:outputStylesheet
+		name="css/bower_components/jvectormap/jquery-jvectormap.css" />
+	<!-- Theme style -->
+	<h:outputStylesheet name="css/dist/css/AdminLTE.min.css" />
+
+	<h:outputStylesheet name="css/dist/css/skins/_all-skins.min.css" />
+
+	<h:outputStylesheet name="css/sypsoft/pos.css"></h:outputStylesheet>
+
+	<!-- bootstrap datepicker 
+	<h:outputStylesheet
+		name="css/bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css" />
+	-->
+
+	<h:outputStylesheet
+		name="css/bower_components/jvectormap/jquery-jvectormap.css" />
+	<!-- Theme style -->
+
+	<h:outputStylesheet name="css/dist/css/AdminLTE.min.css" />
+	<!-- AdminLTE Skins. Choose a skin from the css/skins
+       folder instead of downloading all of them to reduce the load. -->
+	<h:outputStylesheet name="css/dist/css/skins/_all-skins.min.css" />
+
+	<!-- Bootstrap dataTable 
+	<h:outputStylesheet
+		name="css/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css" />
+-->
+	<h:outputScript name="js/layout.js" library="sentinel-layout" />
+	<style type="text/css">
+#layout-header {
+	background: #FFFFFF !important;
+	border-color: #F2F4F4 !important;
+}
+
+#BordRadHalf {
+	background: #FFFFFF !important;
+}
+
+#layout-menubar li a {
+	color: black;
+	background-color: #FFFFFF !important;
+	border-bottom: #F2F4F4 !important;
+	border-bottom-color: #F2F4F4 !important;
+	border-color: #F2F4F4 !important;
+}
+
+#layout-menubar li a:hover {
+	color: black;
+	background-color: #FFFFFF !important;
+	border-bottom: #F2F4F4 !important;
+	border-bottom-color: #F2F4F4 !important;
+	border-color: #F2F4F4 !important;
+}
+
+.yellow {
+	color: #5A8DEE;
+}
+
+.ui-panel .ui-panel-titlebar {
+	background: linear-gradient(to bottom, #475f7b 0%, #475f7b 100%)
+		!Important;
+}
+
+.ui-filter-column {
+	background: #475f7b !important;
+	border-color: #F2F4F4 !important;
+}
+
+.ui-state-default[role="columnheader"] {
+	color: #ffffff !important;
+	background: #475f7b !important;
+}
+
+.ui-column-title {
+	color: #ffffff !important;
+	background: #475f7b !important;
+}
+
+.ui-datepicker-header {
+	color: #ffffff !important;
+	background: #475f7b !important;
+}
+
+.ui-datepicker-header #span {
+	color: #ffffff !important;
+}
+</style>
+	<h:outputText value="&lt;!--[if gte IE 9]&gt;" escape="false" />
+	<style type="text/css">
+.top-alignment {
+	vertical-align: top;
+}
+
+.ui-tabs-top .ui-tabs-nav li, .ui-tabs .ui-tabs-nav li {
+	margin-bottom: 0px !important;
+}
+
+.colMantenimientoBasicoIzquierda {
+	width: 30%;
+	vertical-align: top;
+}
+
+.colMantenimientoBasicoDerecha {
+	width: 70%;
+	vertical-align: top;
+}
+
+#menu-portlets-cover {
+	background-color: #F2F4F4;
+}
+</style>
+
+
+	<h:outputText value="&lt;![endif]--&gt;" escape="false" />
+
+	<ui:insert name="head" />
+
+</h:head>
+
+<h:body styleClass="hold-transition login-page">
+
+	<ui:include src="topbar.xhtml" />
+
+	<div id="menu-portlets-cover">
+		<ui:include src="leftmenu.xhtml" />
+	</div>
+
+	<div id="layout-portlets-cover">
+
+		<ui:insert name="content">
+               Template
+            </ui:insert>
+	</div>
+
+	<!--
+	<h:outputScript name="css/bower_components/jquery/dist/jquery.min.js" />
+	-->
+
+	<!-- jQuery 3 -->
+	<h:outputScript library="primefaces"
+		name="css/bower_components/jquery/dist/jquery.min.js" target="head" />
+	<!-- Bootstrap 3.3.7 -->
+
+	<h:outputScript
+		name="css/bower_components/bootstrap/dist/js/bootstrap.min.js" />
+
+	<!-- InputMask -->
+	<!-- 	<h:outputScript name="css/plugins/input-mask/jquery.inputmask.js" /> -->
+
+
+	<!-- 	<h:outputScript -->
+	<!-- 		name="css/plugins/input-mask/jquery.inputmask.date.extensions.js" /> -->
+	<!-- 	<h:outputScript -->
+	<!-- 		name="css/plugins/input-mask/jquery.inputmask.extensions.js" /> -->
+
+	<!-- date-range-picker -->
+	<!-- 	<h:outputScript name="css/bower_components/moment/min/moment.min.js" /> -->
+	<!-- 	<h:outputScript -->
+	<!-- 		name="css/bower_components/bootstrap-daterangepicker/daterangepicker.js" /> -->
+
+	<!-- bootstrap datepicker 
+	<h:outputScript
+		name="css/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js" />
+	-->
+	<!-- bootstrap color picker -->
+	<h:outputScript
+		name="css/bower_components/bootstrap-colorpicker/dist/js/bootstrap-colorpicker.min.js" />
+
+	<!-- bootstrap dataTable -->
+	<!-- 	<h:outputScript -->
+	<!-- 		name="css/bower_components/datatables.net/js/jquery.dataTables.min.js" /> -->
+	<!-- 	<h:outputScript -->
+	<!-- 		name="css/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js" /> -->
+
+	<!-- bootstrap time picker -->
+	<!-- 	<h:outputScript -->
+	<!-- 		name="css/plugins/timepicker/bootstrap-timepicker.min.js" /> -->
+
+	<!-- FastClick -->
+	<h:outputScript name="css/bower_components/fastclick/lib/fastclick.js" />
+	<!-- AdminLTE App -->
+	<h:outputScript name="css/dist/js/adminlte.min.js" />
+	<!-- Sparkline -->
+	<h:outputScript
+		name="css/bower_components/jquery-sparkline/dist/jquery.sparkline.min.js" />
+	<!-- jvectormap  -->
+	<h:outputScript
+		name="css/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js" />
+	<h:outputScript
+		name="css/plugins/jvectormap/jquery-jvectormap-world-mill-en.js" />
+	<!-- SlimScroll -->
+	<h:outputScript
+		name="css/bower_components/jquery-slimscroll/jquery.slimscroll.min.js" />
+	<!-- ChartJS -->
+	<!-- 	<h:outputScript name="css/bower_components/chart.js/Chart.js" /> -->
+	<!-- AdminLTE dashboard demo (This is only for demo purposes) -->
+	<!-- 	<h:outputScript name="css/dist/js/pages/dashboard2.js" /> -->
+	<!-- AdminLTE for demo purposes -->
+	<!-- 	<h:outputScript name="css/dist/js/demo.js" /> -->
+
+	<script type="text/javascript">
+ PrimeFaces.locales['es'] = {
+                closeText: 'Cerrar',
+                prevText: 'Anterior',
+                nextText: 'Siguiente',
+                monthNames: ['Enero','Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+                monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
+                dayNames: ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'],
+                dayNamesShort: ['Dom','Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+                dayNamesMin: ['D','L','M','M','J','V','S'],
+                weekHeader: 'Semana',
+                firstDay: 1,
+                isRTL: false,
+                showMonthAfterYear: false,
+                yearSuffix: '',
+                timeOnlyTitle: 'Sólo hora',
+                timeText: 'Tiempo',
+                hourText: 'Hora',
+                minuteText: 'Minuto',
+                secondText: 'Segundo',
+                currentText: 'Fecha actual',
+                ampm: false,
+                month: 'Mes',
+                week: 'Semana',
+                day: 'Día',
+                allDayText : 'Todo el día',
+                aria: {
+                    'datatable.sort.ASC': 'Ascendente',
+                    'datatable.sort.DESC': 'Descendente',
+                    'datatable.sort.SORT_LABEL': 'Ordenar'
+                	}
+        };
+</script>
+
+
+	<h:outputStylesheet name="css/font-icon-layout.css"
+		library="sentinel-layout" />
+	<h:outputStylesheet name="css/sentinel-layout.css"
+		library="sentinel-layout" />
+	<h:outputStylesheet name="css/core-layout.css"
+		library="sentinel-layout" />
+	<h:outputStylesheet name="css/ubicaciones.css" library="sypsoft" />
+
+
+
+</h:body>
+
+</html>

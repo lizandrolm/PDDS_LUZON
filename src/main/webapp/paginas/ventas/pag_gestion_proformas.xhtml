@@ -1,0 +1,4687 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	template="/WEB-INF/template.xhtml">
+	<ui:define name="head">
+		<script type="text/javascript">
+    function autAjustePantalla(idDialog){ 
+        document.getElementById(idDialog).style.height = Math.floor(window.innerHeight * 0.7)+"px";
+        document.getElementById(idDialog).style.top= "104px";                        
+}
+
+    function autAjustePantLog(idDialog){ 
+        document.getElementById(idDialog).style.height = Math.floor(window.innerHeight * 0.5)+"px";
+        document.getElementById(idDialog).style.top= "104px";                        
+}
+</script>
+
+		<style type="text/css">
+.dlgCss {
+	background-color: #F6FAF1;
+}
+
+td.centerColum {
+	text-align: center;
+}
+
+.ui-dialog-content {
+	overflow: hidden !important;
+}
+
+.tab1 {
+	background-color: #3c8dbc !important;
+}
+
+.ui-tabs-top .ui-tabs-nav {
+	border-bottom: solid 1px #1578c9;
+	border-bottom-right-radius: 0px;
+	border-bottom-left-radius: 0px;
+	border: solid 0px #175787 !important;
+	font-weight: normal;
+	background: #1578c9;
+	background: -moz-linear-gradient(top, #1578c9 0%, #0b66b1 100%);
+	background: -webkit-gradient(left top, left bottom, color-stop(0%, #1578c9),
+		color-stop(100%, #0b66b1));
+	background: -webkit-linear-gradient(top, #f4f4f4 0%, #f4f4f4 100%);
+	background: -o-linear-gradient(top, #1578c9 0%, #0b66b1 100%);
+	background: -ms-linear-gradient(top, #1578c9 0%, #0b66b1 100%);
+	background: linear-gradient(to bottom, #f4f4f4 0%, #fbfcfd 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1578c9',
+		endColorstr='#0b66b1', GradientType=0);
+}
+
+.ui-chkbox .ui-chkbox-box {
+	width: 21px;
+	height: 19px;
+	display: inline-block;
+	-moz-border-radius: 2px;
+	-webkit-border-radius: 2px;
+	border-radius: 2px;
+}
+
+.ui-chkbox .ui-chkbox-box {
+	background: none;
+	box-shadow: none;
+	margin-right: 5px;
+	margin-top: 0px;
+	color: #287cc1;
+	border: solid 3px #0b66b1;
+	cursor: pointer;
+}
+
+.ui-tabs-top .ui-tabs-panels {
+	background-color: transparent;
+	margin: -1px 0px 3px 0px;
+	border: solid 1px #FBFCFD;
+	color: #020202;
+	background-image: none !important;
+}
+</style>
+	</ui:define>
+
+	<ui:define name="content">
+		<h:form id="form">
+			<p:ajaxStatus onstart="PF('statusDialog').show()"
+				onsuccess="PF('statusDialog').hide()" />
+
+			<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+				closable="false" resizable="false" showHeader="false">
+				<p:graphicImage name="/imagenes/barra_ajax.gif" />
+			</p:dialog>
+
+			<p:messages globalOnly="false" id="msjGeneral" showDetail="false" />
+
+			<p:contextMenu style="width: 200px; color: black" id="ctmMenu">
+				<p:menuitem value="Log de modificaciones" id="idLogMod"
+					actionListener="#{proformasAprobRechMb.consultaLogModificaciones}"
+					update=":formHistProf:tblHistProformas" icon="ui-icon-newwin"
+					style="color: black">
+				</p:menuitem>
+			</p:contextMenu>
+
+			<section class="content-header">
+				<h1>
+					<h:outputLabel style="color:#000000" value="Gestión de Proformas" />
+				</h1>
+			</section>
+
+			<section class="container-fluid">
+				<div class="box-body">
+					<div class="row">
+						<div class="col-lg-12 col-md-12">
+							<div class="box box-info">
+								<div class="box-header with-border">
+									<h3 class="box-title">Criterios de búsqueda</h3>
+								</div>
+								<h:form id="formBuscarFechas">
+									<div class="box-body">
+										<div class="form-group">
+											<div class="row">
+												<div class="col-lg-4 col-md-6 col-sm-6">
+													<div class="col-lg-3 col-md-3">
+														<h:outputLabel style="color:#000000" value="Fecha Desde: "
+															for="fechDesde" />
+													</div>
+													<div class="col-lg-9 col-md-9">
+														<p:calendar id="fechDesde" locale="es" required="true"
+															requiredMessage="Fecha no debe ser nula" showOn="button"
+															value="#{proformasAprobRechMb.fechaDesde}" mask="true"
+															pattern="dd/MM/yyyy" />
+													</div>
+												</div>
+												<div class="col-lg-4 col-md-6 col-sm-6">
+													<div class="col-lg-3 col-md-3">
+														<h:outputLabel style="color:#000000" value="Fecha Hasta: "
+															for="fechHasta" />
+													</div>
+													<div class="col-lg-9 col-md-9">
+														<p:calendar id="fechHasta" locale="es" required="true"
+															requiredMessage="Fecha no debe ser nula" showOn="button"
+															value="#{proformasAprobRechMb.fechaHasta}"
+															pattern="dd/MM/yyyy" />
+													</div>
+												</div>
+												<div class="col-lg-4 col-md-5">
+													<div class="col-lg-3">
+														<h:outputLabel style="color:#000000" value="Estado: " />
+													</div>
+													<div class="col-lg-8">
+														<h:selectOneMenu styleClass="form-control"
+															value="#{proformasAprobRechMb.estadoProforma}">
+															<f:selectItem itemLabel="Todas" itemValue="T" />
+															<f:selectItem itemLabel="Aprobadas" itemValue="A" />
+															<f:selectItem itemLabel="Rechazadas" itemValue="R" />
+															<f:selectItem itemLabel="Pendientes" itemValue="P" />
+														</h:selectOneMenu>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="form-group">
+											<div class="row">
+												<div class="col-lg-4 col-md-5">
+													<div class="col-lg-3">
+														<h:outputLabel style="color:#000000"
+															value="C.I. Paciente: " />
+													</div>
+													<div class="col-lg-8">
+														<p:inputText id="txtNumIDPaciente"
+															value="#{proformasAprobRechMb.numeroIdPaciente}"
+															styleClass="form-control" />
+													</div>
+												</div>
+												<div class="col-lg-4 col-md-5">
+													<div class="col-lg-3">
+														<h:outputLabel style="color:#000000"
+															value="C.I. Cliente: " />
+													</div>
+													<div class="col-lg-8">
+														<p:inputText id="txtNumIDCliente"
+															value="#{proformasAprobRechMb.numeroIdCliente}"
+															styleClass="form-control" />
+													</div>
+												</div>
+												<div class="col-lg-4 col-md-5">
+													<div class="col-lg-3">
+														<h:outputLabel style="color:#000000" value="Sucursal: " />
+													</div>
+													<div class="col-lg-8">
+														<h:selectOneMenu id="listSucurs"
+															value="#{proformasAprobRechMb.sucursal}" dynamic="true"
+															styleClass="form-control" placeholder="Sucursal">
+															<f:selectItem itemLabel="Todas" itemValue="T" />
+															<f:selectItems
+																value="#{proformasAprobRechMb.obtenerListSucursalesLog(loginMb.username)}" />
+														</h:selectOneMenu>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="box-footer">
+											<h:commandButton id="btnBuscar" value="Buscar"
+												actionListener="#{proformasAprobRechMb.Buscar()}"
+												class="btn btn-primary"
+												update="#{p:component('tblProformas')}" />
+										</div>
+									</div>
+								</h:form>
+							</div>
+						</div>
+						<div class="col-md-12">
+							<div class="box box-primary">
+								<p:dataTable var="proforma" id="tblProformas" reflow="true"
+									widgetVar="tblProformas" styleClass="table table-bordered"
+									value="#{proformasAprobRechMb.listaCabProforma}"
+									paginator="true" rows="10"
+									emptyMessage="Seleccione criterios de busqueda">
+
+									<p:column headerText="Id proforma" styleClass="centerColum">
+										<h:outputText value="#{proforma.idProforma}" />
+									</p:column>
+
+									<p:column headerText="Identificación Paciente"
+										styleClass="centerColum">
+										<h:outputText value="#{proforma.idPacienteProf.numDocumento}" />
+									</p:column>
+
+									<p:column headerText="Paciente" styleClass="centerColum">
+										<h:outputText
+											value="#{proforma.idPacienteProf.nombresCompletos}" />
+									</p:column>
+
+									<p:column headerText="Identificación Cliente"
+										styleClass="centerColum">
+										<h:outputText value="#{proforma.idClienteProf.numDocumento}" />
+									</p:column>
+
+									<p:column headerText="Cliente" styleClass="centerColum">
+										<h:outputText
+											value="#{proforma.idClienteProf.nombresCompletos}" />
+									</p:column>
+
+									<p:column headerText="Fecha de Creación"
+										styleClass="centerColum">
+										<h:outputText value="#{proforma.fechaCreacionStr}">
+											<f:convertDateTime pattern="dd/MM/yyyy" />
+										</h:outputText>
+									</p:column>
+
+									<p:column headerText="Fecha de Vencimiento"
+										styleClass="centerColum">
+										<h:outputText value="#{proforma.fechaVencimientoStr}">
+											<f:convertDateTime pattern="dd/MM/yyyy" />
+										</h:outputText>
+									</p:column>
+
+									<p:column headerText="Estado" styleClass="centerColum">
+										<h:outputText
+											class="#{proforma.estadoProformaAproRech eq 'P' ? 'label label-warning' : proforma.estadoProformaAproRech eq 'A' ? 'label label-success' : proforma.estadoProformaAproRech eq 'F' ? 'label label-primary' : proforma.estadoProformaAproRech eq 'PD' ? 'label label-success' : proforma.estadoProformaAproRech eq 'VR' ? 'label label-success' : 'label label-danger'}"
+											value="#{proforma.estadoProformaAproRech eq 'P' ? 'Pendiente' : proforma.estadoProformaAproRech eq 'A' ? 'Aceptado' : proforma.estadoProformaAproRech eq 'F' ? 'Facturado' :proforma.estadoProformaAproRech eq 'PD'?'Pendiente Desapacho': proforma.estadoProformaAproRech eq 'VR'? 'Venta Referido' :'Rechazado'}">
+										</h:outputText>
+									</p:column>
+
+									<p:column headerText="Tipo de Pago" styleClass="centerColum">
+										<p:repeat var="tipoPago"
+											value="#{proforma.formaPagoProformas}">
+											<h:outputText value="#{tipoPago.medioPago}" />
+											<br />
+										</p:repeat>
+									</p:column>
+
+									<p:column headerText="Ver Detalle" styleClass="centerColum">
+										<p:commandButton icon="ui-icon-bookmark" id="btnVerDetalle"
+											title="Permite ver detalle de la factura"
+											actionListener="#{proformasAprobRechMb.onRowSelectFactura(proforma)}"
+											update="#{p:component('pnlDialog')}, #{p:component('pnlDialogSc')},#{p:component('pnlDialogChq')},#{p:component('pnlDialogConv')},#{p:component('pnlDialogOSAprb')},#{p:component('pnlDlgProcedimiento')}, #{p:component('pnlDlgListPrecio')}, #{p:component('pnlDlgActFijo')}, #{p:component('pnlDialogEmp')}, #{p:component('pnlDlgReferidos')}" />
+									</p:column>
+								</p:dataTable>
+							</div>
+						</div>
+					</div>
+				</div>
+				<p:dialog header="Detalle Proforma Empleado"
+					widgetVar="dlgDetalleEmpleado" id="idDlgDetalleEmpleado"
+					responsive="true" resizable="false" hideEffect="clip" modal="true"
+					showEffect="clip" maximizable="true" draggable="false" width="57%"
+					height="57%"
+					onShow="autAjustePantalla('form:idDlgDetalleEmpleado')">
+
+					<p:ajax event="close"
+						listener="#{proformasAprobRechMb.seteaSelectedProforma}" />
+
+					<p:scrollPanel mode="native" style="width:100%;height:96%">
+						<p:panel toggleSpeed="500" closeSpeed="500"
+							widgetVar="panelDetalleEmpleado" style="margin-bottom:20px">
+							<h:panelGroup id="pnlDialogEmp">
+								<div class="box-body">
+									<div class="row">
+										<div class="col-md-6">
+											<div class="box box-info">
+												<div class="box-header with-border">
+													<h3 class="box-title">Datos Pacientes</h3>
+												</div>
+												<div class="box-body form-horizontal">
+													<div class="form-group">
+														<h:outputLabel style="color:#000000" class="col-sm-5"
+															value="Número de identificación:" />
+														<div class="col-sm-7">
+															<h:inputText id="txtNumDocPacEmp"
+																styleClass="form-control" disabled="true"
+																style="text-align:center"
+																value="#{proformasAprobRechMb.selectedProformas.idPacienteProf.numDocumento}" />
+														</div>
+													</div>
+													<div class="form-group">
+														<h:outputLabel style="color:#000000" value="Paciente:"
+															class="col-sm-5" />
+														<div class="col-sm-7">
+															<h:inputText id="txtNombresPacEmp"
+																style="text-align:center"
+																value="#{proformasAprobRechMb.selectedProformas.idPacienteProf.nombresCompletos}"
+																styleClass="form-control" disabled="true" />
+														</div>
+													</div>
+													<div class="form-group">
+														<h:outputLabel style="color:#000000"
+															value="Correo Electrónico:" class="col-sm-5" />
+														<div class="col-sm-7">
+															<h:inputText id="txtMailPacEmp" style="text-align:center"
+																value="#{proformasAprobRechMb.selectedProformas.idPacienteProf.email}"
+																styleClass="form-control" disabled="true" />
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="col-md-6">
+											<div class="box box-info">
+												<div class="box-header with-border">
+													<h3 class="box-title">Datos Clientes</h3>
+												</div>
+												<div class="box-body form-horizontal">
+													<div class="form-group">
+														<h:outputLabel style="color:#000000" class="col-sm-5"
+															value="Número de identificación:" />
+														<div class="col-sm-7">
+															<h:inputText id="txtNumDocEmp" styleClass="form-control"
+																disabled="true" style="text-align:center"
+																value="#{proformasAprobRechMb.selectedProformas.idClienteProf.numDocumento}" />
+														</div>
+													</div>
+													<div class="form-group">
+														<h:outputLabel style="color:#000000" class="col-sm-5"
+															value="Cliente:" />
+														<div class="col-sm-7">
+															<h:inputText id="txtNombresEmp" style="text-align:center"
+																value="#{proformasAprobRechMb.selectedProformas.idClienteProf.nombresCompletos}"
+																styleClass="form-control" disabled="true" />
+														</div>
+													</div>
+													<div class="form-group">
+														<h:outputLabel style="color:#000000"
+															value="Correo Electrónico:" class="col-sm-5" />
+														<div class="col-sm-7">
+															<h:inputText id="txtMailEmp" style="text-align:center"
+																value="#{proformasAprobRechMb.selectedProformas.idClienteProf.email}"
+																styleClass="form-control" disabled="true" />
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="nav-tabs-custom">
+
+											<p:tabView dynamic="true" cache="true"
+												activeIndex="#{proformasAprobRechMb.idxTabView}">
+												<p:tab id="tab0" title="Especialidad" titleStyleClass="tab1">
+													<p:dataTable var="factEspecialidad" id="tblDetalleFactura"
+														widgetVar="tblDetalleFactura"
+														emptyMessage="No se ha seleccionado Medico"
+														value="#{proformasAprobRechMb.listDetProfEsp}"
+														scrollable="true" scrollHeight="150"
+														style="margin-bottom:20px">
+
+														<p:columnGroup type="header">
+															<p:column headerText="Servicio"
+																style="#{loginMb.styleTable}" />
+															<p:column headerText="Médico"
+																style="#{loginMb.styleTable}" />
+															<p:column headerText="Fecha de Atención"
+																style="#{loginMb.styleTable}" />
+															<p:column headerText="Valor Unitario"
+																style="#{loginMb.styleTable}" />
+															<p:column headerText="Cantidad"
+																style="#{loginMb.styleTable}" />
+															<p:column headerText="Precio Sin IVA"
+																style="#{loginMb.styleTable}" />
+														</p:columnGroup>
+
+														<p:column>
+															<h:outputText value="#{factEspecialidad.especialidad}" />
+														</p:column>
+														<p:column>
+															<h:outputText
+																value="#{factEspecialidad.idMedicoProf.nombreCompleto}" />
+														</p:column>
+														<p:column>
+															<h:outputText
+																value="#{factEspecialidad.fechaAtencionStr}" />
+														</p:column>
+														<p:column>
+															<center>
+																<h:outputText value="#{factEspecialidad.precio}">
+																	<f:convertNumber pattern="0.00" />
+																</h:outputText>
+															</center>
+														</p:column>
+														<p:column>
+															<center>
+																<h:outputText value="#{factEspecialidad.cantidad}" />
+															</center>
+														</p:column>
+														<p:column>
+															<center>
+																<h:outputText value="#{factEspecialidad.precioTotal}">
+																	<f:convertNumber pattern="0.00" />
+																</h:outputText>
+															</center>
+														</p:column>
+													</p:dataTable>
+												</p:tab>
+												<p:tab id="tab1" title="Farmacia" titleStyleClass="tab1">
+													<div class="row no-gutters">
+														<div class="col-12 col-sm-6 col-md-6"></div>
+														<div class="col-6 col-md-6">
+															<div class="col-sm-1" />
+															<p:spacer width="13" height="0" />
+															<p:selectBooleanCheckbox disabled="true"
+																value="#{proformasAprobRechMb.selectedProformas.stockComprometido}"
+																itemLabel="Stock Comprometido" />
+														</div>
+													</div>
+													<p:dataTable var="factDet" id="tblDetalleProforma"
+														widgetVar="tblDetalleProforma" scrollRows="2"
+														emptyMessage="No se ha seleccionado Items"
+														scrollHeight="150"
+														value="#{proformasAprobRechMb.listDetProfFarm}"
+														scrollable="true" style="margin-bottom:20px">
+
+														<p:columnGroup type="header">
+															<p:column headerText="Descripción/Articulo"
+																style="#{loginMb.styleTable}" />
+															<p:column headerText="Valor Unitario"
+																style="#{loginMb.styleTable}" />
+															<p:column headerText="Cantidad"
+																style="#{loginMb.styleTable}" />
+															<p:column headerText="Precio Sin IVA"
+																style="#{loginMb.styleTable}" />
+														</p:columnGroup>
+
+														<p:column>
+															<h:outputText value="#{factDet.descripcionItems}" />
+														</p:column>
+														<p:column>
+															<center>
+																<h:outputText value="#{factDet.precio}" />
+															</center>
+														</p:column>
+														<p:column>
+															<center>
+																<h:outputText value="#{factDet.cantidad}" />
+															</center>
+														</p:column>
+														<p:column>
+															<center>
+																<h:outputText value="#{factDet.precioTotal}">
+																	<f:convertNumber pattern="0.00" />
+																</h:outputText>
+															</center>
+														</p:column>
+													</p:dataTable>
+												</p:tab>
+											</p:tabView>
+										</div>
+
+									</div>
+									<div class="form-group">
+										<div class="row">
+											<div class="box-body form-horizontal">
+												<div class="col-lg-6">
+													<div class="form-group">
+														<h:outputLabel style="color:#000000" value="Notas:"
+															class="col-sm-1" />
+														<div class="col-sm-11">
+															<h:inputTextarea id="txtNotasEmp"
+																styleClass="form-control" disabled="true"
+																value="#{proformasAprobRechMb.selectedProformas.notas}" />
+														</div>
+													</div>
+													<div class="form-group">
+														<div class="col-sm-4" />
+														<div class="col-sm-6">
+															<p:commandButton icon="ui-icon-folder-collapsed"
+																id="btnVerDetOb" value="Ver Historico"
+																rendered="#{proformasAprobRechMb.aprobRechProformaValor ? false : true}"
+																actionListener="#{proformasAprobRechMb.consultarHistoricoObraSocial(proformasAprobRechMb.selectedProformas.idPacienteProf,'P')}"
+																oncomplete="PF('tblDatosHist').filter()"
+																title="Permite ver historial del paciente por obra social aceptada" />
+														</div>
+													</div>
+													<div class="form-group">
+														<div class="row">
+															<div class="col-lg-6">
+																<h:outputLabel style="color:#000000"
+																	value="#{proformasAprobRechMb.descripcionAprobRechValor}"
+																	class="col-sm-4" />
+																<div class="col-sm-6"></div>
+															</div>
+															<div class="col-lg-6">
+																<h:outputLabel style="color:#000000"
+																	rendered="#{proformasAprobRechMb.aprobRechProformaValor ? false : true}"
+																	value="Porcentaje aprobado" class="col-sm-4" />
+																<div class="col-sm-6"></div>
+															</div>
+														</div>
+													</div>
+													<div class="form-group">
+														<div class="row">
+															<div class="col-lg-12">
+																<div class="col-sm-3"></div>
+																<div class="col-sm-3"></div>
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="col-lg-6">
+													<div class="row">
+														<div class="col-lg-4" />
+														<div class="col-lg-8">
+															<p:panel>
+																<div class="form-group" />
+																<div class="form-group">
+																	<h:outputLabel style="color:#000000" value="Subtotal:"
+																		class="col-sm-5" />
+																	<div class="col-sm-7">
+																		<h:inputText id="txtSubtotalEmp"
+																			style="text-align: center"
+																			value="#{proformasAprobRechMb.selectedProformas.subtotal}"
+																			styleClass="form-control" disabled="true">
+																			<f:convertNumber pattern="0.00" />
+																		</h:inputText>
+																	</div>
+																</div>
+																<div class="form-group">
+																	<h:outputLabel style="color:#000000"
+																		value="IVA #{proformasAprobRechMb.txtValorIVA}%:"
+																		class="col-sm-5" />
+																	<div class="col-sm-7">
+																		<h:inputText id="txtIvaEmp" style="text-align: center"
+																			value="#{proformasAprobRechMb.selectedProformas.iva}"
+																			styleClass="form-control" disabled="true">
+																			<f:convertNumber pattern="0.00" />
+																		</h:inputText>
+																	</div>
+																</div>
+																<div class="form-group">
+																	<h:outputLabel style="color:#000000" value="IVA 0%:"
+																		class="col-sm-5" />
+																	<div class="col-sm-7">
+																		<h:inputText id="txtIvaCeroEmp"
+																			style="text-align: center"
+																			value="#{proformasAprobRechMb.selectedProformas.ivaCero}"
+																			styleClass="form-control" disabled="true">
+																			<f:convertNumber pattern="0.00" />
+																		</h:inputText>
+																	</div>
+																</div>
+																<div class="form-group">
+																	<h:outputLabel style="color:#000000"
+																		value="Valor Total:" class="col-sm-5" />
+																	<div class="col-sm-7">
+																		<h:inputText id="txtValorTotalEmp"
+																			style="text-align: center"
+																			value="#{proformasAprobRechMb.selectedProformas.valorTotal}"
+																			styleClass="form-control" disabled="true">
+																			<f:convertNumber pattern="0.00" />
+																		</h:inputText>
+																	</div>
+																</div>
+															</p:panel>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</h:panelGroup>
+						</p:panel>
+					</p:scrollPanel>
+				</p:dialog>
+				<p:dialog header="Detalle Proforma" widgetVar="dlgDetalle"
+					id="idDlgDetalle" draggable="false" responsive="true"
+					resizable="false" hideEffect="clip" modal="true" showEffect="clip"
+					maximizable="true" width="57%" height="57%"
+					onShow="autAjustePantalla('form:idDlgDetalle')">
+
+					<p:ajax event="close"
+						listener="#{proformasAprobRechMb.seteaSelectedProforma}" />
+
+					<p:scrollPanel mode="native" style="width:100%;height:96%">
+						<p:panel toggleSpeed="500" closeSpeed="500"
+							widgetVar="panelDetalle" style="margin-bottom:20px">
+							<h:panelGroup id="pnlDialog">
+								<div class="box-body">
+									<div class="row">
+										<div class="col-md-6">
+											<div class="box box-info">
+												<div class="box-header with-border">
+													<h3 class="box-title">Datos Pacientes</h3>
+												</div>
+												<div class="box-body form-horizontal">
+													<div class="form-group">
+														<h:outputLabel style="color:#000000" class="col-sm-5"
+															value="Número de identificación:" />
+														<div class="col-sm-7">
+															<h:inputText id="txtNumDocPac" styleClass="form-control"
+																disabled="true" style="text-align:center"
+																value="#{proformasAprobRechMb.selectedProformas.idPacienteProf.numDocumento}" />
+														</div>
+													</div>
+													<div class="form-group">
+														<h:outputLabel style="color:#000000" value="Paciente:"
+															class="col-sm-5" />
+														<div class="col-sm-7">
+															<h:inputText id="txtNombresPac" style="text-align:center"
+																value="#{proformasAprobRechMb.selectedProformas.idPacienteProf.nombresCompletos}"
+																styleClass="form-control" disabled="true" />
+														</div>
+													</div>
+													<div class="form-group">
+														<h:outputLabel style="color:#000000"
+															value="Correo Electrónico:" class="col-sm-5" />
+														<div class="col-sm-7">
+															<h:inputText id="txtMailPac" style="text-align:center"
+																value="#{proformasAprobRechMb.selectedProformas.idPacienteProf.email}"
+																styleClass="form-control" disabled="true" />
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="col-md-6">
+											<div class="box box-info">
+												<div class="box-header with-border">
+													<h3 class="box-title">Datos Clientes</h3>
+												</div>
+												<div class="box-body form-horizontal">
+													<div class="form-group">
+														<h:outputLabel style="color:#000000" class="col-sm-5"
+															value="Número de identificación:" />
+														<div class="col-sm-7">
+															<h:inputText id="txtNumDoc" styleClass="form-control"
+																disabled="true" style="text-align:center"
+																value="#{proformasAprobRechMb.selectedProformas.idClienteProf.numDocumento}" />
+														</div>
+													</div>
+													<div class="form-group">
+														<h:outputLabel style="color:#000000" class="col-sm-5"
+															value="Cliente:" />
+														<div class="col-sm-7">
+															<h:inputText id="txtNombres" style="text-align:center"
+																value="#{proformasAprobRechMb.selectedProformas.idClienteProf.nombresCompletos}"
+																styleClass="form-control" disabled="true" />
+														</div>
+													</div>
+													<div class="form-group">
+														<h:outputLabel style="color:#000000"
+															value="Correo Electrónico:" class="col-sm-5" />
+														<div class="col-sm-7">
+															<h:inputText id="txtMail" style="text-align:center"
+																value="#{proformasAprobRechMb.selectedProformas.idClienteProf.email}"
+																styleClass="form-control" disabled="true" />
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="nav-tabs-custom">
+
+											<p:tabView dynamic="true" cache="true"
+												activeIndex="#{proformasAprobRechMb.idxTabView}">
+												<p:tab id="tab0" title="Especialidad" titleStyleClass="tab1">
+													<p:dataTable var="factEspecialidad" id="tblDetalleFactura"
+														widgetVar="tblDetalleFactura"
+														emptyMessage="No se ha seleccionado Medico"
+														value="#{proformasAprobRechMb.listDetProfEsp}"
+														scrollable="true" scrollHeight="150"
+														style="margin-bottom:20px">
+
+														<p:columnGroup type="header">
+															<p:column headerText="Servicio"
+																style="#{loginMb.styleTable}" />
+															<p:column headerText="Médico"
+																style="#{loginMb.styleTable}" />
+															<p:column headerText="Fecha de Atención"
+																style="#{loginMb.styleTable}" />
+															<p:column headerText="Valor Unitario"
+																style="#{loginMb.styleTable}" />
+															<p:column headerText="Cantidad"
+																style="#{loginMb.styleTable}" />
+															<p:column headerText="Precio Sin IVA"
+																style="#{loginMb.styleTable}" />
+														</p:columnGroup>
+
+														<p:column>
+															<h:outputText value="#{factEspecialidad.especialidad}" />
+														</p:column>
+														<p:column>
+															<h:outputText
+																value="#{factEspecialidad.idMedicoProf.nombreCompleto}" />
+														</p:column>
+														<p:column>
+															<h:outputText
+																value="#{factEspecialidad.fechaAtencionStr}" />
+														</p:column>
+														<p:column>
+															<center>
+																<h:outputText value="#{factEspecialidad.precio}">
+																	<f:convertNumber pattern="0.00" />
+																</h:outputText>
+															</center>
+														</p:column>
+														<p:column>
+															<center>
+																<h:outputText value="#{factEspecialidad.cantidad}" />
+															</center>
+														</p:column>
+														<p:column>
+															<center>
+																<h:outputText value="#{factEspecialidad.precioTotal}">
+																	<f:convertNumber pattern="0.00" />
+																</h:outputText>
+															</center>
+														</p:column>
+													</p:dataTable>
+												</p:tab>
+												<p:tab id="tab1" title="Farmacia" titleStyleClass="tab1">
+													<div class="row no-gutters">
+														<div class="col-12 col-sm-6 col-md-6"></div>
+														<div class="col-6 col-md-6">
+															<div class="col-sm-1" />
+															<p:spacer width="13" height="0" />
+															<p:selectBooleanCheckbox disabled="true"
+																value="#{proformasAprobRechMb.selectedProformas.stockComprometido}"
+																itemLabel="Stock Comprometido" />
+														</div>
+													</div>
+													<p:dataTable var="factDet" id="tblDetalleProforma"
+														widgetVar="tblDetalleProforma" scrollRows="2"
+														emptyMessage="No se ha seleccionado Items"
+														scrollHeight="150"
+														value="#{proformasAprobRechMb.listDetProfFarm}"
+														scrollable="true" style="margin-bottom:20px">
+
+														<p:columnGroup type="header">
+															<p:column headerText="Descripción/Articulo"
+																style="#{loginMb.styleTable}" />
+															<p:column headerText="Valor Unitario"
+																style="#{loginMb.styleTable}" />
+															<p:column headerText="Cantidad"
+																style="#{loginMb.styleTable}" />
+															<p:column headerText="Precio Sin IVA"
+																style="#{loginMb.styleTable}" />
+														</p:columnGroup>
+
+														<p:column>
+															<h:outputText value="#{factDet.descripcionItems}" />
+														</p:column>
+														<p:column>
+															<center>
+																<h:outputText value="#{factDet.precio}" />
+															</center>
+														</p:column>
+														<p:column>
+															<center>
+																<h:outputText value="#{factDet.cantidad}" />
+															</center>
+														</p:column>
+														<p:column>
+															<center>
+																<h:outputText value="#{factDet.precioTotal}">
+																	<f:convertNumber pattern="0.00" />
+																</h:outputText>
+															</center>
+														</p:column>
+													</p:dataTable>
+												</p:tab>
+												<p:tab id="tab2" title="Datos Adicionales"
+													titleStyleClass="tab1">
+													<p:panel style="height:201px">
+														<div class="box-body form-horizontal">
+															<div class="col-lg-12">
+																<div class="form-group">
+																	<h:outputLabel style="color:#000000" value="Ingresos:"
+																		class="col-sm-2" />
+																	<div class="col-sm-8">
+																		<h:inputText id="txtIngreso" styleClass="form-control"
+																			value="#{proformasAprobRechMb.selectedProformas.ingresos}"
+																			disabled="#{proformasAprobRechMb.aprobRechProformaEstado}">
+																		</h:inputText>
+																	</div>
+																</div>
+																<div class="form-group">
+																	<h:outputLabel style="color:#000000"
+																		value="Origen de Ingresos:" class="col-sm-2" />
+																	<div class="col-sm-8">
+																		<h:inputText id="txtOriIngreso"
+																			styleClass="form-control"
+																			value="#{proformasAprobRechMb.selectedProformas.origenIngresos}"
+																			disabled="#{proformasAprobRechMb.aprobRechProformaEstado}">
+																		</h:inputText>
+																	</div>
+																</div>
+																<div class="form-group">
+																	<h:outputLabel style="color:#000000"
+																		value="Con quien vive el paciente:" class="col-sm-2" />
+																	<div class="col-sm-8">
+																		<h:inputText id="txtConvivePac"
+																			styleClass="form-control"
+																			value="#{proformasAprobRechMb.selectedProformas.convivePaciente}"
+																			disabled="#{proformasAprobRechMb.aprobRechProformaEstado}">
+																		</h:inputText>
+																	</div>
+																</div>
+															</div>
+														</div>
+													</p:panel>
+												</p:tab>
+											</p:tabView>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="row">
+											<div class="box-body form-horizontal">
+												<div class="col-lg-6">
+													<div class="form-group">
+														<h:outputLabel style="color:#000000" value="Notas:"
+															class="col-sm-1" />
+														<div class="col-sm-11">
+															<h:inputTextarea id="txtNotas" styleClass="form-control"
+																disabled="true"
+																value="#{proformasAprobRechMb.selectedProformas.notas}" />
+														</div>
+													</div>
+													<div class="form-group">
+														<div class="col-sm-4" />
+														<div class="col-sm-6">
+															<p:commandButton icon="ui-icon-folder-collapsed"
+																id="btnVerDetalle" value="Ver Historico"
+																rendered="#{proformasAprobRechMb.aprobRechProformaValor ? false : true}"
+																actionListener="#{proformasAprobRechMb.consultarHistoricoObraSocial(proformasAprobRechMb.selectedProformas.idPacienteProf,'P')}"
+																oncomplete="PF('tblDatosHist').filter()"
+																title="Permite ver historial del paciente por obra social aceptada" />
+														</div>
+													</div>
+													<div class="form-group">
+														<div class="row">
+															<div class="col-lg-6 col-md-6 col-sm-8">
+																<h:outputLabel style="color:#000000"
+																	value="#{proformasAprobRechMb.descripcionAprobRechValor}"
+																	class="col-lg-5 col-sm-5" />
+																<div class="col-lg-7 col-sm-7">
+																	<p:inputText styleClass="ui-lg-12 ui-md-12 ui-sm-8"
+																		value="#{proformasAprobRechMb.valorAprobado}"
+																		disabled="true">
+																		<f:convertNumber pattern="0.00" />
+																	</p:inputText>
+																</div>
+															</div>
+															<div class="col-lg-6 col-md-6 col-sm-8">
+																<h:outputLabel style="color:#000000"
+																	rendered="#{proformasAprobRechMb.aprobRechProformaValor ? false : true}"
+																	value="Porcentaje aprobado" class="col-lg-5 col-sm-5" />
+																<div class="col-lg-7 col-sm-7">
+																	<p:inputText disabled="true"
+																		styleClass="ui-lg-12 ui-md-12 ui-sm-8"
+																		value="#{proformasAprobRechMb.porcntajAprobado}"
+																		rendered="#{proformasAprobRechMb.aprobRechProformaValor ? false : true}" />
+																</div>
+															</div>
+														</div>
+													</div>
+													<div class="form-group">
+														<div class="row">
+															<div class="col-lg-12">
+																<div class="col-lg-3 col-sm-4">
+																	<p:commandButton value="Aprobar"
+																		update="#{p:component('tblProformas')}"
+																		disabled="true"
+																		actionListener="#{proformasAprobRechMb.aprobarRechazarProforma(proformasAprobRechMb.selectedProformas,'A')}" />
+																</div>
+																<div class="col-lg-3 col-sm-4">
+																	<p:commandButton value="Rechazar" disabled="true"
+																		update="#{p:component('tblProformas')}"
+																		actionListener="#{proformasAprobRechMb.aprobarRechazarProforma(proformasAprobRechMb.selectedProformas,'R')}" />
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="col-lg-6">
+													<div class="row">
+														<div class="col-lg-4" />
+														<div class="col-lg-8">
+															<p:panel>
+																<div class="form-group" />
+																<div class="form-group">
+																	<h:outputLabel style="color:#000000" value="Subtotal:"
+																		class="col-sm-5" />
+																	<div class="col-sm-7">
+																		<h:inputText id="txtSubtotal"
+																			style="text-align: center"
+																			value="#{proformasAprobRechMb.selectedProformas.subtotal}"
+																			styleClass="form-control" disabled="true">
+																			<f:convertNumber pattern="0.00" />
+																		</h:inputText>
+																	</div>
+																</div>
+																<div class="form-group">
+																	<h:outputLabel style="color:#000000"
+																		value="IVA #{proformasAprobRechMb.txtValorIVA}%:"
+																		class="col-sm-5" />
+																	<div class="col-sm-7">
+																		<h:inputText id="txtIva" style="text-align: center"
+																			value="#{proformasAprobRechMb.selectedProformas.iva}"
+																			styleClass="form-control" disabled="true">
+																			<f:convertNumber pattern="0.00" />
+																		</h:inputText>
+																	</div>
+																</div>
+																<div class="form-group">
+																	<h:outputLabel style="color:#000000" value="IVA 0%:"
+																		class="col-sm-5" />
+																	<div class="col-sm-7">
+																		<h:inputText id="txtIvaCero"
+																			style="text-align: center"
+																			value="#{proformasAprobRechMb.selectedProformas.ivaCero}"
+																			styleClass="form-control" disabled="true">
+																			<f:convertNumber pattern="0.00" />
+																		</h:inputText>
+																	</div>
+																</div>
+																<div class="form-group">
+																	<h:outputLabel style="color:#000000"
+																		value="Valor Total:" class="col-sm-5" />
+																	<div class="col-sm-7">
+																		<h:inputText id="txtValorTotal"
+																			style="text-align: center"
+																			value="#{proformasAprobRechMb.selectedProformas.valorTotal}"
+																			styleClass="form-control" disabled="true">
+																			<f:convertNumber pattern="0.00" />
+																		</h:inputText>
+																	</div>
+																</div>
+															</p:panel>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</h:panelGroup>
+						</p:panel>
+					</p:scrollPanel>
+				</p:dialog>
+
+				<p:dialog header="Historico Obra Social" widgetVar="dlgHOS"
+					draggable="false" responsive="true" hideEffect="clip" modal="true"
+					showEffect="clip" width="1300" height="500" resizable="false">
+					<p:dataTable var="datosHist" id="tblDatosHist"
+						sortBy="#{datosHist.fecha}" sortOrder="descending"
+						widgetVar="tblDatosHist" paginator="true" rows="10"
+						emptyMessage="No se ha encontrado registros"
+						value="#{proformasAprobRechMb.listaHistObraSocial}">
+
+						<p:column headerText="Número factura">
+							<center>
+								<h:outputText value="#{datosHist.numeroFactura}" />
+							</center>
+						</p:column>
+						<p:column headerText="Código S/N">
+							<center>
+								<h:outputText value="#{datosHist.codigoSocioNegocio}" />
+							</center>
+						</p:column>
+						<p:column headerText="Nombre S/N">
+							<center>
+								<h:outputText value="#{datosHist.nombre}" />
+							</center>
+						</p:column>
+						<p:column headerText="Descripción">
+							<center>
+								<h:outputText value="#{datosHist.descripcion}" />
+							</center>
+						</p:column>
+						<p:column headerText="Especialidad">
+							<center>
+								<h:outputText value="#{datosHist.especialidad}" />
+							</center>
+						</p:column>
+						<p:column headerText="Médico">
+							<center>
+								<h:outputText value="#{datosHist.medico}" />
+							</center>
+						</p:column>
+						<p:column headerText="Fecha" sortBy="#{datosHist.fecha}">
+							<center>
+								<h:outputText value="#{datosHist.fecha}" />
+							</center>
+						</p:column>
+						<p:column headerText="Valor Aprobado">
+							<center>
+								<h:outputText value="#{datosHist.valorProfAprobado}">
+									<f:convertNumber pattern="0.00" />
+								</h:outputText>
+							</center>
+						</p:column>
+						<p:column headerText="Valor Total Factura">
+							<center>
+								<h:outputText value="#{datosHist.valorTotalFact}">
+									<f:convertNumber pattern="0.00" />
+								</h:outputText>
+							</center>
+						</p:column>
+						<p:column headerText="Sucursal" sortBy="#{datosHist.sucursal}">
+							<center>
+								<h:outputText value="#{datosHist.sucursal}" />
+							</center>
+						</p:column>
+					</p:dataTable>
+				</p:dialog>
+
+				<p:dialog header="Detalle Proforma" widgetVar="dlgDetalleChq"
+					id="idDlgDetalleChq" draggable="false" resizable="false"
+					hideEffect="clip" modal="true" showEffect="clip" maximizable="true"
+					responsive="true" width="57%" height="57%"
+					onShow="autAjustePantalla('form:idDlgDetalleChq')">
+
+					<p:ajax event="close"
+						listener="#{proformasAprobRechMb.seteaSelectedProforma}" />
+
+					<p:scrollPanel mode="native" style="width:100%;height:96%">
+						<p:panel toggleSpeed="500" closeSpeed="500"
+							widgetVar="panelDetalleChq" style="margin-bottom:20px">
+							<h:panelGroup id="pnlDialogChq">
+								<div class="box-body">
+									<div class="row">
+										<div class="col-md-6">
+											<div class="box box-info">
+												<div class="box-header with-border">
+													<h3 class="box-title">Datos Pacientes</h3>
+												</div>
+												<div class="box-body form-horizontal">
+													<div class="form-group">
+														<h:outputLabel style="color:#000000" class="col-sm-5"
+															value="Número de identificación:" />
+														<div class="col-sm-7">
+															<h:inputText id="txtNumDocPacChq"
+																styleClass="form-control" disabled="true"
+																style="text-align:center"
+																value="#{proformasAprobRechMb.selectedProformas.idPacienteProf.numDocumento}" />
+														</div>
+													</div>
+													<div class="form-group">
+														<h:outputLabel style="color:#000000" value="Paciente:"
+															class="col-sm-5" />
+														<div class="col-sm-7">
+															<h:inputText id="txtNombresPacChq"
+																style="text-align:center"
+																value="#{proformasAprobRechMb.selectedProformas.idPacienteProf.nombresCompletos}"
+																styleClass="form-control" disabled="true" />
+														</div>
+													</div>
+													<div class="form-group">
+														<h:outputLabel style="color:#000000"
+															value="Tarjeta Afiliado:" class="col-sm-5" />
+														<div class="col-sm-7">
+															<h:selectOneMenu id="txtMailPacChq" disabled="true"
+																value="#{proformasAprobRechMb.selectedProformas.idPacienteProf.afiliadoTarjeta}"
+																styleClass="form-control">
+																<f:selectItem itemValue="N" itemLabel="No" />
+																<f:selectItem itemValue="Y" itemLabel="Si" />
+															</h:selectOneMenu>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="col-md-6">
+											<div class="box box-info">
+												<div class="box-header with-border">
+													<h3 class="box-title">Datos Clientes</h3>
+												</div>
+												<div class="box-body form-horizontal">
+													<div class="form-group">
+														<h:outputLabel style="color:#000000" class="col-sm-5"
+															value="Número de identificación:" />
+														<div class="col-sm-7">
+															<h:inputText id="txtNumDocChq" styleClass="form-control"
+																disabled="true" style="text-align:center"
+																value="#{proformasAprobRechMb.selectedProformas.idClienteProf.numDocumento}" />
+														</div>
+													</div>
+													<div class="form-group">
+														<h:outputLabel style="color:#000000" class="col-sm-5"
+															value="Cliente:" />
+														<div class="col-sm-7">
+															<h:inputText id="txtNombresChq" style="text-align:center"
+																value="#{proformasAprobRechMb.selectedProformas.idClienteProf.nombresCompletos}"
+																styleClass="form-control" disabled="true" />
+														</div>
+													</div>
+													<div class="form-group">
+														<h:outputLabel style="color:#000000"
+															value="Correo Electrónico:" class="col-sm-5" />
+														<div class="col-sm-7">
+															<h:inputText id="txtMailChq" style="text-align:center"
+																value="#{proformasAprobRechMb.selectedProformas.idClienteProf.email}"
+																styleClass="form-control" disabled="true" />
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="nav-tabs-custom">
+											<p:tabView dynamic="true" cache="true"
+												activeIndex="#{proformasAprobRechMb.idxTabView}">
+												<p:tab id="tab0" title="Especialidad" titleStyleClass="tab1">
+													<p:dataTable var="factEspecialidad"
+														id="tblDetalleFacturaChq" scrollHeight="150"
+														widgetVar="tblDetalleFacturaChq"
+														emptyMessage="No se ha seleccionado Medico"
+														value="#{proformasAprobRechMb.listDetProfEsp}"
+														scrollable="true" style="margin-bottom:20px">
+
+														<p:columnGroup type="header">
+															<p:column headerText="Servicio"
+																style="#{loginMb.styleTable}" />
+															<p:column headerText="Médico"
+																style="#{loginMb.styleTable}" />
+															<p:column headerText="Fecha de Atención"
+																style="#{loginMb.styleTable}" />
+															<p:column headerText="Valor Unitario"
+																style="#{loginMb.styleTable}" />
+															<p:column headerText="Cantidad"
+																style="#{loginMb.styleTable}" />
+															<p:column headerText="Precio Sin IVA"
+																style="#{loginMb.styleTable}" />
+														</p:columnGroup>
+
+														<p:column>
+															<h:outputText value="#{factEspecialidad.especialidad}" />
+														</p:column>
+														<p:column>
+															<h:outputText
+																value="#{factEspecialidad.idMedicoProf.nombreCompleto}" />
+														</p:column>
+														<p:column>
+															<h:outputText
+																value="#{factEspecialidad.fechaAtencionStr}" />
+														</p:column>
+														<p:column>
+															<center>
+																<h:outputText value="#{factEspecialidad.precio}">
+																	<f:convertNumber pattern="0.00" />
+																</h:outputText>
+															</center>
+														</p:column>
+														<p:column>
+															<center>
+																<h:outputText value="#{factEspecialidad.cantidad}" />
+															</center>
+														</p:column>
+														<p:column>
+															<center>
+																<h:outputText value="#{factEspecialidad.precioTotal}">
+																	<f:convertNumber pattern="0.00" />
+																</h:outputText>
+															</center>
+														</p:column>
+													</p:dataTable>
+												</p:tab>
+												<p:tab id="tab1" title="Farmacia" titleStyleClass="tab1">
+													<div class="row no-gutters">
+														<div class="col-12 col-sm-6 col-md-6"></div>
+														<div class="col-6 col-md-6">
+															<div class="col-sm-1" />
+															<p:spacer width="13" height="0" />
+															<p:selectBooleanCheckbox disabled="true"
+																value="#{proformasAprobRechMb.selectedProformas.stockComprometido}"
+																itemLabel="Stock Comprometido" />
+														</div>
+													</div>
+													<p:dataTable var="factDet" id="tblDetalleProformaChq"
+														widgetVar="tblDetalleProformaChq" scrollHeight="150"
+														emptyMessage="No se ha seleccionado Items"
+														value="#{proformasAprobRechMb.listDetProfFarm}"
+														scrollable="true" style="margin-bottom:20px">
+
+														<p:columnGroup type="header">
+															<p:column headerText="Descripción/Articulo"
+																style="#{loginMb.styleTable}" />
+															<p:column headerText="Valor Unitario"
+																style="#{loginMb.styleTable}" />
+															<p:column headerText="Cantidad"
+																style="#{loginMb.styleTable}" />
+															<p:column headerText="Precio Sin IVA"
+																style="#{loginMb.styleTable}" />
+														</p:columnGroup>
+
+														<p:column>
+															<h:outputText value="#{factDet.descripcionItems}" />
+														</p:column>
+														<p:column>
+															<center>
+																<h:outputText value="#{factDet.precio}" />
+															</center>
+														</p:column>
+														<p:column>
+															<center>
+																<h:outputText value="#{factDet.cantidad}" />
+															</center>
+														</p:column>
+														<p:column>
+															<center>
+																<h:outputText value="#{factDet.precioTotal}">
+																	<f:convertNumber pattern="0.00" />
+																</h:outputText>
+															</center>
+														</p:column>
+													</p:dataTable>
+												</p:tab>
+											</p:tabView>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="row">
+											<div class="col-lg-6">
+												<div class="box-body form-horizontal">
+													<div class="form-group">
+														<h:outputLabel style="color:#000000" value="Notas:"
+															class="col-sm-1" />
+														<div class="col-sm-11">
+															<h:inputTextarea id="txtNotasChq"
+																styleClass="form-control"
+																value="#{proformasAprobRechMb.auxNotas}" disabled="true">
+																<p:ajax event="blur"
+																	listener="#{proformasAprobRechMb.auxGuardaDescpNotas}" />
+															</h:inputTextarea>
+														</div>
+													</div>
+												</div>
+												<div class="box box-info">
+													<p:panel id="pnlFormaPago">
+														<p:dataTable var="formaPago" id="tblFormaPago"
+															widgetVar="tblFormaPago" scrollRows="3" editable="true"
+															editMode="cell"
+															emptyMessage="No se ha seleccionado forma de pago"
+															scrollHeight="80"
+															value="#{proformasAprobRechMb.listaFormaPago}"
+															scrollable="true" style="margin-bottom:20px">
+
+															<p:columnGroup type="header">
+																<p:column headerText="Medio de Pago"
+																	style="#{loginMb.styleTable}" />
+																<p:column headerText="Valor Recibido"
+																	style="#{loginMb.styleTable}" />
+															</p:columnGroup>
+
+															<p:column styleClass="centerColum">
+																<h:outputText id="txtMedioPagoOut"
+																	value="#{formaPago.medioPago}" />
+															</p:column>
+
+															<p:column styleClass="centerColum">
+																<h:outputText id="txtVlrFrmPagoOut"
+																	value="#{formaPago.valorFrmPago}">
+																	<f:convertNumber pattern="0.00" />
+																</h:outputText>
+															</p:column>
+														</p:dataTable>
+														<div class="input-group">
+															<div class="input-group-btn">
+																<p:commandButton value="Detalle Cheque"
+																	onclick="PF('dlgChq').show()"
+																	update="#{p:component('tblDtoChq')}" />
+															</div>
+															<div class="col-sm-4" />
+															<h:outputLabel style="color:#000000" value="Vuelto:"
+																class="col-sm-2" />
+															<div class="col-sm-4">
+																<h:inputText id="txtvuelto" disabled="true"
+																	styleClass="form-control"
+																	value="#{proformasAprobRechMb.selectedProformas.valorVuelto}">
+																	<f:convertNumber pattern="0.00" />
+																</h:inputText>
+															</div>
+														</div>
+													</p:panel>
+
+												</div>
+											</div>
+											<div class="col-lg-6">
+												<div class="row">
+													<div class="col-lg-4" />
+													<div class="col-lg-8">
+														<p:panel>
+															<div class="box-body form-horizontal">
+																<div class="form-group">
+																	<h:outputLabel style="color:#000000" value="Subtotal:"
+																		class="col-sm-5" />
+																	<div class="col-sm-7">
+																		<h:inputText id="txtSubtotalChq"
+																			style="text-align: center"
+																			value="#{proformasAprobRechMb.selectedProformas.subtotal}"
+																			styleClass="form-control" disabled="true">
+																			<f:convertNumber pattern="0.00" />
+																		</h:inputText>
+																	</div>
+																</div>
+																<div class="form-group">
+																	<h:outputLabel style="color:#000000"
+																		value="IVA #{proformasAprobRechMb.txtValorIVA}%:"
+																		class="col-sm-5" />
+																	<div class="col-sm-7">
+																		<h:inputText id="txtIvaChq" style="text-align: center"
+																			value="#{proformasAprobRechMb.selectedProformas.iva}"
+																			styleClass="form-control" disabled="true">
+																			<f:convertNumber pattern="0.00" />
+																		</h:inputText>
+																	</div>
+																</div>
+																<div class="form-group">
+																	<h:outputLabel style="color:#000000" value="IVA 0%:"
+																		class="col-sm-5" />
+																	<div class="col-sm-7">
+																		<h:inputText id="txtIvaCeroChq"
+																			style="text-align: center"
+																			value="#{proformasAprobRechMb.selectedProformas.ivaCero}"
+																			styleClass="form-control" disabled="true">
+																			<f:convertNumber pattern="0.00" />
+																		</h:inputText>
+																	</div>
+																</div>
+																<div class="form-group">
+																	<h:outputLabel style="color:#000000"
+																		value="Valor Total:" class="col-sm-5" />
+																	<div class="col-sm-7">
+																		<h:inputText id="txtValorTotalChq"
+																			style="text-align: center"
+																			value="#{proformasAprobRechMb.selectedProformas.valorTotal}"
+																			styleClass="form-control" disabled="true">
+																			<f:convertNumber pattern="0.00" />
+																		</h:inputText>
+																	</div>
+																</div>
+															</div>
+														</p:panel>
+														<div class="form-group" />
+														<div class="form-group">
+															<div class="col-sm-1" />
+															<p:commandButton value="Aprobar"
+																update="#{p:component('msjGeneral')},#{p:component('tblProformas')}"
+																disabled="true"
+																actionListener="#{proformasAprobRechMb.aprobarRechazarProformaCheque(proformasAprobRechMb.selectedProformas,'A')}" />
+															<p:commandButton value="Rechazar"
+																update="#{p:component('msjGeneral')},#{p:component('tblProformas')}"
+																disabled="true"
+																actionListener="#{proformasAprobRechMb.aprobarRechazarProformaCheque(proformasAprobRechMb.selectedProformas,'R')}" />
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</h:panelGroup>
+						</p:panel>
+					</p:scrollPanel>
+				</p:dialog>
+
+				<p:dialog header="Datos del Cheque" widgetVar="dlgChq"
+					maximizable="true" draggable="false" resizable="false"
+					hideEffect="clip" modal="true" showEffect="clip" responsive="true"
+					width="1500" height="150">
+					<p:dataTable var="datosChques" id="tblDtoChq" widgetVar="tblDtoChq"
+						emptyMessage="No se ha seleccionado forma de pago"
+						value="#{proformasAprobRechMb.listaFormaPago}">
+
+						<p:column headerText="Medio de Pago" styleClass="centerColum">
+							<h:outputText id="txtMedioPagoOut"
+								value="#{datosChques.medioPago}" />
+						</p:column>
+						<p:column headerText="Valor">
+							<p:cellEditor disabled="#{datosChques.banderaChq}">
+								<f:facet name="output">
+									<center>
+										<h:outputText id="txtDlgVlrChqOut"
+											value="#{datosChques.valorFrmPago}" />
+									</center>
+								</f:facet>
+								<f:facet name="input">
+									<center>
+										<p:inputText id="txtDlgVlrChqIn" style="width:65px"
+											disabled="#{datosChques.banderaChq}"
+											value="#{datosChques.valorFrmPago}">
+										</p:inputText>
+									</center>
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
+
+						<p:column headerText="Nombre Banco" style="width:150px">
+							<p:cellEditor disabled="#{datosChques.banderaChq}">
+								<f:facet name="output">
+									<center>
+										<h:outputText value="#{datosChques.nomBanco}"
+											id="txtDlgNomCheqOut" />
+									</center>
+								</f:facet>
+								<f:facet name="input">
+									<center>
+										<h:selectOneMenu value="#{datosChques.nomBanco}"
+											disabled="#{datosChques.banderaChq}" id="txtDlgNomCheqIn"
+											styleClass="form-control">
+											<f:selectItems value="#{proformasAprobRechMb.listaBancos}" />
+										</h:selectOneMenu>
+									</center>
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
+
+						<p:column headerText="No. de Cuenta">
+							<p:cellEditor disabled="#{datosChques.banderaChq}">
+								<f:facet name="output">
+									<center>
+										<h:outputText value="#{datosChques.numeroCuenta}"
+											id="txtDlgNumCtaOut" />
+									</center>
+								</f:facet>
+								<f:facet name="input">
+									<center>
+										<p:inputText value="#{datosChques.numeroCuenta}"
+											disabled="#{datosChques.banderaChq}" required="true"
+											id="txtDlgNumCtaIn"
+											onkeypress="if(event.which &lt; 48 || event.which &gt; 57) return false;">
+										</p:inputText>
+									</center>
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
+
+						<p:column headerText="No. de Cheque">
+							<p:cellEditor disabled="#{datosChques.banderaChq}">
+								<f:facet name="output">
+									<center>
+										<h:outputText value="#{datosChques.numeroCheque}"
+											id="txtDlgNumChqOut" />
+									</center>
+								</f:facet>
+								<f:facet name="input">
+									<center>
+										<p:inputText id="txtDlgNumChqIn"
+											value="#{datosChques.numeroCheque}"
+											disabled="#{datosChques.banderaChq}"
+											onkeypress="if(event.which &lt; 48 || event.which &gt; 57) return false;">
+										</p:inputText>
+									</center>
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
+
+						<p:column headerText="Fecha Recibido">
+							<center>
+								<h:outputText value="#{datosChques.fechaRecepcionChqStr}" />
+							</center>
+						</p:column>
+
+						<p:column headerText="Nom. Completo / Razón Social">
+							<p:cellEditor disabled="#{datosChques.banderaChq}">
+								<f:facet name="output">
+									<center>
+										<h:outputText value="#{datosChques.nombreRznSocialChq}"
+											id="txtDlgNomRznOut" style="text-transform:uppercase;" />
+									</center>
+								</f:facet>
+								<f:facet name="input">
+									<center>
+										<p:inputText value="#{datosChques.nombreRznSocialChq}"
+											style="text-transform:uppercase;" id="txtDlgNomRznIn"
+											disabled="#{datosChques.banderaChq}">
+										</p:inputText>
+									</center>
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
+
+						<p:column headerText="RUC / CI">
+							<p:cellEditor disabled="#{datosChques.banderaChq}">
+								<f:facet name="output">
+									<center>
+										<h:outputText value="#{datosChques.numeroCI_RUCChq}"
+											id="txtDlgNumCIOut" />
+									</center>
+								</f:facet>
+								<f:facet name="input">
+									<center>
+										<p:inputText value="#{datosChques.numeroCI_RUCChq}"
+											id="txtDlgNumCIIn" disabled="#{datosChques.banderaChq}"
+											onkeypress="if(event.which &lt; 48 || event.which &gt; 57) return false;">
+											<p:ajax update="#{p:component('txtDlgNumCIOut')}" />
+										</p:inputText>
+									</center>
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
+
+						<p:column headerText="Dirección">
+							<p:cellEditor disabled="#{datosChques.banderaChq}">
+								<f:facet name="output">
+									<center>
+										<h:outputText value="#{datosChques.direccionChq}" />
+									</center>
+								</f:facet>
+								<f:facet name="input">
+									<center>
+										<p:inputText value="#{datosChques.direccionChq}"
+											disabled="#{datosChques.banderaChq}" />
+									</center>
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
+
+						<p:column headerText="Teléfono">
+							<p:cellEditor disabled="#{datosChques.banderaChq}">
+								<f:facet name="output">
+									<center>
+										<h:outputText value="#{datosChques.telefono}" />
+									</center>
+								</f:facet>
+								<f:facet name="input">
+									<center>
+										<p:inputText value="#{datosChques.telefono}"
+											disabled="#{datosChques.banderaChq}"
+											onkeypress="if(event.which &lt; 48 || event.which &gt; 57) return false;" />
+									</center>
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
+					</p:dataTable>
+				</p:dialog>
+
+				<p:dialog header="Detalle Proforma" widgetVar="dlgDetalleConv"
+					id="idDlgDetalleConv" draggable="false" resizable="false"
+					hideEffect="clip" modal="true" showEffect="clip" maximizable="true"
+					responsive="true" width="57%" height="57%"
+					onShow="autAjustePantalla('form:idDlgDetalleConv')">
+
+					<p:ajax event="close"
+						listener="#{proformasAprobRechMb.seteaSelectedProforma}" />
+
+					<p:scrollPanel mode="native" style="width:100%;height:96%">
+						<p:panel toggleSpeed="500" closeSpeed="500"
+							widgetVar="panelDetalleConv" style="margin-bottom:20px">
+							<h:panelGroup id="pnlDialogConv">
+								<div class="box-body">
+									<div class="row">
+										<div class="col-md-6">
+											<div class="box box-info">
+												<div class="box-header with-border">
+													<h3 class="box-title">Datos Pacientes</h3>
+												</div>
+												<div class="box-body form-horizontal">
+													<div class="form-group">
+														<h:outputLabel style="color:#000000" class="col-sm-5"
+															value="Número de identificación:" />
+														<div class="col-sm-7">
+															<h:inputText id="txtNumDocPacConv"
+																styleClass="form-control" disabled="true"
+																style="text-align:center"
+																value="#{proformasAprobRechMb.selectedProformas.idPacienteProf.numDocumento}" />
+														</div>
+													</div>
+													<div class="form-group">
+														<h:outputLabel style="color:#000000" value="Paciente:"
+															class="col-sm-5" />
+														<div class="col-sm-7">
+															<h:inputText id="txtNombresPacConv"
+																style="text-align:center"
+																value="#{proformasAprobRechMb.selectedProformas.idPacienteProf.nombresCompletos}"
+																styleClass="form-control" disabled="true" />
+														</div>
+													</div>
+													<div class="form-group">
+														<h:outputLabel style="color:#000000"
+															value="Tarjeta Afiliado:" class="col-sm-5" />
+														<div class="col-sm-7">
+															<h:selectOneMenu id="txtMailPacConv" disabled="true"
+																value="#{proformasAprobRechMb.selectedProformas.idPacienteProf.afiliadoTarjeta}"
+																styleClass="form-control">
+																<f:selectItem itemValue="N" itemLabel="No" />
+																<f:selectItem itemValue="Y" itemLabel="Si" />
+															</h:selectOneMenu>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="col-md-6">
+											<div class="box box-info">
+												<div class="box-header with-border">
+													<h3 class="box-title">Datos Clientes</h3>
+												</div>
+												<div class="box-body form-horizontal">
+													<div class="form-group">
+														<h:outputLabel style="color:#000000" class="col-sm-5"
+															value="Número de identificación:" />
+														<div class="col-sm-7">
+															<h:inputText id="txtNumDocConv" styleClass="form-control"
+																disabled="true" style="text-align:center"
+																value="#{proformasAprobRechMb.selectedProformas.idClienteProf.numDocumento}" />
+														</div>
+													</div>
+													<div class="form-group">
+														<h:outputLabel style="color:#000000" class="col-sm-5"
+															value="Cliente:" />
+														<div class="col-sm-7">
+															<h:inputText id="txtNombresConv"
+																style="text-align:center"
+																value="#{proformasAprobRechMb.selectedProformas.idClienteProf.nombresCompletos}"
+																styleClass="form-control" disabled="true" />
+														</div>
+													</div>
+													<div class="form-group">
+														<h:outputLabel style="color:#000000"
+															value="Correo Electrónico:" class="col-sm-5" />
+														<div class="col-sm-7">
+															<h:inputText id="txtMailConv" style="text-align:center"
+																value="#{proformasAprobRechMb.selectedProformas.idClienteProf.email}"
+																styleClass="form-control" disabled="true" />
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="nav-tabs-custom">
+
+											<p:tabView dynamic="true" cache="true"
+												activeIndex="#{proformasAprobRechMb.idxTabView}">
+												<p:tab id="tab0" title="Especialidad" titleStyleClass="tab1">
+													<p:dataTable var="factEspecialidad"
+														id="tblDetalleFacturaConv" scrollHeight="150"
+														widgetVar="tblDetalleFacturaConv"
+														emptyMessage="No se ha seleccionado Medico"
+														value="#{proformasAprobRechMb.listDetProfEsp}"
+														style="margin-bottom:20px" scrollable="true">
+
+														<p:columnGroup type="header">
+															<p:column headerText="Servicio"
+																style="#{loginMb.styleTable}" />
+															<p:column headerText="Médico"
+																style="#{loginMb.styleTable}" />
+															<p:column headerText="Fecha de Atención"
+																style="#{loginMb.styleTable}" />
+															<p:column headerText="Valor Unitario"
+																style="#{loginMb.styleTable}" />
+															<p:column headerText="Cantidad"
+																style="#{loginMb.styleTable}" />
+															<p:column headerText="Precio Sin IVA"
+																style="#{loginMb.styleTable}" />
+														</p:columnGroup>
+
+														<p:column>
+															<h:outputText value="#{factEspecialidad.especialidad}" />
+														</p:column>
+														<p:column>
+															<h:outputText
+																value="#{factEspecialidad.idMedicoProf.nombreCompleto}" />
+														</p:column>
+														<p:column>
+															<h:outputText
+																value="#{factEspecialidad.fechaAtencionStr}" />
+														</p:column>
+														<p:column>
+															<center>
+																<h:outputText value="#{factEspecialidad.precio}">
+																	<f:convertNumber pattern="0.00" />
+																</h:outputText>
+															</center>
+														</p:column>
+														<p:column>
+															<center>
+																<h:outputText value="#{factEspecialidad.cantidad}" />
+															</center>
+														</p:column>
+														<p:column>
+															<center>
+																<h:outputText value="#{factEspecialidad.precioTotal}">
+																	<f:convertNumber pattern="0.00" />
+																</h:outputText>
+															</center>
+														</p:column>
+													</p:dataTable>
+												</p:tab>
+												<p:tab id="tab1" title="Farmacia" titleStyleClass="tab1">
+													<div class="row no-gutters">
+														<div class="col-12 col-sm-6 col-md-6"></div>
+														<div class="col-6 col-md-6">
+															<div class="col-sm-1" />
+															<p:spacer width="13" height="0" />
+															<p:selectBooleanCheckbox disabled="true"
+																value="#{proformasAprobRechMb.selectedProformas.stockComprometido}"
+																itemLabel="Stock Comprometido" />
+														</div>
+													</div>
+													<p:dataTable var="factDet" id="tblDetalleProformaConv"
+														widgetVar="tblDetalleProformaConv" scrollHeight="150"
+														emptyMessage="No se ha seleccionado Items"
+														value="#{proformasAprobRechMb.listDetProfFarm}"
+														style="margin-bottom:20px" scrollable="true">
+
+														<p:columnGroup type="header">
+															<p:column headerText="Descripción/Articulo"
+																style="#{loginMb.styleTable}" />
+															<p:column headerText="Valor Unitario"
+																style="#{loginMb.styleTable}" />
+															<p:column headerText="Cantidad"
+																style="#{loginMb.styleTable}" />
+															<p:column headerText="Precio Sin IVA"
+																style="#{loginMb.styleTable}" />
+														</p:columnGroup>
+
+														<p:column>
+															<h:outputText value="#{factDet.descripcionItems}" />
+														</p:column>
+														<p:column>
+															<center>
+																<h:outputText value="#{factDet.precio}" />
+															</center>
+														</p:column>
+														<p:column>
+															<center>
+																<h:outputText value="#{factDet.cantidad}" />
+															</center>
+														</p:column>
+														<p:column>
+															<center>
+																<h:outputText value="#{factDet.precioTotal}">
+																	<f:convertNumber pattern="0.00" />
+																</h:outputText>
+															</center>
+														</p:column>
+													</p:dataTable>
+												</p:tab>
+											</p:tabView>
+										</div>
+
+									</div>
+									<div class="form-group">
+										<div class="row">
+											<div class="col-lg-6">
+												<div class="box-body form-horizontal">
+													<div class="form-group">
+														<h:outputLabel style="color:#000000" value="Notas:"
+															class="col-sm-1" />
+														<div class="col-sm-11">
+															<h:inputTextarea id="txtNotasConv"
+																styleClass="form-control"
+																value="#{proformasAprobRechMb.auxNotas}"
+																disabled="#{proformasAprobRechMb.aprobRechProformaEstado}">
+																<p:ajax event="blur"
+																	listener="#{proformasAprobRechMb.auxGuardaDescpNotas}" />
+															</h:inputTextarea>
+														</div>
+													</div>
+												</div>
+												<div class="box box-info">
+													<p:panel id="pnlFormaPagoConv">
+														<p:dataTable var="formaPago" id="tblFormaPagoConv"
+															widgetVar="tblFormaPagoConv" scrollRows="3"
+															editable="true" editMode="cell"
+															emptyMessage="No se ha seleccionado forma de pago"
+															scrollHeight="80"
+															value="#{proformasAprobRechMb.listaFormaPago}"
+															scrollable="true" style="margin-bottom:20px">
+
+															<p:columnGroup type="header">
+																<p:column headerText="Medio de Pago"
+																	style="#{loginMb.styleTable}" />
+																<p:column headerText="Valor Recibido"
+																	style="#{loginMb.styleTable}" />
+															</p:columnGroup>
+
+															<p:column styleClass="centerColum">
+																<h:outputText id="txtMedioPagoOutConv"
+																	value="#{formaPago.medioPago}" />
+															</p:column>
+
+															<p:column styleClass="centerColum">
+																<h:outputText id="txtVlrFrmPagoOutConv"
+																	value="#{formaPago.valorFrmPago}">
+																	<f:convertNumber pattern="0.00" />
+																</h:outputText>
+															</p:column>
+														</p:dataTable>
+														<div class="form-group">
+															<div class="col-sm-5" />
+															<h:outputLabel style="color:#000000" value="Vuelto:"
+																class="col-sm-2" />
+															<div class="col-sm-4">
+																<h:inputText id="txtvueltoConv" disabled="true"
+																	styleClass="form-control"
+																	value="#{proformasAprobRechMb.selectedProformas.valorVuelto}">
+																	<f:convertNumber pattern="0.00" />
+																</h:inputText>
+															</div>
+														</div>
+													</p:panel>
+												</div>
+											</div>
+											<div class="col-lg-6">
+												<div class="row">
+													<div class="col-lg-4" />
+													<div class="col-lg-8">
+														<p:panel>
+															<div class="box-body form-horizontal">
+																<div class="form-group">
+																	<h:outputLabel style="color:#000000" value="Subtotal:"
+																		class="col-sm-5" />
+																	<div class="col-sm-7">
+																		<h:inputText id="txtSubtotalConv"
+																			style="text-align: center"
+																			value="#{proformasAprobRechMb.selectedProformas.subtotal}"
+																			styleClass="form-control" disabled="true">
+																			<f:convertNumber pattern="0.00" />
+																		</h:inputText>
+																	</div>
+																</div>
+																<div class="form-group">
+																	<h:outputLabel style="color:#000000"
+																		value="IVA #{proformasAprobRechMb.txtValorIVA}%:"
+																		class="col-sm-5" />
+																	<div class="col-sm-7">
+																		<h:inputText id="txtIvaConv"
+																			style="text-align: center"
+																			value="#{proformasAprobRechMb.selectedProformas.iva}"
+																			styleClass="form-control" disabled="true">
+																			<f:convertNumber pattern="0.00" />
+																		</h:inputText>
+																	</div>
+																</div>
+																<div class="form-group">
+																	<h:outputLabel style="color:#000000" value="IVA 0%:"
+																		class="col-sm-5" />
+																	<div class="col-sm-7">
+																		<h:inputText id="txtIvaCeroConv"
+																			style="text-align: center"
+																			value="#{proformasAprobRechMb.selectedProformas.ivaCero}"
+																			styleClass="form-control" disabled="true">
+																			<f:convertNumber pattern="0.00" />
+																		</h:inputText>
+																	</div>
+																</div>
+																<div class="form-group">
+																	<h:outputLabel style="color:#000000"
+																		value="Valor Total:" class="col-sm-5" />
+																	<div class="col-sm-7">
+																		<h:inputText id="txtValorTotalConv"
+																			style="text-align: center"
+																			value="#{proformasAprobRechMb.selectedProformas.valorTotal}"
+																			styleClass="form-control" disabled="true">
+																			<f:convertNumber pattern="0.00" />
+																		</h:inputText>
+																	</div>
+																</div>
+															</div>
+														</p:panel>
+														<div class="form-group" />
+														<div class="form-group">
+															<div class="row">
+																<div class="col-sm-3" />
+																<p:commandButton value="Aprobar"
+																	update="#{p:component('msjGeneral')},#{p:component('tblProformas')}"
+																	disabled="true"
+																	actionListener="#{proformasAprobRechMb.aprobarRechazarProformaConvenio(proformasAprobRechMb.selectedProformas,'A')}" />
+																<p:commandButton value="Rechazar"
+																	update="#{p:component('msjGeneral')},#{p:component('tblProformas')}"
+																	disabled="true"
+																	actionListener="#{proformasAprobRechMb.aprobarRechazarProformaConvenio(proformasAprobRechMb.selectedProformas,'R')}" />
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</h:panelGroup>
+						</p:panel>
+					</p:scrollPanel>
+				</p:dialog>
+
+				<p:dialog header="Detalle Proforma" widgetVar="dlgDetalleOSAprob"
+					id="idDlgDetalleOSAprob" draggable="false" resizable="false"
+					hideEffect="clip" modal="true" showEffect="clip" maximizable="true"
+					responsive="true" width="57%" height="57%"
+					onShow="autAjustePantalla('form:idDlgDetalleOSAprob')">
+
+					<p:ajax event="close"
+						listener="#{proformasAprobRechMb.seteaSelectedProforma}" />
+
+					<p:scrollPanel mode="native" style="width:100%;height:96%">
+						<p:panel toggleSpeed="500" closeSpeed="500"
+							widgetVar="panelDetalleOSAprb" style="margin-bottom:20px">
+							<h:panelGroup id="pnlDialogOSAprb">
+								<div class="box-body">
+									<div class="row">
+										<div class="col-md-6">
+											<div class="box box-info">
+												<div class="box-header with-border">
+													<h3 class="box-title">Datos Pacientes</h3>
+												</div>
+												<div class="box-body form-horizontal">
+													<div class="form-group">
+														<h:outputLabel style="color:#000000" class="col-sm-5"
+															value="Número de identificación:" />
+														<div class="col-sm-7">
+															<h:inputText id="txtNumDocPacOSAprb"
+																styleClass="form-control" disabled="true"
+																style="text-align:center"
+																value="#{proformasAprobRechMb.selectedProformas.idPacienteProf.numDocumento}" />
+														</div>
+													</div>
+													<div class="form-group">
+														<h:outputLabel style="color:#000000" value="Paciente:"
+															class="col-sm-5" />
+														<div class="col-sm-7">
+															<h:inputText id="txtNombresPacOSAprb"
+																style="text-align:center"
+																value="#{proformasAprobRechMb.selectedProformas.idPacienteProf.nombresCompletos}"
+																styleClass="form-control" disabled="true" />
+														</div>
+													</div>
+													<div class="form-group">
+														<h:outputLabel style="color:#000000"
+															value="Correo Electrónico:" class="col-sm-5" />
+														<div class="col-sm-7">
+															<h:inputText id="txtMailPacOSAprb"
+																style="text-align:center"
+																value="#{proformasAprobRechMb.selectedProformas.idPacienteProf.email}"
+																styleClass="form-control" disabled="true" />
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="col-md-6">
+											<div class="box box-info">
+												<div class="box-header with-border">
+													<h3 class="box-title">Datos Clientes</h3>
+												</div>
+												<div class="box-body form-horizontal">
+													<div class="form-group">
+														<h:outputLabel style="color:#000000" class="col-sm-5"
+															value="Número de identificación:" />
+														<div class="col-sm-7">
+															<h:inputText id="txtNumDocOSAprb"
+																styleClass="form-control" disabled="true"
+																style="text-align:center"
+																value="#{proformasAprobRechMb.selectedProformas.idClienteProf.numDocumento}" />
+														</div>
+													</div>
+													<div class="form-group">
+														<h:outputLabel style="color:#000000" class="col-sm-5"
+															value="Cliente:" />
+														<div class="col-sm-7">
+															<h:inputText id="txtNombresOSAprb"
+																style="text-align:center"
+																value="#{proformasAprobRechMb.selectedProformas.idClienteProf.nombresCompletos}"
+																styleClass="form-control" disabled="true" />
+														</div>
+													</div>
+													<div class="form-group">
+														<h:outputLabel style="color:#000000"
+															value="Correo Electrónico:" class="col-sm-5" />
+														<div class="col-sm-7">
+															<h:inputText id="txtMailOSAprb" style="text-align:center"
+																value="#{proformasAprobRechMb.selectedProformas.idClienteProf.email}"
+																styleClass="form-control" disabled="true" />
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="nav-tabs-custom">
+
+											<p:tabView dynamic="true" cache="true"
+												activeIndex="#{proformasAprobRechMb.idxTabView}">
+												<p:tab id="tab0" title="Especialidad" titleStyleClass="tab1">
+													<p:dataTable var="factEspecialidad"
+														id="tblDetalleFacturaOSAprb" scrollHeight="150"
+														widgetVar="tblDetalleFacturaOSAprb"
+														emptyMessage="No se ha seleccionado Medico"
+														value="#{proformasAprobRechMb.listDetProfEsp}"
+														scrollable="true" style="ui-datatable;">
+														<p:columnGroup type="header">
+															<p:column headerText="Servicio"
+																style="#{loginMb.styleTable}" />
+															<p:column headerText="Médico"
+																style="#{loginMb.styleTable}" />
+															<p:column headerText="Fecha de Atención"
+																style="#{loginMb.styleTable}" />
+															<p:column headerText="Valor Unitario"
+																style="#{loginMb.styleTable}" />
+															<p:column headerText="Cantidad"
+																style="#{loginMb.styleTable}" />
+															<p:column headerText="Precio Sin IVA"
+																style="#{loginMb.styleTable}" />
+														</p:columnGroup>
+
+														<p:column>
+															<h:outputText value="#{factEspecialidad.especialidad}" />
+														</p:column>
+														<p:column>
+															<h:outputText
+																value="#{factEspecialidad.idMedicoProf.nombreCompleto}" />
+														</p:column>
+														<p:column>
+															<h:outputText
+																value="#{factEspecialidad.fechaAtencionStr}" />
+														</p:column>
+														<p:column>
+															<center>
+																<h:outputText value="#{factEspecialidad.precio}">
+																	<f:convertNumber pattern="0.00" />
+																</h:outputText>
+															</center>
+														</p:column>
+														<p:column>
+															<center>
+																<h:outputText value="#{factEspecialidad.cantidad}" />
+															</center>
+														</p:column>
+														<p:column>
+															<center>
+																<h:outputText value="#{factEspecialidad.precioTotal}">
+																	<f:convertNumber pattern="0.00" />
+																</h:outputText>
+															</center>
+														</p:column>
+													</p:dataTable>
+												</p:tab>
+												<p:tab id="tab1" title="Farmacia" titleStyleClass="tab1">
+													<div class="row no-gutters">
+														<div class="col-12 col-sm-6 col-md-6"></div>
+														<div class="col-6 col-md-6">
+															<div class="col-sm-1" />
+															<p:spacer width="13" height="0" />
+															<p:selectBooleanCheckbox disabled="true"
+																value="#{proformasAprobRechMb.selectedProformas.stockComprometido}"
+																itemLabel="Stock Comprometido" />
+														</div>
+													</div>
+													<p:dataTable var="factDet" id="tblDetalleProformaOSAprb"
+														widgetVar="tblDetalleProformaOSAprb" scrollRows="2"
+														emptyMessage="No se ha seleccionado Items"
+														scrollHeight="150"
+														value="#{proformasAprobRechMb.listDetProfFarm}"
+														scrollable="true" style="margin-bottom:20px">
+
+														<p:columnGroup type="header">
+															<p:column headerText="Descripción/Articulo"
+																style="#{loginMb.styleTable}" />
+															<p:column headerText="Valor Unitario"
+																style="#{loginMb.styleTable}" />
+															<p:column headerText="Cantidad"
+																style="#{loginMb.styleTable}" />
+															<p:column headerText="Precio Sin IVA"
+																style="#{loginMb.styleTable}" />
+														</p:columnGroup>
+
+														<p:column>
+															<h:outputText value="#{factDet.descripcionItems}" />
+														</p:column>
+														<p:column>
+															<center>
+																<h:outputText value="#{factDet.precio}" />
+															</center>
+														</p:column>
+														<p:column>
+															<center>
+																<h:outputText value="#{factDet.cantidad}" />
+															</center>
+														</p:column>
+														<p:column>
+															<center>
+																<h:outputText value="#{factDet.precioTotal}">
+																	<f:convertNumber pattern="0.00" />
+																</h:outputText>
+															</center>
+														</p:column>
+													</p:dataTable>
+												</p:tab>
+												<p:tab id="tab2" title="Datos Adicionales"
+													titleStyleClass="tab1">
+													<p:panel style="height:201px">
+														<div class="box-body form-horizontal">
+															<div class="col-lg-12">
+																<div class="form-group">
+																	<h:outputLabel style="color:#000000" value="Ingresos:"
+																		class="col-sm-2" />
+																	<div class="col-sm-8">
+																		<h:inputText id="txtIngreso" styleClass="form-control"
+																			value="#{proformasAprobRechMb.selectedProformas.ingresos}"
+																			disabled="#{proformasAprobRechMb.aprobRechProformaEstado}">
+																		</h:inputText>
+																	</div>
+																</div>
+																<div class="form-group">
+																	<h:outputLabel style="color:#000000"
+																		value="Origen de Ingresos:" class="col-sm-2" />
+																	<div class="col-sm-8">
+																		<h:inputText id="txtOriIngreso"
+																			styleClass="form-control"
+																			value="#{proformasAprobRechMb.selectedProformas.origenIngresos}"
+																			disabled="#{proformasAprobRechMb.aprobRechProformaEstado}">
+																		</h:inputText>
+																	</div>
+																</div>
+																<div class="form-group">
+																	<h:outputLabel style="color:#000000"
+																		value="Con quien vive el paciente:" class="col-sm-2" />
+																	<div class="col-sm-8">
+																		<h:inputText id="txtConvivePac"
+																			styleClass="form-control"
+																			value="#{proformasAprobRechMb.selectedProformas.convivePaciente}"
+																			disabled="#{proformasAprobRechMb.aprobRechProformaEstado}">
+																		</h:inputText>
+																	</div>
+																</div>
+															</div>
+														</div>
+													</p:panel>
+												</p:tab>
+											</p:tabView>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="row">
+											<div class="col-lg-6">
+												<div class="box-body form-horizontal">
+													<h:outputLabel style="color:#000000" value="Notas:"
+														class="col-sm-2" />
+													<div class="col-sm-10">
+														<h:inputTextarea id="txtNotasOSAprb"
+															styleClass="form-control" disabled="true"
+															value="#{proformasAprobRechMb.selectedProformas.notas}" />
+													</div>
+												</div>
+												<div class="box box-info">
+													<p:panel id="pnlFormaPagoOSAprb">
+														<p:dataTable var="formaPago" id="tblFormaPagoOSAprb"
+															widgetVar="tblFormaPagoOSAprb" scrollRows="3"
+															editable="true" editMode="cell"
+															emptyMessage="No se ha seleccionado forma de pago"
+															scrollHeight="80"
+															value="#{proformasAprobRechMb.listaFormaPago}"
+															scrollable="true" style="margin-bottom:20px">
+
+															<p:columnGroup type="header">
+																<p:column headerText="Medio de Pago"
+																	style="#{loginMb.styleTable}" />
+																<p:column headerText="Valor Recibido"
+																	style="#{loginMb.styleTable}" />
+															</p:columnGroup>
+
+															<p:column styleClass="centerColum">
+																<h:outputText id="txtMedioPagoOutOSAprb"
+																	value="#{formaPago.medioPago}" />
+															</p:column>
+
+															<p:column styleClass="centerColum">
+																<h:outputText id="txtVlrFrmPagoOutOSAprb"
+																	value="#{formaPago.valorFrmPago}">
+																	<f:convertNumber pattern="0.00" />
+																</h:outputText>
+															</p:column>
+														</p:dataTable>
+														<div class="form-group">
+															<div class="col-sm-5" />
+															<h:outputLabel style="color:#000000" value="Vuelto:"
+																class="col-sm-2" />
+															<div class="col-sm-4">
+																<h:inputText id="txtvueltoOSAprb" disabled="true"
+																	styleClass="form-control"
+																	value="#{proformasAprobRechMb.selectedProformas.valorVuelto}">
+																	<f:convertNumber pattern="0.00" />
+																</h:inputText>
+															</div>
+														</div>
+													</p:panel>
+												</div>
+											</div>
+											<div class="col-lg-6">
+												<div class="row">
+													<div class="col-lg-4" />
+													<div class="col-lg-8">
+														<p:panel>
+															<div class="box-body form-horizontal">
+																<div class="form-group">
+																	<h:outputLabel style="color:#000000" value="Subtotal:"
+																		class="col-sm-5" />
+																	<div class="col-sm-7">
+																		<h:inputText id="txtSubtotalOSAprb"
+																			style="text-align: center"
+																			value="#{proformasAprobRechMb.selectedProformas.subtotal}"
+																			styleClass="form-control" disabled="true">
+																			<f:convertNumber pattern="0.00" />
+																		</h:inputText>
+																	</div>
+																</div>
+																<div class="form-group">
+																	<h:outputLabel style="color:#000000"
+																		value="IVA #{proformasAprobRechMb.txtValorIVA}%:"
+																		class="col-sm-5" />
+																	<div class="col-sm-7">
+																		<h:inputText id="txtIvaOSAprb"
+																			style="text-align: center"
+																			value="#{proformasAprobRechMb.selectedProformas.iva}"
+																			styleClass="form-control" disabled="true">
+																			<f:convertNumber pattern="0.00" />
+																		</h:inputText>
+																	</div>
+																</div>
+																<div class="form-group">
+																	<h:outputLabel style="color:#000000" value="IVA 0%:"
+																		class="col-sm-5" />
+																	<div class="col-sm-7">
+																		<h:inputText id="txtIvaCeroOSAprb"
+																			style="text-align: center"
+																			value="#{proformasAprobRechMb.selectedProformas.ivaCero}"
+																			styleClass="form-control" disabled="true">
+																			<f:convertNumber pattern="0.00" />
+																		</h:inputText>
+																	</div>
+																</div>
+																<div class="form-group">
+																	<h:outputLabel style="color:#000000"
+																		value="Valor Total:" class="col-sm-5" />
+																	<div class="col-sm-7">
+																		<h:inputText id="txtValorTotalOSAprb"
+																			style="text-align: center"
+																			value="#{proformasAprobRechMb.selectedProformas.valorTotal}"
+																			styleClass="form-control" disabled="true">
+																			<f:convertNumber pattern="0.00" />
+																		</h:inputText>
+																	</div>
+																</div>
+															</div>
+														</p:panel>
+														<div class="form-group" />
+														<div class="form-group">
+															<div class="row">
+																<div class="col-sm-2" />
+																<p:commandButton value="Aprobar"
+																	update="#{p:component('msjGeneral')},#{p:component('tblProformas')}"
+																	disabled="true"
+																	actionListener="#{proformasAprobRechMb.aprobarRechazarProformaConvenio(proformasAprobRechMb.selectedProformas,'A')}" />
+																<p:commandButton value="Rechazar"
+																	update="#{p:component('msjGeneral')},#{p:component('tblProformas')}"
+																	disabled="true"
+																	actionListener="#{proformasAprobRechMb.aprobarRechazarProformaConvenio(proformasAprobRechMb.selectedProformas,'R')}" />
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</h:panelGroup>
+						</p:panel>
+					</p:scrollPanel>
+				</p:dialog>
+			</section>
+		</h:form>
+
+		<h:form id="formProcedimiento">
+			<p:dialog header="Detalle Proforma" widgetVar="dlgDetProcedimiento"
+				draggable="false" maximizable="true" id="idDlgDetProcedimiento"
+				resizable="false" responsive="true" showEffect="fade" width="57%"
+				height="57%" modal="true"
+				onShow="autAjustePantalla('formProcedimiento:idDlgDetProcedimiento')">
+
+				<p:ajax event="close"
+					listener="#{proformasAprobRechMb.seteaSelectedProforma}" />
+
+				<p:scrollPanel mode="native" style="width:100%;height:96%">
+					<p:panel toggleSpeed="500" closeSpeed="500"
+						widgetVar="pnlDetProcedimiento" style="margin-bottom:20px">
+						<h:panelGroup id="pnlDlgProcedimiento">
+							<div class="box-body">
+								<div class="row">
+									<div class="col-md-6">
+										<div class="box box-info">
+											<div class="box-header with-border">
+												<h3 class="box-title">Datos Pacientes</h3>
+											</div>
+											<div class="box-body form-horizontal">
+												<div class="form-group">
+													<h:outputLabel style="color:#000000" class="col-sm-5"
+														value="Número de identificación:" />
+													<div class="col-sm-7">
+														<h:inputText id="txtNumDocPacProc"
+															styleClass="form-control" disabled="true"
+															style="text-align:center"
+															value="#{proformasAprobRechMb.selectedProformas.idPacienteProf.numDocumento}" />
+													</div>
+												</div>
+												<div class="form-group">
+													<h:outputLabel style="color:#000000" value="Paciente:"
+														class="col-sm-5" />
+													<div class="col-sm-7">
+														<h:inputText id="txtNombresPacProc"
+															style="text-align:center"
+															value="#{proformasAprobRechMb.selectedProformas.idPacienteProf.nombresCompletos}"
+															styleClass="form-control" disabled="true" />
+													</div>
+												</div>
+												<div class="form-group">
+													<h:outputLabel style="color:#000000"
+														value="Tarjeta Afiliado:" class="col-sm-5" />
+													<div class="col-sm-7">
+														<h:selectOneMenu id="txtMailPacProc" disabled="true"
+															value="#{proformasAprobRechMb.selectedProformas.idPacienteProf.afiliadoTarjeta}"
+															styleClass="form-control">
+															<f:selectItem itemValue="N" itemLabel="No" />
+															<f:selectItem itemValue="Y" itemLabel="Si" />
+														</h:selectOneMenu>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="box box-info">
+											<div class="box-header with-border">
+												<h3 class="box-title">Datos Clientes</h3>
+											</div>
+											<div class="box-body form-horizontal">
+												<div class="form-group">
+													<h:outputLabel style="color:#000000" class="col-sm-5"
+														value="Número de identificación:" />
+													<div class="col-sm-7">
+														<h:inputText id="txtNumDocProc" styleClass="form-control"
+															disabled="true" style="text-align:center"
+															value="#{proformasAprobRechMb.selectedProformas.idClienteProf.numDocumento}" />
+													</div>
+												</div>
+												<div class="form-group">
+													<h:outputLabel style="color:#000000" class="col-sm-5"
+														value="Cliente:" />
+													<div class="col-sm-7">
+														<h:inputText id="txtNombresProc" style="text-align:center"
+															value="#{proformasAprobRechMb.selectedProformas.idClienteProf.nombresCompletos}"
+															styleClass="form-control" disabled="true" />
+													</div>
+												</div>
+												<div class="form-group">
+													<h:outputLabel style="color:#000000"
+														value="Correo Electrónico:" class="col-sm-5" />
+													<div class="col-sm-7">
+														<h:inputText id="txtMailProc" style="text-align:center"
+															value="#{proformasAprobRechMb.selectedProformas.idClienteProf.email}"
+															styleClass="form-control" disabled="true" />
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="nav-tabs-custom">
+										<p:tabView dynamic="true" cache="true"
+											activeIndex="#{proformasAprobRechMb.idxTabView}">
+											<p:tab id="tab0" title="Especialidad" titleStyleClass="tab1">
+												<p:dataTable var="factEspecialidad" id="tblDetFactProc"
+													widgetVar="tblDetFactProc" scrollHeight="150"
+													emptyMessage="No se ha seleccionado Medico"
+													value="#{proformasAprobRechMb.listDetProfEsp}"
+													scrollable="true" style="margin-bottom:20px">
+
+													<p:columnGroup type="header">
+														<p:column headerText="Servicio"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="Médico"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="Fecha de Atención"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="Valor Unitario"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="Cantidad"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="Precio Sin IVA"
+															style="#{loginMb.styleTable}" />
+													</p:columnGroup>
+
+													<p:column>
+														<h:outputText value="#{factEspecialidad.especialidad}" />
+													</p:column>
+													<p:column>
+														<h:outputText
+															value="#{factEspecialidad.idMedicoProf.nombreCompleto}" />
+													</p:column>
+													<p:column>
+														<h:outputText value="#{factEspecialidad.fechaAtencionStr}" />
+													</p:column>
+													<p:column>
+														<center>
+															<h:outputText value="#{factEspecialidad.precio}">
+																<f:convertNumber pattern="0.00" />
+															</h:outputText>
+														</center>
+													</p:column>
+													<p:column>
+														<center>
+															<h:outputText value="#{factEspecialidad.cantidad}" />
+														</center>
+													</p:column>
+													<p:column>
+														<center>
+															<h:outputText value="#{factEspecialidad.precioTotal}">
+																<f:convertNumber pattern="0.00" />
+															</h:outputText>
+														</center>
+													</p:column>
+												</p:dataTable>
+											</p:tab>
+											<p:tab id="tab1" title="Farmacia" titleStyleClass="tab1">
+												<p:dataTable var="factDet" id="tblDetProfrmaProc"
+													widgetVar="tblDetProfrmaProc" scrollRows="2"
+													emptyMessage="No se ha seleccionado Items"
+													scrollHeight="150"
+													value="#{proformasAprobRechMb.listDetProfFarm}"
+													scrollable="true" style="margin-bottom:20px">
+
+													<p:columnGroup type="header">
+														<p:column headerText="Descripción/Articulo"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="Cant Bodega Donación"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="Lote" style="#{loginMb.styleTable}" />
+														<p:column headerText="Valor Unitario"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="Cantidad"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="Precio Sin IVA"
+															style="#{loginMb.styleTable}" />
+													</p:columnGroup>
+
+													<p:column>
+														<center>
+															<h:outputText value="#{factDet.descripcionItems}" />
+														</center>
+													</p:column>
+													<p:column>
+														<center>
+															<h:outputText value="#{factDet.cantBodgaDonacion}" />
+														</center>
+													</p:column>
+													<p:column>
+														<center>
+															<div class="input-group">
+																<h:outputText value="#{factDet.loteActual}" />
+																<p:spacer width="5" height="0" />
+																<div class="input-group-btn">
+																	<p:commandButton icon="ui-icon-search"
+																		id="btnUbicacion"
+																		disabled="#{factDet.banderaTipoUbic}"
+																		actionListener="#{proformasAprobRechMb.getListaLotesUbicaciones(factDet)}"
+																		title="Permite seleccionar lote, ubicación del item a despachar"
+																		oncomplete="PF('tblDtoLotes').filter()" />
+																</div>
+															</div>
+														</center>
+													</p:column>
+													<p:column>
+														<center>
+															<h:outputText value="#{factDet.precio}" />
+														</center>
+													</p:column>
+													<p:column>
+														<center>
+															<h:outputText value="#{factDet.cantidad}" />
+														</center>
+													</p:column>
+													<p:column>
+														<center>
+															<h:outputText value="#{factDet.precioTotal}">
+																<f:convertNumber pattern="0.00" />
+															</h:outputText>
+														</center>
+													</p:column>
+												</p:dataTable>
+											</p:tab>
+											<p:tab id="tab2" title="Datos Adicionales"
+												titleStyleClass="tab1">
+												<p:panel style="height:201px">
+													<div class="box-body form-horizontal">
+														<div class="col-lg-12">
+															<div class="form-group">
+																<h:outputLabel style="color:#000000" value="Ingresos:"
+																	class="col-sm-2" />
+																<div class="col-sm-8">
+																	<h:inputText id="txtIngresoProc"
+																		styleClass="form-control"
+																		value="#{proformasAprobRechMb.selectedProformas.ingresos}"
+																		disabled="#{proformasAprobRechMb.aprobRechProformaEstado}">
+																	</h:inputText>
+																</div>
+															</div>
+															<div class="form-group">
+																<h:outputLabel style="color:#000000"
+																	value="Origen de Ingresos:" class="col-sm-2" />
+																<div class="col-sm-8">
+																	<h:inputText id="txtOriIngresoProc"
+																		styleClass="form-control"
+																		value="#{proformasAprobRechMb.selectedProformas.origenIngresos}"
+																		disabled="#{proformasAprobRechMb.aprobRechProformaEstado}">
+																	</h:inputText>
+																</div>
+															</div>
+															<div class="form-group">
+																<h:outputLabel style="color:#000000"
+																	value="Con quien vive el paciente:" class="col-sm-2" />
+																<div class="col-sm-8">
+																	<h:inputText id="txtConvivePacProc"
+																		styleClass="form-control"
+																		value="#{proformasAprobRechMb.selectedProformas.convivePaciente}"
+																		disabled="#{proformasAprobRechMb.aprobRechProformaEstado}">
+																	</h:inputText>
+																</div>
+															</div>
+														</div>
+													</div>
+												</p:panel>
+											</p:tab>
+										</p:tabView>
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="row">
+										<div class="box-body form-horizontal">
+											<div class="col-lg-6">
+												<div class="form-group">
+													<h:outputLabel style="color:#000000" value="Notas:"
+														class="col-sm-1" />
+													<div class="col-sm-11">
+														<h:inputTextarea id="txtNotasProc"
+															styleClass="form-control"
+															value="#{proformasAprobRechMb.auxNotas}"
+															disabled="#{proformasAprobRechMb.aprobRechProformaEstado}">
+															<p:ajax event="blur"
+																listener="#{proformasAprobRechMb.auxGuardaDescpNotas}" />
+														</h:inputTextarea>
+													</div>
+												</div>
+												<div class="form-group">
+													<div class="row">
+														<div class="col-sm-6">
+															<div class="col-sm-1" />
+															<p:commandButton icon="ui-icon-folder-collapsed"
+																id="btnVerDetProc" value="Ver Historico"
+																rendered="#{proformasAprobRechMb.aprobRechProformaValor ? false : true}"
+																actionListener="#{proformasAprobRechMb.consultarHistoricoObraSocial(proformasAprobRechMb.selectedProformas.idPacienteProf,'P')}"
+																oncomplete="PF('tblDatosHist').filter()"
+																title="Permite ver historial del paciente por obra social aceptada" />
+														</div>
+														<div class="col-lg-6">
+															<h:outputLabel style="color:#000000"
+																value="Valor final a pagar" class="col-sm-5" />
+															<div class="col-sm-7">
+																<h:inputText disabled="true" id="txtValFnlPago"
+																	style="text-align: center"
+																	value="#{proformasAprobRechMb.valorFinalPago}"
+																	styleClass="form-control">
+																	<f:convertNumber pattern="0.00" />
+																</h:inputText>
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="form-group">
+													<div class="row">
+														<div class="col-lg-6">
+															<h:outputLabel style="color:#000000"
+																value="#{proformasAprobRechMb.descripcionAprobRechValor}"
+																class="col-sm-5" />
+															<div class="col-sm-7">
+																<h:inputText styleClass="form-control"
+																	value="#{proformasAprobRechMb.valorAprobado}"
+																	disabled="#{proformasAprobRechMb.aprobRechProformaValor}">
+																	<f:convertNumber pattern="0.00" />
+																</h:inputText>
+															</div>
+														</div>
+														<div class="col-lg-6">
+															<h:outputLabel style="color:#000000"
+																rendered="#{proformasAprobRechMb.aprobRechProformaValor ? false : true}"
+																value="Porcentaje aprobado" class="col-sm-5" />
+															<div class="col-sm-7">
+																<h:inputText styleClass="form-control"
+																	value="#{proformasAprobRechMb.porcntajAprobado}"
+																	rendered="#{proformasAprobRechMb.aprobRechProformaValor ? false : true}" />
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="form-group">
+													<div class="row">
+														<div class="col-lg-12">
+															<div class="col-sm-3">
+																<p:commandButton value="Aprobar"
+																	update="#{p:component('tblProformas')}" disabled="true"
+																	actionListener="#{proformasAprobRechMb.aprobarRechazarProformaProcedmiento(proformasAprobRechMb.selectedProformas,'A')}" />
+															</div>
+															<div class="col-sm-3">
+																<p:commandButton value="Rechazar" disabled="true"
+																	update="#{p:component('tblProformas')}"
+																	actionListener="#{proformasAprobRechMb.aprobarRechazarProformaProcedmiento(proformasAprobRechMb.selectedProformas,'R')}" />
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+											<div class="col-lg-6">
+												<div class="row">
+													<div class="col-lg-4" />
+													<div class="col-lg-8">
+														<p:panel>
+															<div class="form-group" />
+															<div class="form-group">
+																<h:outputLabel style="color:#000000" value="Subtotal:"
+																	class="col-sm-5" />
+																<div class="col-sm-7">
+																	<h:inputText id="txtSubtotalProc"
+																		style="text-align: center"
+																		value="#{proformasAprobRechMb.selectedProformas.subtotal}"
+																		styleClass="form-control" disabled="true">
+																		<f:convertNumber pattern="0.00" />
+																	</h:inputText>
+																</div>
+															</div>
+															<div class="form-group">
+																<h:outputLabel style="color:#000000"
+																	value="IVA #{proformasAprobRechMb.txtValorIVA}%:"
+																	class="col-sm-5" />
+																<div class="col-sm-7">
+																	<h:inputText id="txtIva" style="text-align: center"
+																		value="#{proformasAprobRechMb.selectedProformas.iva}"
+																		styleClass="form-control" disabled="true">
+																		<f:convertNumber pattern="0.00" />
+																	</h:inputText>
+																</div>
+															</div>
+															<div class="form-group">
+																<h:outputLabel style="color:#000000" value="IVA 0%:"
+																	class="col-sm-5" />
+																<div class="col-sm-7">
+																	<h:inputText id="txtIvaCeroProc"
+																		style="text-align: center"
+																		value="#{proformasAprobRechMb.selectedProformas.ivaCero}"
+																		styleClass="form-control" disabled="true">
+																		<f:convertNumber pattern="0.00" />
+																	</h:inputText>
+																</div>
+															</div>
+															<div class="form-group">
+																<h:outputLabel style="color:#000000"
+																	value="Valor Total:" class="col-sm-5" />
+																<div class="col-sm-7">
+																	<h:inputText id="txtValorTotalProc"
+																		style="text-align: center"
+																		value="#{proformasAprobRechMb.selectedProformas.valorTotal}"
+																		styleClass="form-control" disabled="true">
+																		<f:convertNumber pattern="0.00" />
+																	</h:inputText>
+																</div>
+															</div>
+														</p:panel>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</h:panelGroup>
+					</p:panel>
+				</p:scrollPanel>
+			</p:dialog>
+		</h:form>
+
+		<h:form id="formAsignaLote">
+			<p:dialog header="Selección de Lotes" widgetVar="dlgLotes"
+				draggable="false" responsive="true" showEffect="clip" width="30%"
+				modal="true" resizable="false">
+				<p:messages globalOnly="false" id="msjGnrlLote" showDetail="false" />
+				<p:dataTable var="datosUbiLotes" id="tblDtoLotes"
+					widgetVar="tblDtoLotes"
+					value="#{proformasAprobRechMb.auxUbicacionLotes}"
+					selectionMode="single"
+					filteredValue="#{proformasAprobRechMb.listaFiltroUbicLot}"
+					paginator="true" rows="10"
+					selection="#{proformasAprobRechMb.selectedLotsStock}"
+					rowKey="#{datosUbiLotes.contador}">
+
+					<p:ajax event="rowSelect"
+						listener="#{proformasAprobRechMb.onRowSelectUbicacion}"
+						update="#{p:component('tblDetProfrmaProc')},#{p:component('txtValFnlPago')},#{p:component('msjGnrlLote')}" />
+
+					<p:column headerText="Lotes" filterBy="#{datosUbiLotes.lote}"
+						filterMatchMode="contains" styleClass="centerColum"
+						filterStyle="150px">
+						<h:outputText id="txtUbiLote" value="#{datosUbiLotes.lote}" />
+					</p:column>
+					<p:column headerText="Cantidad Disponible en Stock"
+						styleClass="centerColum">
+						<h:outputText id="txtUbiCantLot"
+							value="#{datosUbiLotes.cantidadLote}" />
+					</p:column>
+					<p:column headerText="Cantidad a donar" styleClass="centerColum">
+						<h:inputText id="txtCantDonada" styleClass="form-control"
+							value="#{datosUbiLotes.cantidad}" />
+					</p:column>
+				</p:dataTable>
+			</p:dialog>
+		</h:form>
+
+		<h:form id="formListaPrecio">
+			<p:dialog header="Detalle Proforma" widgetVar="dlgDetListPrecio"
+				draggable="false" maximizable="true" id="idDlgDetListPrecio"
+				resizable="false" responsive="true" showEffect="fade" width="57%"
+				height="57%" modal="true"
+				onShow="autAjustePantalla('formListaPrecio:idDlgDetListPrecio')">
+
+				<p:ajax event="close"
+					listener="#{proformasAprobRechMb.seteaSelectedProforma}" />
+
+				<p:scrollPanel mode="native" style="width:100%;height:96%">
+					<p:panel toggleSpeed="500" closeSpeed="500"
+						widgetVar="pnlDetListPrecio" style="margin-bottom:20px">
+						<h:panelGroup id="pnlDlgListPrecio">
+							<div class="box-body">
+								<div class="row">
+									<div class="col-md-6">
+										<div class="box box-info">
+											<div class="box-header with-border">
+												<h3 class="box-title">Datos Pacientes</h3>
+											</div>
+											<div class="box-body form-horizontal">
+												<div class="form-group">
+													<h:outputLabel style="color:#000000" class="col-sm-5"
+														value="Número de identificación:" />
+													<div class="col-sm-7">
+														<h:inputText id="txtNumDocPacListP"
+															styleClass="form-control" disabled="true"
+															style="text-align:center"
+															value="#{proformasAprobRechMb.selectedProformas.idPacienteProf.numDocumento}" />
+													</div>
+												</div>
+												<div class="form-group">
+													<h:outputLabel style="color:#000000" value="Paciente:"
+														class="col-sm-5" />
+													<div class="col-sm-7">
+														<h:inputText id="txtNombresPacListP"
+															style="text-align:center"
+															value="#{proformasAprobRechMb.selectedProformas.idPacienteProf.nombresCompletos}"
+															styleClass="form-control" disabled="true" />
+													</div>
+												</div>
+												<div class="form-group">
+													<h:outputLabel style="color:#000000"
+														value="Tarjeta Afiliado:" class="col-sm-5" />
+													<div class="col-sm-7">
+														<h:selectOneMenu id="txtMailPacListP" disabled="true"
+															value="#{proformasAprobRechMb.selectedProformas.idPacienteProf.afiliadoTarjeta}"
+															styleClass="form-control">
+															<f:selectItem itemValue="N" itemLabel="No" />
+															<f:selectItem itemValue="Y" itemLabel="Si" />
+														</h:selectOneMenu>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="box box-info">
+											<div class="box-header with-border">
+												<h3 class="box-title">Datos Clientes</h3>
+											</div>
+											<div class="box-body form-horizontal">
+												<div class="form-group">
+													<h:outputLabel style="color:#000000" class="col-sm-5"
+														value="Número de identificación:" />
+													<div class="col-sm-7">
+														<h:inputText id="txtNumDocListP" styleClass="form-control"
+															disabled="true" style="text-align:center"
+															value="#{proformasAprobRechMb.selectedProformas.idClienteProf.numDocumento}" />
+													</div>
+												</div>
+												<div class="form-group">
+													<h:outputLabel style="color:#000000" class="col-sm-5"
+														value="Cliente:" />
+													<div class="col-sm-7">
+														<h:inputText id="txtNombresListP"
+															style="text-align:center"
+															value="#{proformasAprobRechMb.selectedProformas.idClienteProf.nombresCompletos}"
+															styleClass="form-control" disabled="true" />
+													</div>
+												</div>
+												<div class="form-group">
+													<h:outputLabel style="color:#000000"
+														value="Correo Electrónico:" class="col-sm-5" />
+													<div class="col-sm-7">
+														<h:inputText id="txtMailListP" style="text-align:center"
+															value="#{proformasAprobRechMb.selectedProformas.idClienteProf.email}"
+															styleClass="form-control" disabled="true" />
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="nav-tabs-custom">
+										<p:tabView dynamic="true" cache="true"
+											activeIndex="#{proformasAprobRechMb.idxTabView}">
+											<p:tab id="tab0" title="Especialidad" titleStyleClass="tab1">
+												<p:dataTable var="factEspecialidad" id="tblDetFactListP"
+													widgetVar="tblDetFactListP" scrollHeight="150"
+													emptyMessage="No se ha seleccionado Medico"
+													value="#{proformasAprobRechMb.listDetProfEsp}"
+													scrollable="true" style="margin-bottom:20px">
+
+													<p:columnGroup type="header">
+														<p:column headerText="Servicio"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="Médico"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="Fecha de Atención"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="Valor Unitario"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="Cantidad"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="Precio Sin IVA"
+															style="#{loginMb.styleTable}" />
+													</p:columnGroup>
+
+													<p:column>
+														<h:outputText value="#{factEspecialidad.especialidad}" />
+													</p:column>
+													<p:column>
+														<h:outputText
+															value="#{factEspecialidad.idMedicoProf.nombreCompleto}" />
+													</p:column>
+													<p:column>
+														<h:outputText value="#{factEspecialidad.fechaAtencionStr}" />
+													</p:column>
+													<p:column>
+														<center>
+															<h:outputText value="#{factEspecialidad.precio}">
+																<f:convertNumber pattern="0.00" />
+															</h:outputText>
+														</center>
+													</p:column>
+													<p:column>
+														<center>
+															<h:outputText value="#{factEspecialidad.cantidad}" />
+														</center>
+													</p:column>
+													<p:column>
+														<center>
+															<h:outputText value="#{factEspecialidad.precioTotal}">
+																<f:convertNumber pattern="0.00" />
+															</h:outputText>
+														</center>
+													</p:column>
+												</p:dataTable>
+											</p:tab>
+											<p:tab id="tab1" title="Farmacia" titleStyleClass="tab1">
+												<p:dataTable var="factDet" id="tblDetProfrmaListP"
+													widgetVar="tblDetProfrmaListP" scrollRows="2"
+													emptyMessage="No se ha seleccionado Items"
+													scrollHeight="150"
+													value="#{proformasAprobRechMb.listDetProfFarm}"
+													scrollable="true" style="margin-bottom:20px">
+
+													<p:columnGroup type="header">
+														<p:column headerText="Descripción/Articulo"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="Cant Bodega Donación"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="Lote" style="#{loginMb.styleTable}" />
+														<p:column headerText="Valor Unitario"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="Cantidad"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="Precio Sin IVA"
+															style="#{loginMb.styleTable}" />
+													</p:columnGroup>
+
+													<p:column>
+														<center>
+															<h:outputText value="#{factDet.descripcionItems}" />
+														</center>
+													</p:column>
+													<p:column>
+														<center>
+															<h:outputText value="#{factDet.cantBodgaDonacion}" />
+														</center>
+													</p:column>
+													<p:column>
+														<center>
+															<div class="input-group">
+																<h:outputText value="#{factDet.loteActual}" />
+																<p:spacer width="5" height="0" />
+																<div class="input-group-btn">
+																	<p:commandButton icon="ui-icon-search"
+																		id="btnUbicacion"
+																		disabled="#{factDet.banderaTipoUbic}"
+																		actionListener="#{proformasAprobRechMb.getListaLotesUbicaciones(factDet)}"
+																		title="Permite seleccionar lote, ubicación del item a despachar"
+																		oncomplete="PF('tblDtoLotes').filter()" />
+																</div>
+															</div>
+														</center>
+													</p:column>
+													<p:column>
+														<center>
+															<h:outputText value="#{factDet.precio}" />
+														</center>
+													</p:column>
+													<p:column>
+														<center>
+															<h:outputText value="#{factDet.cantidad}" />
+														</center>
+													</p:column>
+													<p:column>
+														<center>
+															<h:outputText value="#{factDet.precioTotal}">
+																<f:convertNumber pattern="0.00" />
+															</h:outputText>
+														</center>
+													</p:column>
+												</p:dataTable>
+											</p:tab>
+											<p:tab id="tab2" title="Activo Fijo" titleStyleClass="tab1">
+												<p:dataTable var="factActFijo" id="tblDetFactActFijo"
+													widgetVar="tblDetFactActFijo"
+													emptyMessage="No se ha seleccionado items"
+													scrollHeight="150"
+													value="#{proformasAprobRechMb.listDetProfAF}"
+													scrollable="true" style="margin-bottom:20px">
+
+													<p:columnGroup type="header">
+														<p:column headerText="Número de artículo"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="Descripción artículo"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="Valor Unitario"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="Cantidad"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="Baja Parcial"
+															style="#{loginMb.styleTable}" />
+													</p:columnGroup>
+
+													<p:column styleClass="centerColum">
+														<h:outputText value="#{factActFijo.codigoItems}" />
+													</p:column>
+													<p:column styleClass="centerColum">
+														<h:outputText value="#{factActFijo.descripcionItems}" />
+													</p:column>
+													<p:column styleClass="centerColum">
+														<h:outputText value="#{factActFijo.precio}">
+															<f:convertNumber pattern="0.00" />
+														</h:outputText>
+													</p:column>
+													<p:column styleClass="centerColum">
+														<h:outputText id="cantidad"
+															value="#{factActFijo.cantidad}"
+															inputStyleClass="centerColumn" />
+													</p:column>
+													<p:column styleClass="centerColum">
+														<p:selectBooleanCheckbox
+															value="#{factActFijo.actFijoBajaParcial}" disabled="true" />
+													</p:column>
+												</p:dataTable>
+											</p:tab>
+											<p:tab id="tab3" title="Datos Adicionales"
+												titleStyleClass="tab1">
+												<p:panel style="height:201px">
+													<div class="box-body form-horizontal">
+														<div class="col-lg-12">
+															<div class="form-group">
+																<h:outputLabel style="color:#000000" value="Ingresos:"
+																	class="col-sm-2" />
+																<div class="col-sm-8">
+																	<h:inputText id="txtIngresoListP"
+																		styleClass="form-control"
+																		value="#{proformasAprobRechMb.selectedProformas.ingresos}"
+																		disabled="true">
+																	</h:inputText>
+																</div>
+															</div>
+															<div class="form-group">
+																<h:outputLabel style="color:#000000"
+																	value="Origen de Ingresos:" class="col-sm-2" />
+																<div class="col-sm-8">
+																	<h:inputText id="txtOriIngresoListP"
+																		styleClass="form-control"
+																		value="#{proformasAprobRechMb.selectedProformas.origenIngresos}"
+																		disabled="true">
+																	</h:inputText>
+																</div>
+															</div>
+															<div class="form-group">
+																<h:outputLabel style="color:#000000"
+																	value="Con quien vive el paciente:" class="col-sm-2" />
+																<div class="col-sm-8">
+																	<h:inputText id="txtConvivePacListP"
+																		styleClass="form-control"
+																		value="#{proformasAprobRechMb.selectedProformas.convivePaciente}"
+																		disabled="true">
+																	</h:inputText>
+																</div>
+															</div>
+														</div>
+													</div>
+												</p:panel>
+											</p:tab>
+										</p:tabView>
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="row">
+										<div class="box-body form-horizontal">
+											<div class="col-lg-6">
+												<p:panel id="pnlListPrecioCamb">
+													<div class="form-group">
+														<h:outputLabel style="color:#000000" value="Notas:"
+															class="col-sm-1" />
+														<div class="col-sm-11">
+															<h:inputTextarea id="txtNotasListP"
+																styleClass="form-control"
+																value="#{proformasAprobRechMb.auxNotas}" disabled="true">
+															</h:inputTextarea>
+														</div>
+													</div>
+													<div class="form-group">
+														<div class="row">
+															<div class="col-sm-1" />
+															<div class="col-sm-10">
+																<h:outputLabel style="color:#000000"
+																	value="Lista de Precio Anterior:" class="col-sm-6" />
+																<div class="col-sm-6">
+																	<h:inputText styleClass="form-control"
+																		value="#{proformasAprobRechMb.nombreListaPrecioOld}"
+																		disabled="true">
+																		<f:convertNumber pattern="0.00" />
+																	</h:inputText>
+																</div>
+															</div>
+														</div>
+													</div>
+													<div class="form-group">
+														<div class="row">
+															<div class="col-sm-1" />
+															<div class="col-lg-10">
+																<h:outputLabel style="color:#000000"
+																	value="Lista de Precio Nueva:" class="col-sm-6" />
+																<div class="col-sm-6">
+																	<h:inputText styleClass="form-control"
+																		value="#{proformasAprobRechMb.nombreListaPrecioNew}"
+																		disabled="true">
+																		<f:convertNumber pattern="0.00" />
+																	</h:inputText>
+																</div>
+															</div>
+														</div>
+													</div>
+													<div class="form-group">
+														<div class="row">
+															<div class="col-lg-12">
+																<div class="col-sm-2" />
+																<div class="col-sm-3">
+																	<p:commandButton value="Aprobar"
+																		update="#{p:component('tblProformas')}"
+																		disabled="true"
+																		actionListener="#{proformasAprobRechMb.aprobarRechazarProformaListaPrecio(proformasAprobRechMb.selectedProformas,'A')}" />
+																</div>
+																<div class="col-sm-3">
+																	<p:commandButton value="Rechazar" disabled="true"
+																		update="#{p:component('tblProformas')}"
+																		actionListener="#{proformasAprobRechMb.aprobarRechazarProformaListaPrecio(proformasAprobRechMb.selectedProformas,'R')}" />
+																</div>
+															</div>
+														</div>
+													</div>
+												</p:panel>
+											</div>
+											<div class="col-lg-6">
+												<div class="row">
+													<div class="col-lg-4" />
+													<div class="col-lg-8">
+														<p:panel>
+															<div class="form-group" />
+															<div class="form-group">
+																<h:outputLabel style="color:#000000" value="Subtotal:"
+																	class="col-sm-5" />
+																<div class="col-sm-7">
+																	<h:inputText id="txtSubtotalListP"
+																		style="text-align: center"
+																		value="#{proformasAprobRechMb.selectedProformas.subtotal}"
+																		styleClass="form-control" disabled="true">
+																		<f:convertNumber pattern="0.00" />
+																	</h:inputText>
+																</div>
+															</div>
+															<div class="form-group">
+																<h:outputLabel style="color:#000000"
+																	value="IVA #{proformasAprobRechMb.txtValorIVA}%:"
+																	class="col-sm-5" />
+																<div class="col-sm-7">
+																	<h:inputText id="txtIvaListP"
+																		style="text-align: center"
+																		value="#{proformasAprobRechMb.selectedProformas.iva}"
+																		styleClass="form-control" disabled="true">
+																		<f:convertNumber pattern="0.00" />
+																	</h:inputText>
+																</div>
+															</div>
+															<div class="form-group">
+																<h:outputLabel style="color:#000000" value="IVA 0%:"
+																	class="col-sm-5" />
+																<div class="col-sm-7">
+																	<h:inputText id="txtIvaCeroListP"
+																		style="text-align: center"
+																		value="#{proformasAprobRechMb.selectedProformas.ivaCero}"
+																		styleClass="form-control" disabled="true">
+																		<f:convertNumber pattern="0.00" />
+																	</h:inputText>
+																</div>
+															</div>
+															<div class="form-group">
+																<h:outputLabel style="color:#000000"
+																	value="Valor Total:" class="col-sm-5" />
+																<div class="col-sm-7">
+																	<h:inputText id="txtValorTotalListP"
+																		style="text-align: center"
+																		value="#{proformasAprobRechMb.selectedProformas.valorTotal}"
+																		styleClass="form-control" disabled="true">
+																		<f:convertNumber pattern="0.00" />
+																	</h:inputText>
+																</div>
+															</div>
+														</p:panel>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</h:panelGroup>
+					</p:panel>
+				</p:scrollPanel>
+			</p:dialog>
+		</h:form>
+		<h:form id="formVtaSc">
+			<p:dialog header="Detalle Proforma" widgetVar="dlgDetalleSc"
+				id="idDlgDetalleSc" draggable="false" resizable="false"
+				hideEffect="clip" modal="true" showEffect="clip" maximizable="true"
+				responsive="true" width="57%" height="57%"
+				onShow="autAjustePantalla('form:idDlgDetalleSc')">
+
+				<p:ajax event="close"
+					listener="#{proformasAprobRechMb.seteaSelectedProforma}" />
+
+				<p:scrollPanel mode="native" style="width:100%;height:96%">
+					<p:panel toggleSpeed="500" closeSpeed="500"
+						widgetVar="panelDetalle" style="margin-bottom:20px">
+						<h:panelGroup id="pnlDialogSc">
+							<div class="box-body">
+								<div class="row">
+									<div class="col-md-6">
+										<div class="box box-info">
+											<div class="box-header with-border">
+												<h3 class="box-title">Datos Pacientes</h3>
+											</div>
+											<div class="box-body form-horizontal">
+												<div class="form-group">
+													<h:outputLabel style="color:#000000" class="col-sm-5"
+														value="Número de identificación:" />
+													<div class="col-sm-7">
+														<h:inputText id="txtNumDocPac" styleClass="form-control"
+															disabled="true" style="text-align:center"
+															value="#{proformasAprobRechMb.selectedProformas.idPacienteProf.numDocumento}" />
+													</div>
+												</div>
+												<div class="form-group">
+													<h:outputLabel style="color:#000000" value="Paciente:"
+														class="col-sm-5" />
+													<div class="col-sm-7">
+														<h:inputText id="txtNombresPac" style="text-align:center"
+															value="#{proformasAprobRechMb.selectedProformas.idPacienteProf.nombresCompletos}"
+															styleClass="form-control" disabled="true" />
+													</div>
+												</div>
+												<div class="form-group">
+													<h:outputLabel style="color:#000000"
+														value="Correo Electrónico:" class="col-sm-5" />
+													<div class="col-sm-7">
+														<h:inputText id="txtMailPac" style="text-align:center"
+															value="#{proformasAprobRechMb.selectedProformas.idPacienteProf.email}"
+															styleClass="form-control" disabled="true" />
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="box box-info">
+											<div class="box-header with-border">
+												<h3 class="box-title">Datos Clientes</h3>
+											</div>
+											<div class="box-body form-horizontal">
+												<div class="form-group">
+													<h:outputLabel style="color:#000000" class="col-sm-5"
+														value="Número de identificación:" />
+													<div class="col-sm-7">
+														<h:inputText id="txtNumDoc" styleClass="form-control"
+															disabled="true" style="text-align:center"
+															value="#{proformasAprobRechMb.selectedProformas.idClienteProf.numDocumento}" />
+													</div>
+												</div>
+												<div class="form-group">
+													<h:outputLabel style="color:#000000" class="col-sm-5"
+														value="Cliente:" />
+													<div class="col-sm-7">
+														<h:inputText id="txtNombres" style="text-align:center"
+															value="#{proformasAprobRechMb.selectedProformas.idClienteProf.nombresCompletos}"
+															styleClass="form-control" disabled="true" />
+													</div>
+												</div>
+												<div class="form-group">
+													<h:outputLabel style="color:#000000"
+														value="Correo Electrónico:" class="col-sm-5" />
+													<div class="col-sm-7">
+														<h:inputText id="txtMail" style="text-align:center"
+															value="#{proformasAprobRechMb.selectedProformas.idClienteProf.email}"
+															styleClass="form-control" disabled="true" />
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="nav-tabs-custom">
+
+										<p:tabView dynamic="true" cache="true"
+											activeIndex="#{proformasAprobRechMb.idxTabView}">
+											<p:tab id="tab0" title="Especialidad" titleStyleClass="tab1">
+												<p:dataTable var="factEspecialidad" id="tblDetalleFactura"
+													widgetVar="tblDetalleFactura"
+													emptyMessage="No se ha seleccionado Medico"
+													value="#{proformasAprobRechMb.listDetProfEsp}"
+													scrollable="true" scrollHeight="150"
+													style="margin-bottom:20px">
+
+													<p:columnGroup type="header">
+														<p:column headerText="Servicio"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="Médico"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="Fecha de Atención"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="Valor Unitario"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="Cantidad"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="Precio Sin IVA"
+															style="#{loginMb.styleTable}" />
+													</p:columnGroup>
+
+													<p:column>
+														<h:outputText value="#{factEspecialidad.especialidad}" />
+													</p:column>
+													<p:column>
+														<h:outputText
+															value="#{factEspecialidad.idMedicoProf.nombreCompleto}" />
+													</p:column>
+													<p:column>
+														<h:outputText value="#{factEspecialidad.fechaAtencionStr}" />
+													</p:column>
+													<p:column>
+														<center>
+															<h:outputText value="#{factEspecialidad.precio}">
+																<f:convertNumber pattern="0.00" />
+															</h:outputText>
+														</center>
+													</p:column>
+													<p:column>
+														<center>
+															<h:outputText value="#{factEspecialidad.cantidad}" />
+														</center>
+													</p:column>
+													<p:column>
+														<center>
+															<h:outputText value="#{factEspecialidad.precioTotal}">
+																<f:convertNumber pattern="0.00" />
+															</h:outputText>
+														</center>
+													</p:column>
+												</p:dataTable>
+											</p:tab>
+											<p:tab id="tab1" title="Farmacia" titleStyleClass="tab1">
+												<div class="row no-gutters">
+													<div class="col-12 col-sm-6 col-md-6"></div>
+													<div class="col-6 col-md-6">
+														<div class="col-sm-1" />
+														<p:spacer width="13" height="0" />
+														<p:selectBooleanCheckbox disabled="true"
+															value="#{proformasAprobRechMb.selectedProformas.stockComprometido}"
+															itemLabel="Stock Comprometido" />
+													</div>
+												</div>
+												<p:dataTable var="factDet" id="tblDetalleProforma"
+													widgetVar="tblDetalleProforma" scrollRows="2"
+													emptyMessage="No se ha seleccionado Items"
+													scrollHeight="150"
+													value="#{proformasAprobRechMb.listDetProfFarm}"
+													scrollable="true" style="margin-bottom:20px">
+
+													<p:columnGroup type="header">
+														<p:column headerText="Descripción/Articulo"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="Valor Unitario"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="Cantidad"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="Precio Sin IVA"
+															style="#{loginMb.styleTable}" />
+													</p:columnGroup>
+
+													<p:column>
+														<h:outputText value="#{factDet.descripcionItems}" />
+													</p:column>
+													<p:column>
+														<center>
+															<h:outputText value="#{factDet.precio}" />
+														</center>
+													</p:column>
+													<p:column>
+														<center>
+															<h:outputText value="#{factDet.cantidad}" />
+														</center>
+													</p:column>
+													<p:column>
+														<center>
+															<h:outputText value="#{factDet.precioTotal}">
+																<f:convertNumber pattern="0.00" />
+															</h:outputText>
+														</center>
+													</p:column>
+												</p:dataTable>
+											</p:tab>
+										</p:tabView>
+									</div>
+
+								</div>
+								<div class="form-group">
+									<div class="row">
+										<div class="box-body form-horizontal">
+											<div class="col-lg-6">
+												<div class="form-group">
+													<h:outputLabel style="color:#000000" value="Notas:"
+														class="col-sm-1" />
+													<div class="col-sm-11">
+														<h:inputTextarea id="txtNotas" styleClass="form-control"
+															disabled="true"
+															value="#{proformasAprobRechMb.selectedProformas.notas}" />
+													</div>
+												</div>
+												<div class="form-group">
+													<div class="col-sm-4" />
+													<div class="col-sm-6"></div>
+												</div>
+												<div class="form-group">
+													<div class="row">
+														<div class="col-lg-6">
+															<h:outputLabel style="color:#000000"
+																value="#{proformasAprobRechMb.descripcionAprobRechValor}"
+																class="col-sm-4" />
+															<div class="col-sm-6">
+																<p:inputText
+																	value="#{proformasAprobRechMb.valorAprobado}"
+																	disabled="true">
+																	<f:convertNumber pattern="0.00" />
+																</p:inputText>
+															</div>
+														</div>
+														<div class="col-lg-6">
+															<h:outputLabel style="color:#000000"
+																rendered="#{proformasAprobRechMb.aprobRechProformaValor ? false : true}"
+																value="Porcentaje aprobado" class="col-sm-4" />
+															<div class="col-sm-6">
+																<p:inputText disabled="true"
+																	value="#{proformasAprobRechMb.porcntajAprobado}"
+																	rendered="#{proformasAprobRechMb.aprobRechProformaValor ? false : true}" />
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="form-group">
+													<div class="row">
+														<div class="col-lg-12">
+															<div class="col-sm-3">
+																<p:commandButton value="Aprobar"
+																	update="#{p:component('tblProformas')}" disabled="true"
+																	actionListener="#{proformasAprobRechMb.aprobarRechazarProforma(proformasAprobRechMb.selectedProformas,'A')}" />
+															</div>
+															<div class="col-sm-3">
+																<p:commandButton value="Rechazar" disabled="true"
+																	update="#{p:component('tblProformas')}"
+																	actionListener="#{proformasAprobRechMb.aprobarRechazarProforma(proformasAprobRechMb.selectedProformas,'R')}" />
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+											<div class="col-lg-6">
+												<div class="row">
+													<div class="col-lg-4" />
+													<div class="col-lg-8">
+														<p:panel>
+															<div class="form-group" />
+															<div class="form-group">
+																<h:outputLabel style="color:#000000" value="Subtotal:"
+																	class="col-sm-5" />
+																<div class="col-sm-7">
+																	<h:inputText id="txtSubtotal"
+																		style="text-align: center"
+																		value="#{proformasAprobRechMb.selectedProformas.subtotal}"
+																		styleClass="form-control" disabled="true">
+																		<f:convertNumber pattern="0.00" />
+																	</h:inputText>
+																</div>
+															</div>
+															<div class="form-group">
+																<h:outputLabel style="color:#000000"
+																	value="IVA #{proformasAprobRechMb.txtValorIVA}%:"
+																	class="col-sm-5" />
+																<div class="col-sm-7">
+																	<h:inputText id="txtIva" style="text-align: center"
+																		value="#{proformasAprobRechMb.selectedProformas.iva}"
+																		styleClass="form-control" disabled="true">
+																		<f:convertNumber pattern="0.00" />
+																	</h:inputText>
+																</div>
+															</div>
+															<div class="form-group">
+																<h:outputLabel style="color:#000000" value="IVA 0%:"
+																	class="col-sm-5" />
+																<div class="col-sm-7">
+																	<h:inputText id="txtIvaCero" style="text-align: center"
+																		value="#{proformasAprobRechMb.selectedProformas.ivaCero}"
+																		styleClass="form-control" disabled="true">
+																		<f:convertNumber pattern="0.00" />
+																	</h:inputText>
+																</div>
+															</div>
+															<div class="form-group">
+																<h:outputLabel style="color:#000000"
+																	value="Valor Total:" class="col-sm-5" />
+																<div class="col-sm-7">
+																	<h:inputText id="txtValorTotal"
+																		style="text-align: center"
+																		value="#{proformasAprobRechMb.selectedProformas.valorTotal}"
+																		styleClass="form-control" disabled="true">
+																		<f:convertNumber pattern="0.00" />
+																	</h:inputText>
+																</div>
+															</div>
+														</p:panel>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</h:panelGroup>
+					</p:panel>
+				</p:scrollPanel>
+			</p:dialog>
+		</h:form>
+
+		<h:form id="formVtaActFijo">
+			<p:dialog header="Detalle Proforma" widgetVar="dlgDetActFijo"
+				draggable="false" id="idDlgDetActFijo" maximizable="true"
+				resizable="false" responsive="true" showEffect="fade" width="57%"
+				height="57%" modal="true"
+				onShow="autAjustePantalla('formVtaActFijo:idDlgDetActFijo')">
+
+				<p:ajax event="close"
+					listener="#{proformasAprobRechMb.seteaSelectedProforma}" />
+
+				<p:scrollPanel mode="native" style="width:100%;height:96%">
+					<p:panel toggleSpeed="500" closeSpeed="500"
+						widgetVar="pnlDetActFijo" style="margin-bottom:20px">
+						<h:panelGroup id="pnlDlgActFijo">
+							<div class="box-body">
+								<div class="row">
+									<div class="col-md-6">
+										<div class="box box-info">
+											<div class="box-header with-border">
+												<h3 class="box-title">Datos Pacientes</h3>
+											</div>
+											<div class="box-body form-horizontal">
+												<div class="form-group">
+													<h:outputLabel style="color:#000000" class="col-sm-5"
+														value="Número de identificación:" />
+													<div class="col-sm-7">
+														<h:inputText id="txtNumDocPacActFijo"
+															styleClass="form-control" disabled="true"
+															style="text-align:center"
+															value="#{proformasAprobRechMb.selectedProformas.idPacienteProf.numDocumento}" />
+													</div>
+												</div>
+												<div class="form-group">
+													<h:outputLabel style="color:#000000" value="Paciente:"
+														class="col-sm-5" />
+													<div class="col-sm-7">
+														<h:inputText id="txtNombresPacActFijo"
+															style="text-align:center"
+															value="#{proformasAprobRechMb.selectedProformas.idPacienteProf.nombresCompletos}"
+															styleClass="form-control" disabled="true" />
+													</div>
+												</div>
+												<div class="form-group">
+													<h:outputLabel style="color:#000000"
+														value="Tarjeta Afiliado:" class="col-sm-5" />
+													<div class="col-sm-7">
+														<h:selectOneMenu id="txtMailPacActFijo" disabled="true"
+															value="#{proformasAprobRechMb.selectedProformas.idPacienteProf.afiliadoTarjeta}"
+															styleClass="form-control">
+															<f:selectItem itemValue="N" itemLabel="No" />
+															<f:selectItem itemValue="Y" itemLabel="Si" />
+														</h:selectOneMenu>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="box box-info">
+											<div class="box-header with-border">
+												<h3 class="box-title">Datos Clientes</h3>
+											</div>
+											<div class="box-body form-horizontal">
+												<div class="form-group">
+													<h:outputLabel style="color:#000000" class="col-sm-5"
+														value="Número de identificación:" />
+													<div class="col-sm-7">
+														<h:inputText id="txtNumDocActFijo"
+															styleClass="form-control" disabled="true"
+															style="text-align:center"
+															value="#{proformasAprobRechMb.selectedProformas.idClienteProf.numDocumento}" />
+													</div>
+												</div>
+												<div class="form-group">
+													<h:outputLabel style="color:#000000" class="col-sm-5"
+														value="Cliente:" />
+													<div class="col-sm-7">
+														<h:inputText id="txtNombresActFijo"
+															style="text-align:center"
+															value="#{proformasAprobRechMb.selectedProformas.idClienteProf.nombresCompletos}"
+															styleClass="form-control" disabled="true" />
+													</div>
+												</div>
+												<div class="form-group">
+													<h:outputLabel style="color:#000000"
+														value="Correo Electrónico:" class="col-sm-5" />
+													<div class="col-sm-7">
+														<h:inputText id="txtMailActFijo" style="text-align:center"
+															value="#{proformasAprobRechMb.selectedProformas.idClienteProf.email}"
+															styleClass="form-control" disabled="true" />
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="nav-tabs-custom">
+										<p:tabView dynamic="true" cache="true"
+											activeIndex="#{proformasAprobRechMb.idxTabView}">
+											<p:tab id="tab0" title="Activo Fijo" titleStyleClass="tab1">
+												<p:dataTable var="factActFijo" id="tblDetFactActFijo"
+													widgetVar="tblDetFactActFijo"
+													emptyMessage="No se ha seleccionado items"
+													scrollHeight="150"
+													value="#{proformasAprobRechMb.listDetProfAF}"
+													scrollable="true" style="margin-bottom:20px">
+
+													<p:columnGroup type="header">
+														<p:column headerText="Número de artículo"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="Descripción artículo"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="Valor Unitario"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="Cantidad"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="Baja Parcial"
+															style="#{loginMb.styleTable}" />
+													</p:columnGroup>
+
+													<p:column styleClass="centerColum">
+														<h:outputText value="#{factActFijo.codigoItems}" />
+													</p:column>
+													<p:column styleClass="centerColum">
+														<h:outputText value="#{factActFijo.descripcionItems}" />
+													</p:column>
+													<p:column styleClass="centerColum">
+														<h:outputText value="#{factActFijo.precio}">
+															<f:convertNumber pattern="0.00" />
+														</h:outputText>
+													</p:column>
+													<p:column styleClass="centerColum">
+														<h:outputText id="cantidad"
+															value="#{factActFijo.cantidad}"
+															inputStyleClass="centerColumn" />
+													</p:column>
+													<p:column styleClass="centerColum">
+														<p:selectBooleanCheckbox
+															value="#{factActFijo.actFijoBajaParcial}" disabled="true" />
+													</p:column>
+												</p:dataTable>
+											</p:tab>
+											<p:tab id="tab1" title="Datos Adicionales"
+												titleStyleClass="tab1">
+												<p:panel style="height:201px">
+													<div class="box-body form-horizontal">
+														<div class="col-lg-12">
+															<div class="form-group">
+																<h:outputLabel style="color:#000000" value="Ingresos:"
+																	class="col-sm-2" />
+																<div class="col-sm-8">
+																	<h:inputText id="txtIngresoActFijo"
+																		styleClass="form-control"
+																		value="#{proformasAprobRechMb.selectedProformas.ingresos}"
+																		disabled="true">
+																	</h:inputText>
+																</div>
+															</div>
+															<div class="form-group">
+																<h:outputLabel style="color:#000000"
+																	value="Origen de Ingresos:" class="col-sm-2" />
+																<div class="col-sm-8">
+																	<h:inputText id="txtOriIngresoActFijo"
+																		styleClass="form-control"
+																		value="#{proformasAprobRechMb.selectedProformas.origenIngresos}"
+																		disabled="true">
+																	</h:inputText>
+																</div>
+															</div>
+															<div class="form-group">
+																<h:outputLabel style="color:#000000"
+																	value="Con quien vive el paciente:" class="col-sm-2" />
+																<div class="col-sm-8">
+																	<h:inputText id="txtConvivePacActFijo"
+																		styleClass="form-control"
+																		value="#{proformasAprobRechMb.selectedProformas.convivePaciente}"
+																		disabled="true">
+																	</h:inputText>
+																</div>
+															</div>
+														</div>
+													</div>
+												</p:panel>
+											</p:tab>
+										</p:tabView>
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="row">
+										<div class="col-lg-6">
+											<div class="box-body form-horizontal">
+												<div class="form-group">
+													<h:outputLabel style="color:#000000" value="Notas:"
+														class="col-sm-1" />
+													<div class="col-sm-11">
+														<h:inputTextarea id="txtNotasActFijo"
+															styleClass="form-control"
+															value="#{proformasAprobRechMb.auxNotas}" disabled="true">
+															<p:ajax event="blur"
+																listener="#{proformasAprobRechMb.auxGuardaDescpNotas}" />
+														</h:inputTextarea>
+													</div>
+												</div>
+											</div>
+											<div class="box box-info">
+												<p:panel id="pnlFormaPagoActFijo">
+													<p:dataTable var="formaPago" id="tblFormaPagoActFijo"
+														widgetVar="tblFormaPagoActFijo" scrollRows="3"
+														editable="true" editMode="cell"
+														emptyMessage="No se ha seleccionado forma de pago"
+														scrollHeight="80"
+														value="#{proformasAprobRechMb.listaFormaPago}"
+														scrollable="true" style="margin-bottom:20px">
+
+														<p:columnGroup type="header">
+															<p:column headerText="Medio de Pago"
+																style="#{loginMb.styleTable}" />
+															<p:column headerText="Valor Recibido"
+																style="#{loginMb.styleTable}" />
+														</p:columnGroup>
+
+														<p:column styleClass="centerColum">
+															<h:outputText id="txtMedioPagoOutActFijo"
+																value="#{formaPago.medioPago}" />
+														</p:column>
+
+														<p:column styleClass="centerColum">
+															<h:outputText id="txtVlrFrmPagoOutActFijo"
+																value="#{formaPago.valorFrmPago}">
+																<f:convertNumber pattern="0.00" />
+															</h:outputText>
+														</p:column>
+													</p:dataTable>
+													<div class="form-group">
+														<div class="col-sm-6" />
+														<h:outputLabel style="color:#000000" value="Vuelto:"
+															class="col-sm-2" />
+														<div class="col-sm-3">
+															<h:inputText id="txtvueltoActFijo" disabled="true"
+																styleClass="form-control" style="text-align: center"
+																value="#{proformasAprobRechMb.selectedProformas.valorVuelto}">
+																<f:convertNumber pattern="0.00" />
+															</h:inputText>
+														</div>
+													</div>
+												</p:panel>
+											</div>
+										</div>
+										<div class="col-lg-6">
+											<div class="row">
+												<div class="col-lg-4" />
+												<div class="col-lg-8">
+													<p:panel>
+														<div class="box-body form-horizontal">
+															<div class="form-group">
+																<h:outputLabel style="color:#000000" value="Subtotal:"
+																	class="col-sm-5" />
+																<div class="col-sm-7">
+																	<h:inputText id="txtSubtotalActFijo"
+																		style="text-align: center"
+																		value="#{proformasAprobRechMb.selectedProformas.subtotal}"
+																		styleClass="form-control" disabled="true">
+																		<f:convertNumber pattern="0.00" />
+																	</h:inputText>
+																</div>
+															</div>
+															<div class="form-group">
+																<h:outputLabel style="color:#000000" class="col-sm-5"
+																	value="IVA #{proformasAprobRechMb.txtValorIVA}%:" />
+																<div class="col-sm-7">
+																	<h:inputText id="txtIvaActFijo"
+																		style="text-align: center"
+																		value="#{proformasAprobRechMb.selectedProformas.iva}"
+																		styleClass="form-control" disabled="true">
+																		<f:convertNumber pattern="0.00" />
+																	</h:inputText>
+																</div>
+															</div>
+															<div class="form-group">
+																<h:outputLabel style="color:#000000" value="IVA 0%:"
+																	class="col-sm-5" />
+																<div class="col-sm-7">
+																	<h:inputText id="txtIvaCeroActFijo"
+																		style="text-align: center"
+																		value="#{proformasAprobRechMb.selectedProformas.ivaCero}"
+																		styleClass="form-control" disabled="true">
+																		<f:convertNumber pattern="0.00" />
+																	</h:inputText>
+																</div>
+															</div>
+															<div class="form-group">
+																<h:outputLabel style="color:#000000"
+																	value="Valor Total:" class="col-sm-5" />
+																<div class="col-sm-7">
+																	<h:inputText id="txtValorTotalActFijo"
+																		style="text-align: center"
+																		value="#{proformasAprobRechMb.selectedProformas.valorTotal}"
+																		styleClass="form-control" disabled="true">
+																		<f:convertNumber pattern="0.00" />
+																	</h:inputText>
+																</div>
+															</div>
+														</div>
+													</p:panel>
+													<div class="form-group" />
+													<div class="form-group">
+														<div class="col-sm-1" />
+														<p:commandButton value="Aprobar"
+															update="#{p:component('msjGeneral')},#{p:component('tblProformas')}"
+															disabled="true"
+															actionListener="#{proformasAprobRechMb.aprobarRechazarProformaActFijo(proformasAprobRechMb.selectedProformas,'A')}" />
+														<p:commandButton value="Rechazar"
+															update="#{p:component('msjGeneral')},#{p:component('tblProformas')}"
+															disabled="true"
+															actionListener="#{proformasAprobRechMb.aprobarRechazarProformaActFijo(proformasAprobRechMb.selectedProformas,'R')}" />
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</h:panelGroup>
+					</p:panel>
+				</p:scrollPanel>
+			</p:dialog>
+
+		</h:form>
+
+		<h:form id="formReferidos">
+			<p:dialog header="Detalle Proforma" widgetVar="dlgDetReferidos"
+				responsive="true" id="idDlgDetReferido" maximizable="true"
+				resizable="false" draggable="false" showEffect="fade" width="57%"
+				height="57%" modal="true"
+				onShow="autAjustePantalla('formReferidos:idDlgDetReferido')">
+
+				<p:ajax event="close"
+					listener="#{proformasAprobRechMb.seteaSelectedProforma}" />
+
+				<p:scrollPanel mode="native" style="width:100%;height:96%">
+					<p:panel toggleSpeed="500" closeSpeed="500"
+						widgetVar="panelDetalle" style="margin-bottom:20px">
+						<h:panelGroup id="pnlDlgReferidos">
+							<div class="box-body">
+								<div class="row">
+									<div class="col-md-6">
+										<div class="box box-info">
+											<div class="box-header with-border">
+												<h3 class="box-title">Datos Pacientes</h3>
+											</div>
+											<div class="box-body form-horizontal">
+												<div class="form-group">
+													<h:outputLabel style="color:#000000" class="col-sm-5"
+														value="Número de identificación:" />
+													<div class="col-sm-7">
+														<h:inputText id="txtNumDocPac" styleClass="form-control"
+															disabled="true" style="text-align:center"
+															value="#{proformasAprobRechMb.selectedProformas.idPacienteProf.numDocumento}" />
+													</div>
+												</div>
+												<div class="form-group">
+													<h:outputLabel style="color:#000000" value="Paciente:"
+														class="col-sm-5" />
+													<div class="col-sm-7">
+														<h:inputText id="txtNombresPac" style="text-align:center"
+															value="#{proformasAprobRechMb.selectedProformas.idPacienteProf.nombresCompletos}"
+															styleClass="form-control" disabled="true" />
+													</div>
+												</div>
+												<div class="form-group">
+													<h:outputLabel style="color:#000000"
+														value="Tarjeta Afiliado:" class="col-sm-5" />
+													<div class="col-sm-7">
+														<h:selectOneMenu id="txtMailPac" disabled="true"
+															value="#{proformasAprobRechMb.selectedProformas.idPacienteProf.afiliadoTarjeta}"
+															styleClass="form-control">
+															<f:selectItem itemValue="N" itemLabel="No" />
+															<f:selectItem itemValue="Y" itemLabel="Si" />
+														</h:selectOneMenu>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="box box-info">
+											<div class="box-header with-border">
+												<h3 class="box-title">Datos Clientes</h3>
+											</div>
+											<div class="box-body form-horizontal">
+												<div class="form-group">
+													<h:outputLabel style="color:#000000" class="col-sm-5"
+														value="Número de identificación:" />
+													<div class="col-sm-7">
+														<h:inputText id="txtNumDoc" styleClass="form-control"
+															disabled="true" style="text-align:center"
+															value="#{proformasAprobRechMb.selectedProformas.idClienteProf.numDocumento}" />
+													</div>
+												</div>
+												<div class="form-group">
+													<h:outputLabel style="color:#000000" class="col-sm-5"
+														value="Cliente:" />
+													<div class="col-sm-7">
+														<h:inputText id="txtNombres" style="text-align:center"
+															value="#{proformasAprobRechMb.selectedProformas.idClienteProf.nombresCompletos}"
+															styleClass="form-control" disabled="true" />
+													</div>
+												</div>
+												<div class="form-group">
+													<h:outputLabel style="color:#000000"
+														value="Correo Electrónico:" class="col-sm-5" />
+													<div class="col-sm-7">
+														<h:inputText id="txtMail" style="text-align:center"
+															value="#{proformasAprobRechMb.selectedProformas.idClienteProf.email}"
+															styleClass="form-control" disabled="true" />
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="nav-tabs-custom">
+										<p:tabView dynamic="true" cache="true"
+											activeIndex="#{proformasAprobRechMb.idxTabView}">
+											<p:tab id="tab0" title="Especialidad" titleStyleClass="tab1">
+												<p:dataTable var="factEspecialidad" id="tblDetalleFactura"
+													widgetVar="tblDetalleFactura" scrollHeight="150"
+													emptyMessage="No se ha seleccionado Medico"
+													value="#{proformasAprobRechMb.listDetProfEsp}"
+													scrollable="true" style="margin-bottom:20px">
+
+													<p:columnGroup type="header">
+														<p:column headerText="Servicio"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="Médico"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="Fecha de Atención"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="Valor Unitario"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="Cantidad"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="Precio Sin IVA"
+															style="#{loginMb.styleTable}" />
+													</p:columnGroup>
+
+													<p:column>
+														<h:outputText value="#{factEspecialidad.especialidad}" />
+													</p:column>
+													<p:column>
+														<h:outputText
+															value="#{factEspecialidad.idMedicoProf.nombreCompleto}" />
+													</p:column>
+													<p:column>
+														<h:outputText value="#{factEspecialidad.fechaAtencionStr}" />
+													</p:column>
+													<p:column>
+														<center>
+															<h:outputText value="#{factEspecialidad.precio}">
+																<f:convertNumber pattern="0.00" />
+															</h:outputText>
+														</center>
+													</p:column>
+													<p:column>
+														<center>
+															<h:outputText value="#{factEspecialidad.cantidad}" />
+														</center>
+													</p:column>
+													<p:column>
+														<center>
+															<h:outputText value="#{factEspecialidad.precioTotal}">
+																<f:convertNumber pattern="0.00" />
+															</h:outputText>
+														</center>
+													</p:column>
+												</p:dataTable>
+											</p:tab>
+											<p:tab id="tab1" title="Farmacia" titleStyleClass="tab1">
+												<div class="row no-gutters">
+													<div class="col-12 col-sm-6 col-md-6"></div>
+													<div class="col-6 col-md-6">
+														<div class="col-sm-1" />
+														<p:spacer width="13" height="0" />
+														<p:selectBooleanCheckbox disabled="true"
+															value="#{proformasAprobRechMb.selectedProformas.stockComprometido}"
+															itemLabel="Stock Comprometido" />
+													</div>
+												</div>
+												<p:dataTable var="factDet" id="tblDetalleProforma"
+													widgetVar="tblDetalleProforma" scrollRows="2"
+													emptyMessage="No se ha seleccionado Items"
+													scrollHeight="150"
+													value="#{proformasAprobRechMb.listDetProfFarm}"
+													scrollable="true" style="margin-bottom:20px">
+
+													<p:columnGroup type="header">
+														<p:column headerText="Descripción/Articulo"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="Valor Unitario"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="Cantidad"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="Precio Sin IVA"
+															style="#{loginMb.styleTable}" />
+													</p:columnGroup>
+
+													<p:column>
+														<h:outputText value="#{factDet.descripcionItems}" />
+													</p:column>
+													<p:column>
+														<center>
+															<h:outputText value="#{factDet.precio}" />
+														</center>
+													</p:column>
+													<p:column>
+														<center>
+															<h:outputText value="#{factDet.cantidad}" />
+														</center>
+													</p:column>
+													<p:column>
+														<center>
+															<h:outputText value="#{factDet.precioTotal}">
+																<f:convertNumber pattern="0.00" />
+															</h:outputText>
+														</center>
+													</p:column>
+												</p:dataTable>
+											</p:tab>
+										</p:tabView>
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="row">
+										<div class="box-body form-horizontal">
+											<div class="col-lg-6">
+												<div class="form-group">
+													<h:outputLabel style="color:#000000" value="Notas:"
+														class="col-sm-1" />
+													<div class="col-sm-11">
+														<h:inputTextarea id="txtNotas" styleClass="form-control"
+															value="#{proformasAprobRechMb.auxNotas}"
+															disabled="#{proformasAprobRechMb.aprobRechProformaEstado}">
+															<p:ajax event="blur"
+																listener="#{proformasAprobRechMb.auxGuardaDescpNotas}" />
+														</h:inputTextarea>
+													</div>
+												</div>
+												<div class="box box-info">
+													<p:panel id="pnlFormaPagoActFijo">
+														<p:dataTable var="formaPago" id="tblFormaPagoRef"
+															widgetVar="tblFormaPagoRef" scrollRows="3"
+															editable="true" editMode="cell"
+															emptyMessage="No se ha seleccionado forma de pago"
+															scrollHeight="80"
+															value="#{proformasAprobRechMb.listaFormaPago}"
+															scrollable="true" style="margin-bottom:20px">
+
+															<p:columnGroup type="header">
+																<p:column headerText="Medio de Pago"
+																	style="#{loginMb.styleTable}" />
+																<p:column headerText="Valor Recibido"
+																	style="#{loginMb.styleTable}" />
+															</p:columnGroup>
+
+															<p:column styleClass="centerColum">
+																<h:outputText id="txtMedioPagoOutRef"
+																	value="#{formaPago.medioPago}" />
+															</p:column>
+
+															<p:column styleClass="centerColum">
+																<h:outputText id="txtVlrFrmPagoOutRef"
+																	value="#{formaPago.valorFrmPago}">
+																	<f:convertNumber pattern="0.00" />
+																</h:outputText>
+															</p:column>
+														</p:dataTable>
+													</p:panel>
+												</div>
+
+												<div class="form-group">
+													<div class="row">
+														<div class="col-lg-12">
+															<div class="col-sm-1" />
+															<div class="col-sm-5">
+																<p:commandButton value="Aprobar Referido"
+																	update="#{p:component('msjGeneral')},#{p:component('tblProformas')}"
+																	disabled="true"
+																	actionListener="#{proformasAprobRechMb.aprobarRechazarProformaRef(proformasAprobRechMb.selectedProformas,'A')}" />
+															</div>
+															<div class="col-sm-5">
+																<p:commandButton value="Rechazar Referido"
+																	disabled="true"
+																	update="#{p:component('tblProformas')}, #{p:component('msjGeneral')}"
+																	actionListener="#{proformasAprobRechMb.aprobarRechazarProformaRef(proformasAprobRechMb.selectedProformas,'R')}" />
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+											<div class="col-lg-6">
+												<div class="row">
+													<div class="col-lg-4">
+														<div class="form-group" />
+														<div class="form-group" />
+														<div class="form-group">
+															<div class="row">
+																<div class="col-lg-3" />
+																<div class="col-lg-9">
+																	<div class="form-group">
+																		<h:outputLabel style="color:#000000"
+																			value="Aprobado por:" />
+																		<p:selectBooleanCheckbox disabled="true"
+																			value="#{proformasAprobRechMb.aprobadoAdmin}"
+																			itemLabel="Administración" />
+																		<p:selectBooleanCheckbox disabled="true"
+																			value="#{proformasAprobRechMb.aprobadoCoord}"
+																			itemLabel="Coordinación" />
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+													<div class="col-lg-8">
+														<p:panel>
+															<div class="form-group" />
+															<div class="form-group">
+																<h:outputLabel style="color:#000000" value="Subtotal:"
+																	class="col-sm-5" />
+																<div class="col-sm-7">
+																	<h:inputText id="txtSubtotal"
+																		style="text-align: center"
+																		value="#{proformasAprobRechMb.selectedProformas.subtotal}"
+																		styleClass="form-control" disabled="true">
+																		<f:convertNumber pattern="0.00" />
+																	</h:inputText>
+																</div>
+															</div>
+															<div class="form-group">
+																<h:outputLabel style="color:#000000"
+																	value="IVA #{proformasAprobRechMb.txtValorIVA}%:"
+																	class="col-sm-5" />
+																<div class="col-sm-7">
+																	<h:inputText id="txtIva" style="text-align: center"
+																		value="#{proformasAprobRechMb.selectedProformas.iva}"
+																		styleClass="form-control" disabled="true">
+																		<f:convertNumber pattern="0.00" />
+																	</h:inputText>
+																</div>
+															</div>
+															<div class="form-group">
+																<h:outputLabel style="color:#000000" value="IVA 0%:"
+																	class="col-sm-5" />
+																<div class="col-sm-7">
+																	<h:inputText id="txtIvaCero" style="text-align: center"
+																		value="#{proformasAprobRechMb.selectedProformas.ivaCero}"
+																		styleClass="form-control" disabled="true">
+																		<f:convertNumber pattern="0.00" />
+																	</h:inputText>
+																</div>
+															</div>
+															<div class="form-group">
+																<h:outputLabel style="color:#000000"
+																	value="Valor Total:" class="col-sm-5" />
+																<div class="col-sm-7">
+																	<h:inputText id="txtValorTotal"
+																		style="text-align: center"
+																		value="#{proformasAprobRechMb.selectedProformas.valorTotal}"
+																		styleClass="form-control" disabled="true">
+																		<f:convertNumber pattern="0.00" />
+																	</h:inputText>
+																</div>
+															</div>
+														</p:panel>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</h:panelGroup>
+					</p:panel>
+				</p:scrollPanel>
+			</p:dialog>
+		</h:form>
+
+		<h:form id="formHistProf">
+			<p:dialog widgetVar="dlgDetHist" id="idDlgDetHist" responsive="true"
+				draggable="false" maximizable="true" resizable="false"
+				header="Log de modificaciones" showEffect="clip" hideEffect="clip"
+				width="57%" height="50%" modal="true"
+				onShow="autAjustePantLog('formHistProf:idDlgDetHist')">
+
+				<p:scrollPanel mode="native" style="width:100%;height:95%">
+					<p:panel toggleSpeed="500" closeSpeed="500"
+						widgetVar="panelDetalle" style="margin-bottom:20px">
+						<h:panelGroup id="pnlDialog">
+							<p:dataTable var="historico" id="tblHistProformas"
+								widgetVar="tblHistProformas" styleClass="table table-bordered"
+								value="#{proformasAprobRechMb.datoHistorico}" paginator="true"
+								rows="7" reflow="true" selectionMode="single" 
+								selection="#{proformasAprobRechMb.selectHistorico}"
+								rowKey="#{historico.idRegistro}">
+
+								<p:ajax event="rowSelect"
+									listener="#{proformasAprobRechMb.seleccionaProfHistorica()}"
+									update="#{p:component('pnlDlgHistProf')}"/>
+
+								<p:column headerText="Instancia" styleClass="centerColum">
+									<h:outputText value="#{historico.instanciaModificada}" />
+								</p:column>
+
+								<p:column headerText="Fecha/Hora de actualización"
+									styleClass="centerColum">
+									<h:outputText value="#{historico.fechaModificacionStr}" />
+								</p:column>
+
+								<p:column headerText="Actualizado por" styleClass="centerColum">
+									<h:outputText value="#{historico.nombreActualizadoPor}" />
+								</p:column>
+
+								<p:column headerText="Fecha/Hora de creación"
+									styleClass="centerColum">
+									<h:outputText value="#{historico.fechaCreacionStr}" />
+								</p:column>
+
+								<p:column headerText="Creado por" styleClass="centerColum">
+									<h:outputText value="#{historico.nombreCreadoPor}"
+										style="text-transform:uppercase;" />
+								</p:column>
+							</p:dataTable>
+						</h:panelGroup>
+					</p:panel>
+				</p:scrollPanel>
+			</p:dialog>
+		</h:form>
+
+		<h:form id="formHist">
+			<p:dialog header="Detalle Proforma - Instancia Historial" widgetVar="dlgDetHistorico"
+				id="idDlgDetHistorico" resizable="false" closeOnEscape="true"
+				hideEffect="clip" modal="true" showEffect="clip" maximizable="true"
+				responsive="true" width="57%" height="57%"
+				onShow="autAjustePantalla('formHist:idDlgDetHistorico')">
+
+				<p:scrollPanel mode="native" style="width:100%;height:96%">
+					<p:panel toggleSpeed="500" closeSpeed="500"
+						widgetVar="panelDetHist" style="margin-bottom:20px">
+						<h:panelGroup id="pnlDlgHistProf">
+							<div class="box-body">
+								<div class="row">
+									<div class="col-md-6 col-sm-12 col-xs-12">
+										<div class="box box-info">
+											<div class="box-header with-border">
+												<h3 class="box-title">Datos Pacientes</h3>
+											</div>
+											<div class="box-body form-horizontal">
+												<div class="form-group">
+													<h:outputLabel style="color:#000000" class="col-md-5 col-sm-5"
+														value="Número de identificación:" />
+													<div class="col-md-7 col-sm-7">
+														<h:inputText id="txtNumDocPacOSAprb"
+															styleClass="form-control" disabled="true"
+															style="text-align:center"
+															value="#{proformasAprobRechMb.selectHistorico.idPacienteProfHist.numDocumento}" />
+													</div>
+												</div>
+												<div class="form-group">
+													<h:outputLabel style="color:#000000" value="Paciente:"
+														class="col-md-5 col-sm-5" />
+													<div class="col-md-7 col-sm-7">
+														<h:inputText id="txtNombresPacOSAprb"
+															style="text-align:center"
+															value="#{proformasAprobRechMb.selectHistorico.idPacienteProfHist.nombresCompletos}"
+															styleClass="form-control" disabled="true" />
+													</div>
+												</div>
+												<div class="form-group">
+													<h:outputLabel style="color:#000000"
+														value="Correo Electrónico:" class="col-sm-5" />
+													<div class="col-sm-7">
+														<h:inputText id="txtMailPacOSAprb"
+															style="text-align:center"
+															value="#{proformasAprobRechMb.selectHistorico.idPacienteProfHist.email}"
+															styleClass="form-control" disabled="true" />
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="box box-info">
+											<div class="box-header with-border">
+												<h3 class="box-title">Datos Clientes</h3>
+											</div>
+											<div class="box-body form-horizontal">
+												<div class="form-group">
+													<h:outputLabel style="color:#000000" class="col-sm-5"
+														value="Número de identificación:" />
+													<div class="col-sm-7">
+														<h:inputText id="txtNumDocOSAprb"
+															styleClass="form-control" disabled="true"
+															style="text-align:center"
+															value="#{proformasAprobRechMb.selectHistorico.idClienteProfHist.numDocumento}" />
+													</div>
+												</div>
+												<div class="form-group">
+													<h:outputLabel style="color:#000000" class="col-sm-5"
+														value="Cliente:" />
+													<div class="col-sm-7">
+														<h:inputText id="txtNombresOSAprb"
+															style="text-align:center"
+															value="#{proformasAprobRechMb.selectHistorico.idClienteProfHist.nombresCompletos}"
+															styleClass="form-control" disabled="true" />
+													</div>
+												</div>
+												<div class="form-group">
+													<h:outputLabel style="color:#000000"
+														value="Correo Electrónico:" class="col-sm-5" />
+													<div class="col-sm-7">
+														<h:inputText id="txtMailOSAprb" style="text-align:center"
+															value="#{proformasAprobRechMb.selectHistorico.idClienteProfHist.email}"
+															styleClass="form-control" disabled="true" />
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="nav-tabs-custom">
+
+										<p:tabView dynamic="true" cache="true"
+											activeIndex="#{proformasAprobRechMb.idxTabViewHist}">
+											<p:tab id="tab0" title="Especialidad" titleStyleClass="tab1">
+												<p:dataTable var="factEspecialidad"
+													id="tblDetalleFacturaOSAprb" scrollHeight="150"
+													widgetVar="tblDetalleFacturaOSAprb"
+													emptyMessage="No se ha seleccionado Medico"
+													value="#{proformasAprobRechMb.listHistDetServ}"
+													scrollable="true" style="ui-datatable;">
+													<p:columnGroup type="header">
+														<p:column headerText="Servicio"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="Médico"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="Fecha de Atención"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="Valor Unitario"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="Cantidad"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="Precio Sin IVA"
+															style="#{loginMb.styleTable}" />
+													</p:columnGroup>
+
+													<p:column>
+														<h:outputText value="#{factEspecialidad.especialidad}" />
+													</p:column>
+													<p:column>
+														<h:outputText
+															value="#{factEspecialidad.idMedicoHistProf.nombreCompleto}" />
+													</p:column>
+													<p:column>
+														<h:outputText value="#{factEspecialidad.fechaAtencionStr}" />
+													</p:column>
+													<p:column>
+														<center>
+															<h:outputText value="#{factEspecialidad.precio}">
+																<f:convertNumber pattern="0.00" />
+															</h:outputText>
+														</center>
+													</p:column>
+													<p:column>
+														<center>
+															<h:outputText value="#{factEspecialidad.cantidad}" />
+														</center>
+													</p:column>
+													<p:column>
+														<center>
+															<h:outputText value="#{factEspecialidad.precioTotal}">
+																<f:convertNumber pattern="0.00" />
+															</h:outputText>
+														</center>
+													</p:column>
+												</p:dataTable>
+											</p:tab>
+											<p:tab id="tab1" title="Farmacia" titleStyleClass="tab1">
+												<div class="row no-gutters">
+													<div class="col-12 col-sm-6 col-md-6"></div>
+													<div class="col-6 col-md-6">
+														<div class="col-sm-1" />
+														<p:spacer width="13" height="0" />
+														<p:selectBooleanCheckbox disabled="true"
+															value="#{proformasAprobRechMb.selectHistorico.stockComprometido}"
+															itemLabel="Stock Comprometido" />
+													</div>
+												</div>
+												<p:dataTable var="factDet" id="tblDetalleProformaOSAprb"
+													widgetVar="tblDetalleProformaOSAprb" scrollRows="2"
+													emptyMessage="No se ha seleccionado Items"
+													scrollHeight="150"
+													value="#{proformasAprobRechMb.listHistDetFarm}"
+													scrollable="true" style="margin-bottom:20px">
+
+													<p:columnGroup type="header">
+														<p:column headerText="Descripción/Articulo"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="Valor Unitario"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="Cantidad"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="Precio Sin IVA"
+															style="#{loginMb.styleTable}" />
+													</p:columnGroup>
+
+													<p:column>
+														<h:outputText value="#{factDet.descripcionItems}" />
+													</p:column>
+													<p:column>
+														<center>
+															<h:outputText value="#{factDet.precio}" />
+														</center>
+													</p:column>
+													<p:column>
+														<center>
+															<h:outputText value="#{factDet.cantidad}" />
+														</center>
+													</p:column>
+													<p:column>
+														<center>
+															<h:outputText value="#{factDet.precioTotal}">
+																<f:convertNumber pattern="0.00" />
+															</h:outputText>
+														</center>
+													</p:column>
+												</p:dataTable>
+											</p:tab>
+											<p:tab id="tab2" title="Activo Fijo" titleStyleClass="tab1">
+												<p:dataTable var="factActFijo" id="tblDetFactActFijo"
+													widgetVar="tblDetFactActFijo"
+													emptyMessage="No se ha seleccionado items"
+													scrollHeight="150"
+													value="#{proformasAprobRechMb.listHistDetAF}"
+													scrollable="true" style="margin-bottom:20px">
+
+													<p:columnGroup type="header">
+														<p:column headerText="Número de artículo"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="Descripción artículo"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="Valor Unitario"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="Cantidad"
+															style="#{loginMb.styleTable}" />
+														<p:column headerText="Baja Parcial"
+															style="#{loginMb.styleTable}" />
+													</p:columnGroup>
+
+													<p:column styleClass="centerColum">
+														<h:outputText value="#{factActFijo.codigoItems}" />
+													</p:column>
+													<p:column styleClass="centerColum">
+														<h:outputText value="#{factActFijo.descripcionItems}" />
+													</p:column>
+													<p:column styleClass="centerColum">
+														<h:outputText value="#{factActFijo.precio}">
+															<f:convertNumber pattern="0.00" />
+														</h:outputText>
+													</p:column>
+													<p:column styleClass="centerColum">
+														<h:outputText id="cantidad"
+															value="#{factActFijo.cantidad}"
+															inputStyleClass="centerColumn" />
+													</p:column>
+													<p:column styleClass="centerColum">
+														<p:selectBooleanCheckbox
+															value="#{factActFijo.actFijoBajaParcial}" disabled="true" />
+													</p:column>
+												</p:dataTable>
+											</p:tab>
+											<p:tab id="tab3" title="Datos Adicionales"
+												titleStyleClass="tab1">
+												<p:panel style="height:201px">
+													<div class="box-body form-horizontal">
+														<div class="col-lg-12">
+															<div class="form-group">
+																<h:outputLabel style="color:#000000" value="Ingresos:"
+																	class="col-sm-2" />
+																<div class="col-sm-8">
+																	<h:inputText id="txtIngreso" styleClass="form-control"
+																		value="#{proformasAprobRechMb.selectHistorico.ingresos}"
+																		disabled="#{proformasAprobRechMb.aprobRechProformaEstado}">
+																	</h:inputText>
+																</div>
+															</div>
+															<div class="form-group">
+																<h:outputLabel style="color:#000000"
+																	value="Origen de Ingresos:" class="col-sm-2" />
+																<div class="col-sm-8">
+																	<h:inputText id="txtOriIngreso"
+																		styleClass="form-control"
+																		value="#{proformasAprobRechMb.selectHistorico.origenIngresos}"
+																		disabled="#{proformasAprobRechMb.aprobRechProformaEstado}">
+																	</h:inputText>
+																</div>
+															</div>
+															<div class="form-group">
+																<h:outputLabel style="color:#000000"
+																	value="Con quien vive el paciente:" class="col-sm-2" />
+																<div class="col-sm-8">
+																	<h:inputText id="txtConvivePac"
+																		styleClass="form-control"
+																		value="#{proformasAprobRechMb.selectHistorico.convivePaciente}"
+																		disabled="#{proformasAprobRechMb.aprobRechProformaEstado}">
+																	</h:inputText>
+																</div>
+															</div>
+														</div>
+													</div>
+												</p:panel>
+											</p:tab>
+										</p:tabView>
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="row">
+										<div class="col-lg-6">
+											<div class="box-body form-horizontal">
+												<h:outputLabel style="color:#000000" value="Notas:"
+													class="col-sm-2" />
+												<div class="col-sm-10">
+													<h:inputTextarea id="txtNotasOSAprb"
+														styleClass="form-control" disabled="true"
+														value="#{proformasAprobRechMb.selectHistorico.notas}" />
+												</div>
+											</div>
+											<div class="box box-info">
+												<p:panel id="pnlFormaPagoOSAprb">
+													<p:dataTable var="formaPago" id="tblFormaPagoOSAprb"
+														widgetVar="tblFormaPagoOSAprb" scrollRows="3"
+														editable="true" editMode="cell"
+														emptyMessage="No se ha seleccionado forma de pago"
+														scrollHeight="80"
+														value="#{proformasAprobRechMb.listHistFormPag}"
+														scrollable="true" style="margin-bottom:20px">
+
+														<p:columnGroup type="header">
+															<p:column headerText="Medio de Pago"
+																style="#{loginMb.styleTable}" />
+															<p:column headerText="Valor Recibido"
+																style="#{loginMb.styleTable}" />
+														</p:columnGroup>
+
+														<p:column styleClass="centerColum">
+															<h:outputText id="txtMedioPagoOutOSAprb"
+																value="#{formaPago.medioPago}" />
+														</p:column>
+
+														<p:column styleClass="centerColum">
+															<h:outputText id="txtVlrFrmPagoOutOSAprb"
+																value="#{formaPago.valorFrmPago}">
+																<f:convertNumber pattern="0.00" />
+															</h:outputText>
+														</p:column>
+													</p:dataTable>
+													<div class="form-group">
+														<div class="col-sm-5" />
+														<h:outputLabel style="color:#000000" value="Vuelto:"
+															class="col-sm-2" />
+														<div class="col-sm-4">
+															<h:inputText id="txtvueltoOSAprb" disabled="true"
+																styleClass="form-control"
+																value="#{proformasAprobRechMb.selectHistorico.valorVuelto}">
+																<f:convertNumber pattern="0.00" />
+															</h:inputText>
+														</div>
+													</div>
+												</p:panel>
+											</div>
+										</div>
+										<div class="col-lg-6">
+											<div class="row">
+												<div class="col-lg-4" />
+												<div class="col-lg-8">
+													<p:panel>
+														<div class="box-body form-horizontal">
+															<div class="form-group">
+																<h:outputLabel style="color:#000000" value="Subtotal:"
+																	class="col-sm-5" />
+																<div class="col-sm-7">
+																	<h:inputText id="txtSubtotalOSAprb"
+																		style="text-align: center"
+																		value="#{proformasAprobRechMb.selectHistorico.subtotal}"
+																		styleClass="form-control" disabled="true">
+																		<f:convertNumber pattern="0.00" />
+																	</h:inputText>
+																</div>
+															</div>
+															<div class="form-group">
+																<h:outputLabel style="color:#000000"
+																	value="IVA #{proformasAprobRechMb.txtValorIVA}%:"
+																	class="col-sm-5" />
+																<div class="col-sm-7">
+																	<h:inputText id="txtIvaOSAprb"
+																		style="text-align: center"
+																		value="#{proformasAprobRechMb.selectHistorico.iva}"
+																		styleClass="form-control" disabled="true">
+																		<f:convertNumber pattern="0.00" />
+																	</h:inputText>
+																</div>
+															</div>
+															<div class="form-group">
+																<h:outputLabel style="color:#000000" value="IVA 0%:"
+																	class="col-sm-5" />
+																<div class="col-sm-7">
+																	<h:inputText id="txtIvaCeroOSAprb"
+																		style="text-align: center"
+																		value="#{proformasAprobRechMb.selectHistorico.ivaCero}"
+																		styleClass="form-control" disabled="true">
+																		<f:convertNumber pattern="0.00" />
+																	</h:inputText>
+																</div>
+															</div>
+															<div class="form-group">
+																<h:outputLabel style="color:#000000"
+																	value="Valor Total:" class="col-sm-5" />
+																<div class="col-sm-7">
+																	<h:inputText id="txtValorTotalOSAprb"
+																		style="text-align: center"
+																		value="#{proformasAprobRechMb.selectHistorico.valorTotal}"
+																		styleClass="form-control" disabled="true">
+																		<f:convertNumber pattern="0.00" />
+																	</h:inputText>
+																</div>
+															</div>
+														</div>
+													</p:panel>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</h:panelGroup>
+					</p:panel>
+				</p:scrollPanel>
+			</p:dialog>
+		</h:form>
+	</ui:define>
+</ui:composition>

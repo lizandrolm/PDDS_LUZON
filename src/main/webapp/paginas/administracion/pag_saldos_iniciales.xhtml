@@ -1,0 +1,128 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:pm="http://primefaces.org/mobile"
+	xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml">
+
+	<ui:define name="head">
+	</ui:define>
+
+	<ui:define name="content">
+		<h:form>
+			<p:ajaxStatus onstart="PF('statusDialog').show()"
+				onsuccess="PF('statusDialog').hide()" />
+			<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+				closable="false" resizable="false" showHeader="false">
+				<p:graphicImage name="/imagenes/barra_ajax.gif" />
+			</p:dialog>
+			<p:messages globalOnly="false" id="msjGeneral" showDetail="false" />
+
+			<section class="content">
+				<div class="row">
+					<div class="col-md-12">
+						<div class="box box-info">
+							<div class="box-header with-border">
+								<div class="box-header with-border">
+									<h:outputText value="Carga de Saldos Iniciales" styleClass="FontBold Fs18 hardblue"></h:outputText>
+									
+								</div>
+								<p:commandButton value="Importar Facturas"
+									onclick="PF('dlgImportarExcel').show();"
+									title="Permite leer archivo excel para actualización de datos" 
+									class="btnn btnn-primary"
+									style="border:none; 
+									background:transparent;"/>
+								 
+								 
+							</div>
+						</div>
+					</div>
+					 
+				</div>
+				
+				<p:dialog header="Listar saldos Inicales: importar excel"
+					widgetVar="dlgImportarExcel" showEffect="fade" width="700"
+					height="180" resizable="false" >
+					<h:form id="frmDetEjecucionExcel">
+						<p:panel id="pDetEjecucionesArchivoExcel"> 
+						<span style="color: red"> 
+							<h:outputText style="font-size: 15px;" value="Dar clic en el boton y elegir el archivo excel(.xlsx)" />
+						</span>
+						<br /><br />
+						<p:fileUpload skinSimple="true" uploadLabel="Subir" 
+							label="Seleccione" 
+							allowTypes="/(\.|\/)(xlsx)$/"  
+							invalidFileMessage="El tipo de archivo seleccionado no es válido, seleccione archivos con formato: xlsx"
+							multiple="false" 
+							mode="advanced" 
+							sizeLimit="6048000" 
+							showButtons="false" 
+							fileUploadListener="#{saldosInicialesMb.importaFacturas}"
+							process="@this" 
+							update=":#{p:component('msjGeneral')}"
+							immediate="true"
+							oncomplete="PF('dlgImportarExcel').hide()" />
+						  <p:growl id="messages" showDetail="true" />  
+						</p:panel>
+					</h:form>
+				</p:dialog>
+				
+				<p:dialog header="Notas de cédito"
+					widgetVar="dlgImportarExcelNc" showEffect="fade" width="700"
+					height="180" resizable="false" >
+					<h:form id="frmDetEjecucionExcelNc">
+						<p:panel id="pDetEjecucionesArchivoExcel"> 
+						<span style="color: red"> 
+							<h:outputText style="font-size: 15px;" value="Dar clic en el boton y elegir el archivo excel(.xlsx)" />
+						</span>
+						<br /><br />
+						<p:fileUpload skinSimple="true" uploadLabel="Subir" 
+							label="Seleccione" 
+							allowTypes="/(\.|\/)(xlsx)$/"  
+							invalidFileMessage="El tipo de archivo seleccionado no es válido, seleccione archivos con formato: xlsx"
+							multiple="false" 
+							mode="advanced" 
+							sizeLimit="6048000" 
+							showButtons="false" 
+							fileUploadListener="#{saldosInicialesMb.importaNc}"
+							process="@this" 
+							update=":#{p:component('msjGeneral')}"
+							immediate="true"
+							oncomplete="PF('dlgImportarExcelNc').hide()" />
+						  <p:growl id="messages" showDetail="true" />  
+						</p:panel>
+					</h:form>
+				</p:dialog>
+				<p:dialog header="Importar excel"
+					widgetVar="dlgImportarExcelDev" showEffect="fade" width="700"
+					height="180" resizable="false" >
+					<h:form id="frmDetEjecucionExcelDev">
+						<p:panel id="pDetEjecucionesArchivoExcelDev"> 
+						<span style="color: red"> 
+							<h:outputText style="font-size: 15px;" value="Dar clic en el boton y elegir el archivo excel(.xlsx)" />
+						</span>
+						<br /><br />
+						<p:fileUpload skinSimple="true" uploadLabel="Subir" 
+							label="Seleccione" 
+							allowTypes="/(\.|\/)(xlsx)$/"  
+							invalidFileMessage="El tipo de archivo seleccionado no es válido, seleccione archivos con formato: xlsx"
+							multiple="false" 
+							mode="advanced" 
+							sizeLimit="6048000" 
+							showButtons="false" 
+							fileUploadListener="#{saldosInicialesMb.importaDevoluciones}"
+							process="@this" 
+							update=":#{p:component('msjGeneral')}"
+							immediate="true" 
+							oncomplete="PF('dlgImportarExcelDev').hide()" />
+						  <p:growl id="messages" showDetail="true" />  
+						</p:panel>
+					</h:form>
+				</p:dialog>
+			</section>
+			
+		</h:form>
+	</ui:define>
+</ui:composition>

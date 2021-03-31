@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h5="http://xmlns.jcp.org/jsf/passthrough">
+
+
+<h:head>
+	<link rel="shortcut icon" type="image/png"
+		href="#{request.contextPath}/resources/assets/images/pos-logo-login.png" />
+	<meta charset="utf-8"></meta>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"></meta>
+	<!-- Tell the browser to be responsive to screen width -->
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
+	<title>POS Web | Login</title>
+	<h:outputStylesheet name="assets/css/displayLogin.css"></h:outputStylesheet>
+
+	<h:outputStylesheet name="assets/css/materialdesignicons.min.css"></h:outputStylesheet>
+
+	<h:outputStylesheet name="assets/css/bootstrap.min.css" />
+	<h:outputStylesheet name="assets/css/login.css"></h:outputStylesheet>
+
+
+	<script type="text/javascript">
+		function ChangeCase(elem) {
+			elem.value = elem.value.toUpperCase();
+		}
+	</script>
+
+<style type="text/css">
+  .login-card-img-fondo {
+    border-radius: 0;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    -o-object-fit: initial;
+       object-fit: initial; }
+       </style>
+</h:head>
+
+<h:body style="background-image: url(../assets/images/login.png)">
+	<h:form>
+		<h:graphicImage name="assets/images/fondo.jpg" styleClass="login-card-img-fondo"></h:graphicImage>
+		<p:growl id="growl" showDetail="true" sticky="true"></p:growl>
+		<p:ajaxStatus onstart="PF('statusDialog').show()"
+			onsuccess="PF('statusDialog').hide()" />
+
+		<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+			closable="false" resizable="false" showHeader="false">
+			<p:graphicImage name="/imagenes/barra_ajax.gif" />
+		</p:dialog>
+		<main class="d-flex align-items-center min-vh-100 py-3 py-md-0">
+			<div class="container">
+				<div class="card login-card">
+					<div class="row no-gutters">
+						<div class="col-md-5">
+
+							<h:graphicImage name="assets/images/login.png"
+								styleClass="login-card-img"></h:graphicImage>
+						</div>
+						<div class="col-md-7">
+							<div class="card-body">
+								<div class="brand-wrapper">
+
+									<h:graphicImage name="assets/images/logo-sap.png" width="75%"
+										height="50%" />
+
+
+								</div>
+								<p class="login-card-description">Ingrese credenciales para
+									acceder</p>
+
+								<div class="form-group">
+									<label class="sr-only">Usuario</label>
+									<h:inputText styleClass="form-control" style="font-size:16px" h5:placeholder="Usuario"
+										onblur="upperCase(this);" value="#{loginMb.username}" h5:autofocus="autofocus">
+										<p:ajax update="#{p:component('listSucurs')},#{p:component('txtMsj')}" />
+									</h:inputText>
+								</div>
+								<div class="form-group mb-4">
+									<label for="password" class="sr-only">Contraseña</label>
+									<h:inputSecret styleClass="form-control"
+										h5:placeholder="Contraseña" id="password" placeholder="Clave"
+										value="#{loginMb.password}"></h:inputSecret>
+								</div>
+								<div class="form-group mb-4">
+									<h:selectOneMenu id="listSucurs" value="#{loginMb.sucursal}"
+										dynamic="true" styleClass="form-control" style="font-size:16px"
+										placeholder="Sucursal">
+										<f:selectItems
+											value="#{loginMb.obtenerListSucursal(loginMb.username)}" />
+									</h:selectOneMenu>
+								</div>
+
+								<h:commandButton styleClass="btn btn-block login-btn mb-4"
+									value="Ingresar" action="#{loginMb.doLogin}" update="@form"></h:commandButton>
+
+
+								<div class="col-xs-8">
+
+									<h:messages styleClass="orange" id="txtMsj" globalOnly="false"
+										showDetail="false" />
+
+								</div>
+
+							</div>
+						</div>
+					</div>
+				</div>
+
+			</div>
+		</main>
+
+
+
+		<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+		<script
+			src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+		<script
+			src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+
+	</h:form>
+</h:body>
+
+
+</html>

@@ -1,0 +1,223 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:pm="http://primefaces.org/mobile"
+	xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml">
+	<ui:define name="head">
+	</ui:define>
+
+<ui:define name="content">
+<h:form>
+<p:ajaxStatus onstart="PF('statusDialog').show()"
+	onsuccess="PF('statusDialog').hide()" />
+<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+	closable="false" resizable="false" showHeader="false">
+	<p:graphicImage name="/imagenes/barra_ajax.gif" />
+</p:dialog>
+<p:messages globalOnly="false" id="msjGeneral" showDetail="false"/>
+
+
+<section class="content">
+	<div class="row">
+		<div class="col-md-12">
+			<div class="box box-primary">
+				<p:panel id="toggleable" header="Seleccione Factura" rendered="#{adminCreditoMb.pintaFacturas}"
+					toggleable="true" toggleSpeed="500" closeSpeed="500"
+					widgetVar="panel" style="margin-bottom:20px">
+					<div class="box-body">
+						<div class="form-group">
+							<div class="col-md-1">
+							<h:outputLabel style="color:#000000" value="Fecha Desde:" for="fechDesde" />
+							</div>
+							<div class="col-md-2">
+							<p:calendar id="fechDesde" value="#{adminCreditoMb.fechaDesde}" locale="es" pattern="dd/MM/yyyy">								
+							</p:calendar>
+							</div>
+							<div class="col-md-1">
+							<h:outputLabel style="color:#000000" value="Fecha Hasta:" for="fechHasta"/>
+							</div>
+							<div class="col-md-2">
+							<p:calendar id="fechHasta" value="#{adminCreditoMb.fechaHasta}" locale="es"	pattern="dd/MM/yyyy">
+							</p:calendar>
+							</div>
+							<div class="col-md-2">
+							<div class="form-group">
+							<p:commandButton icon="ui-icon-search" value="Buscar" id="btnFecha"
+								actionListener="#{adminCreditoMb.capturarFechas(adminCreditoMb.sucursalLogin)}"
+								update="#{p:component('tblFactClientes')}">
+							</p:commandButton>
+							</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<h:selectOneMenu styleClass="form-control" id="selectSucursales"
+								value="#{adminCreditoMb.sucursalLogin}">
+								<f:selectItem itemLabel="Cambiar Sucursal" itemValue="0" />
+								<f:selectItems
+									value="#{loginMb.obtenerListSucursal(loginMb.username)}"/>
+								<p:ajax update="#{p:component('tblFactClientes')}"/>
+							</h:selectOneMenu>
+							<p:dataTable var="factcli" id="tblFactClientes" reflow="true" rows="10"
+								value="#{adminCreditoMb.obtieneListaFacturas(adminCreditoMb.sucursalLogin)}"
+								paginator="true">
+								<!--p:column headerText="Identificacion" filterBy="#{factcli.numDocumento}" class="col-md-2"
+									filterMatchMode="contains">
+									<h:outputText value="#{factcli.numDocumento}"/>
+								</p:column-->
+								<p:column headerText="N{umero Factura" class="col-md-2">
+									<h:outputText value="#{factcli.numFactura}"/>
+								</p:column>
+								<!--p:column headerText="Nombres" filterBy="#{factcli.nombreCliente}" filterMatchMode="contains" class="col-md-3">
+									<h:outputText value="#{factcli.nombreCliente}"/>
+								</p:column-->
+								<p:column headerText="Fecha/Factura" class="col-md-3">
+									<h:outputText value="#{factcli.fechaCreacion}">
+									<f:convertDateTime pattern="dd/MM/yyyy hh:mm:ss"/>
+									</h:outputText>
+								</p:column>
+								<p:column headerText="Fecha/Vencimiento" class="col-md-3">
+									<h:outputText value="#{factcli.fechaVencimiento}">
+									<f:convertDateTime pattern="dd/MM/yyyy hh:mm:ss"/>
+									</h:outputText>
+								</p:column>
+								<p:column headerText="cliente" class="col-md-3">
+									<h:outputText value="#{factcli.idClienteFact.cardCode}">
+									</h:outputText>
+								</p:column>
+								<p:column headerText="Acciones" class="col-md-1">
+									<div class="form-group">
+										<h:commandButton value="Generar" id="btnNuevoPac"
+											styleClass="btn btn-primary"
+											update="#{p:component('tblDetallesFactura')}"
+											action="#{adminCreditoMb.seleccionarFactura(factcli.idFactura)}"></h:commandButton>
+									</div>
+								</p:column>
+							</p:dataTable>
+						</div>
+					</div>
+				</p:panel>
+				<div class="box-body">
+					<div class="row">
+						<div class="col-md-12">
+							<div class="box box-info">
+								<p:panel  rendered="#{adminCreditoMb.pintaDetalle}">
+									<div class="box-body">
+										<div class="form-group">
+											<div class="row">
+											<div class="col-sm-1">
+												<h:outputLabel style="color:#000000" value="No. Factura:"/>
+											</div>
+											<div class="col-sm-3">
+												<h:inputText styleClass="form-control" disabled="true"
+													style="text-align:center"
+													value="#{adminCreditoMb.listaCabeceraFacturas.get(0).getNumFactura()}" />
+											</div>
+											<div class="col-sm-1">
+												<h:outputLabel style="color:#000000" value="Fecha Factura:" />
+											</div>
+											<div class="col-sm-2">
+												<h:inputText styleClass="form-control" disabled="true"
+													style="text-align:center"
+													value="#{adminCreditoMb.fechaFactura}" />
+											</div>
+											<div class="col-sm-1">
+												<h:outputLabel style="color:#000000" value="Valor Factura:" />
+											</div>
+											<div class="col-sm-2">
+												<h:inputText styleClass="form-control" disabled="true"
+													style="text-align:center"
+													value="#{adminCreditoMb.listaCabeceraFacturas.get(0).getValorTotal()}" />
+											</div>
+											</div>
+											<div class="row">
+											<div class="col-sm-1">
+												<h:outputLabel style="color:#000000" value="Dias/ Facturación" />
+											</div>
+											<div class="col-sm-3">
+												<h:inputText styleClass="form-control" disabled="true"
+													style="text-align:center"
+													value="#{adminCreditoMb.diasFacturados}"/>
+											</div>
+											<div class="col-sm-1">
+												<h:outputLabel style="color:#000000" value="Aplica Penalidad" />
+											</div>
+											<div class="col-sm-2">
+												<h:inputText styleClass="form-control" disabled="true"
+													style="text-align:center"
+													value="#{adminCreditoMb.aplicaPenalidad}"/>
+											</div>
+											<div class="col-sm-1">
+												<h:outputLabel style="color:#000000" value="Valor Penalidad" />
+											</div>
+											<div class="col-sm-2">
+												<h:inputText styleClass="form-control" disabled="true"
+													style="text-align:center"
+													value="#{adminCreditoMb.porcentajePenalidad}"/>
+											</div>
+											</div>
+											<div class="row">
+											<div class="col-sm-1">
+												<h:outputLabel style="color:#000000" value="Ingrese Observacion:" />
+											</div>
+											<div class="col-sm-10">
+											<h:inputTextarea id="txtNotas" class="col-sm-10"
+												value="#{adminCreditoMb.observacion}"/>
+											</div>
+											</div>
+										</div>
+									</div>
+								</p:panel>
+								<p:dataTable var="detalleFact" id="tblDetallesFactura" reflow="true" rows="10" rendered="#{adminCreditoMb.pintaDetalle}"
+									value="#{adminCreditoMb.listaDetalleCredito}"
+									paginator="true">
+									<p:column headerText="Items" class="col-md-3">
+										<h:outputText value="#{detalleFact.descripcionItems}"/>
+									</p:column>
+									<p:column headerText="Fecha Atención" class="col-md-2">
+										<h:outputText value="#{detalleFact.fechaAtencion}"/>
+									</p:column>
+									<p:column headerText="Cant." class="col-md-1">
+										<h:outputText value="#{detalleFact.cantidad}"/>
+									</p:column>
+									<p:column headerText="P. Unit." class="col-md-1">
+										<h:outputText value="#{detalleFact.precioUnitario}"/>
+									</p:column>
+									<p:column headerText="Valor sin iva" class="col-md-1">
+										<h:outputText value="#{detalleFact.precioSinIva}"/>
+									</p:column>
+									<p:column headerText="Valor con iva" class="col-md-1">
+										<h:outputText value="#{detalleFact.precioConIva}">
+										<f:convertNumber pattern="0.00"/>
+										</h:outputText>
+									</p:column>
+									<p:column headerText="Valor Credito" class="col-md-1">
+										<p:inputText value="#{detalleFact.valorCredito}"
+										 	id="txtValor" styleClass="form-control"/>
+									</p:column>
+								</p:dataTable>
+								<div class="form-group">
+									<div class="col-sm-12">
+										<h:outputLabel style="color:#ffffff" value="."/>
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="col-sm-2">
+									<p:commandButton icon="ui-icon-share" value="Guardar" id="btnNuevoPac" rendered="#{adminCreditoMb.pintaDetalle}"
+										actionListener="#{adminCreditoMb.guardarNotaCredito()}"
+										update="@form">
+									</p:commandButton>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+</h:form>
+</ui:define>
+</ui:composition>

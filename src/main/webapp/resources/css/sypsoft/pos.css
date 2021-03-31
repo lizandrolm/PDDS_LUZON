@@ -1,0 +1,68 @@
+.ui-datepicker-month {
+	color: black!important
+}
+
+.ui-datepicker-month #span {
+		color: #ffffff!important;
+	}
+
+.ui-datepicker-year {
+	color: black!important
+}
+
+.ui-state-default {
+	color: black!important
+}
+
+.ui-messages-warn-summary{
+	border-width: 30px;
+	font-size: 20px;
+	margin: 30px
+}
+
+.ui-messages-warn-icon{
+	height: 40px !important;
+    width: 40px !important;
+}
+
+.ui-messages-info-summary{
+	border-width: 30px;
+	font-size: 20px;
+	margin: 30px
+}
+
+.ui-messages-info-icon{
+	height: 40px !important;
+    width: 40px !important;
+}
+
+.ui-messages-error-summary{
+	border-width: 30px;
+	font-size: 20px;
+	margin: 30px
+}
+
+.ui-messages-error-icon{
+	height: 40px !important;
+    width: 40px !important;
+}
+
+.ui-datatable-scrollable-body {
+    overflow: overlay;
+}
+
+.ui-selectonemenu-panel .ui-selectonemenu-filter-container
+	{
+	width: 100% !important;
+}
+
+.ui-selectonemenu .ui-selectonemenu-trigger {
+    width: 24px !important;
+    background: -webkit-linear-gradient(top, #c1d3e2 0%, #0b66b1 100%) !important;
+}
+
+.ui-selectonemenu.ui-state-disabled .ui-selectonemenu-label {
+	color: black!important;
+	font-weight: bold!important;
+	background-color: #eee !important;	
+}

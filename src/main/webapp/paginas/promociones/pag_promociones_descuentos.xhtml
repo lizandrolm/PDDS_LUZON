@@ -1,0 +1,529 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:hf="http://xmlns.jcp.org/jsf/passthrough"
+	template="/WEB-INF/template.xhtml">
+	<ui:define name="head">
+
+		<style type="text/css">
+td.centerColum {
+	text-align: center;
+}
+
+.ui-datatable .ui-datatable-header {
+	border: hidden;
+	background: linear-gradient(to bottom, #f4f4f4 0%, #fbfcfd 100%);
+}
+
+.ui-row-editor-outline {
+	outline: dotted thin !important;
+	color: blue !important;
+}
+
+.ui-inputfield {
+	color: black !important
+}
+
+.ui-datatable .ui-row-editing .ui-cell-editor .ui-cell-editor-input {
+	text-align: -webkit-center;
+}
+</style>
+
+	</ui:define>
+
+	<ui:define name="content">
+		<h:form id="form">
+			<p:ajaxStatus onstart="PF('statusDialog').show()"
+				onsuccess="PF('statusDialog').hide()" />
+
+			<p:dialog id="statusDialog" widgetVar="statusDialog" modal="true"
+				draggable="false" closable="false" resizable="false"
+				showHeader="false" position="center"
+				header="Please wait : processing">
+				<p:graphicImage name="/imagenes/barra_ajax.gif" />
+			</p:dialog>
+
+			<section class="content-header" />
+			<section class="container-fluid">
+				<div class="row">
+					<div class="col-md-12">
+						<div class="box box-primary">
+							<div class="box-header with-border">
+								<h1 class="box-title">Promociones y Descuentos</h1>
+							</div>
+							<p:panel id="pnlBusqueda"
+								header="Busqueda Promociones y Descuentos" toggleable="true"
+								toggleSpeed="500" closeSpeed="500" widgetVar="panel"
+								style="margin-bottom:20px">
+								<div class="box-body form-horizontal">
+									<div class="form-group">
+										<div class="row">
+											<div class="col-lg-4 col-md-6 col-sm-6">
+												<div class="col-lg-3 col-md-3">
+													<h:outputLabel style="color:#000000" value="Fecha Desde: "
+														for="fechDesde" />
+												</div>
+												<div class="col-lg-9 col-md-9">
+													<p:calendar id="fechDesde" locale="es" required="true"
+														requiredMessage="Fecha no debe ser nula" showOn="button"
+														value="#{promoDescuentoMb.fechaDesdeB}" mask="true"
+														pattern="dd/MM/yyyy" />
+												</div>
+											</div>
+											<div class="col-lg-4 col-md-6 col-sm-6">
+												<div class="col-lg-3 col-md-3">
+													<h:outputLabel style="color:#000000" value="Fecha Hasta: "
+														for="fechHasta" />
+												</div>
+												<div class="col-lg-9 col-md-9">
+													<p:calendar id="fechHasta" locale="es" required="true"
+														requiredMessage="Fecha no debe ser nula" showOn="button"
+														value="#{promoDescuentoMb.fechaHastaB}"
+														pattern="dd/MM/yyyy" />
+												</div>
+											</div>
+											<div class="col-lg-4 col-md-6">
+												<div class="col-lg-3">
+													<h:outputLabel style="color:#000000"
+														value="Tipo de descuento: " />
+												</div>
+												<div class="col-lg-9">
+													<p:selectOneMenu styleClass="ui-g-12 ui-lg-7"
+														value="#{promoDescuentoMb.tipoDescuento}">
+														<f:selectItem itemLabel="Todas" itemValue="T" />
+														<f:selectItem itemLabel="Promo 2X1" itemValue="A" />
+														<f:selectItem itemLabel="Compra A lleva B" itemValue="B" />
+														<f:selectItem itemLabel="Servicios con Descuentos"
+															itemValue="C" />
+														<f:selectItem itemLabel="Descuento por Temporada"
+															itemValue="D" />
+													</p:selectOneMenu>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="row">
+											<div class="col-lg-4 col-md-5">
+												<div class="col-lg-3">
+													<h:outputLabel style="color:#000000" value="Estado: " />
+												</div>
+												<div class="col-lg-8">
+													<p:selectOneMenu autoWidth="false"
+														value="#{promoDescuentoMb.estado}"
+														styleClass="ui-g-12 ui-lg-8">
+														<f:selectItem itemLabel="Activo" itemValue="A" />
+														<f:selectItem itemLabel="Inactivo" itemValue="I" />
+													</p:selectOneMenu>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="box-footer">
+										<p:commandButton value="Consultar" id="cmbConsulta"
+											disabled="#{!promoDescuentoMb.opcionConsultar}"
+											oncomplete="PF('tblPromoAct').filter()"
+											actionListener="#{promoDescuentoMb.consultarPromocionDescuento}" />
+									</div>
+								</div>
+							</p:panel>
+						</div>
+					</div>
+					<div class="col-md-12">
+						<div class="box box-primary">
+							<div class="box-header with-border">
+								<h3 class="box-title">Datos de Promoción y Descuentos</h3>
+							</div>
+							<div class="box-body form-horizontal">
+								<div class="form-group">
+									<div class="row">
+										<div class="col-lg-4 col-md-6 col-sm-6">
+											<div class="col-lg-3 col-md-3">
+												<h:outputLabel style="color:#000000" value="Fecha Inicio: "
+													for="fechInicio" />
+											</div>
+											<div class="col-lg-9 col-md-9">
+												<p:calendar id="fechInicio" locale="es" required="true"
+													disabled="#{promoDescuentoMb.opcionConsultar}"
+													requiredMessage="Fecha no debe ser nula" showOn="button"
+													value="#{promoDescuentoMb.datoPromocion.fechaDesde}"
+													mask="true" pattern="dd/MM/yyyy" />
+											</div>
+										</div>
+										<div class="col-lg-4 col-md-6 col-sm-6">
+											<div class="col-lg-3 col-md-3">
+												<h:outputLabel style="color:#000000" value="Fecha Fin: "
+													for="fechFin" />
+											</div>
+											<div class="col-lg-9 col-md-9">
+												<p:calendar id="fechFin" locale="es" required="true"
+													disabled="#{promoDescuentoMb.opcionConsultar}"
+													requiredMessage="Fecha no debe ser nula" showOn="button"
+													value="#{promoDescuentoMb.datoPromocion.fechaHasta}"
+													pattern="dd/MM/yyyy" />
+											</div>
+										</div>
+										<div class="col-lg-4 col-md-6">
+											<div class="col-lg-3">
+												<h:outputLabel style="color:#000000"
+													value="Tipo de descuento: " />
+											</div>
+											<div class="col-lg-9">
+												<p:selectOneMenu styleClass="ui-g-12 ui-lg-7"
+													id="oneMnTipDesc"
+													value="#{promoDescuentoMb.datoPromocion.tipoDescuento}"
+													disabled="#{promoDescuentoMb.opcionConsultar}">
+													<f:selectItem itemLabel="Promo 2X1" itemValue="A" />
+													<f:selectItem itemLabel="Compra A lleva B" itemValue="B" />
+													<f:selectItem itemLabel="Servicios con Descuentos"
+														itemValue="C" />
+													<f:selectItem itemLabel="Descuento por Temporada"
+														itemValue="D" />
+													<p:ajax update="tblPromociones"
+														listener="#{promoDescuentoMb.modificaTipoDescuento}" />
+												</p:selectOneMenu>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="row">
+										<div class="col-lg-4 col-md-6 col-sm-6">
+											<div class="col-lg-3 col-md-3">
+												<h:outputLabel style="color:#000000" value="Descripción: " />
+											</div>
+											<div class="col-lg-9 col-md-9">
+												<p:inputText id="txtDescripcion" style="text-transform:uppercase;"
+													value="#{promoDescuentoMb.datoPromocion.descripcionPromo}"
+													disabled="#{promoDescuentoMb.opcionConsultar}" size="220"
+													styleClass="ui-g-12 ui-lg-12" />
+											</div>
+										</div>
+									</div>
+								</div>
+								<p:dataTable var="promociones" id="tblPromociones"
+									widgetVar="tblPromociones" styleClass="table table-bordered"
+									paginator="true" rows="10" editable="true"
+									rowIndexVar="rowIndex"
+									value="#{promoDescuentoMb.listaDetPromocion}"
+									emptyMessage="Debe consultar por criterios de búsqueda o crear uno nuevo">
+
+									<f:facet name="header">
+										<p:commandButton icon="ui-icon-plus" id="cmbAgregarItem"
+											value="Agregar Nuevo Items"
+											onclick="PF('dlgBuscaItems').show()"
+											disabled="#{promoDescuentoMb.opcionConsultar}" />
+										<p:commandButton icon="ui-icon-script" update="@form"
+											disabled="#{promoDescuentoMb.opcionConsultar}"
+											actionListener="#{promoDescuentoMb.guardarPromocionDescuento}"
+											value="Guardar Promoción/Descuento" id="cmbGuardarList" />
+										<p:commandButton icon="ui-icon-trash" update="tblPromociones"
+											disabled="#{promoDescuentoMb.opcionConsultar}"
+											actionListener="#{promoDescuentoMb.limpiarListaPromo}"
+											value="Borrar Lista" id="cmbBorrarList" />
+										<p:commandButton icon="ui-icon-minusthick"
+											update="tblPromociones, @form"
+											disabled="#{promoDescuentoMb.opcionConsultar eq false ? promoDescuentoMb.inactivaBtn : promoDescuentoMb.opcionConsultar}"
+											actionListener="#{promoDescuentoMb.inactivaActivaPromocion}"
+											value="#{promoDescuentoMb.descripcionActInc}"
+											id="cmbInactivaList" />
+										<p:commandButton icon="ui-icon-disk"
+											disabled="#{!promoDescuentoMb.opcionConsultar}"
+											value="Nueva Promoción/Descuento" id="cmbCrearNuevList"
+											actionListener="#{promoDescuentoMb.activaNuevaPromocionDescuento}"
+											update="@form" />
+									</f:facet>
+
+									<p:ajax event="rowEditInit"
+										listener="#{promoDescuentoMb.seleccionaItem('txtItemcodeIn',promociones.itemCodePrincipalA)}" />
+									<p:ajax event="rowEdit"
+										listener="#{promoDescuentoMb.rowEdit(promociones,rowIndex)}" />
+									<p:ajax event="rowEditCancel"
+										listener="#{promoDescuentoMb.confirmaEliminarFilaMaterial(promociones)}"
+										update=":formConfDeltItems" />
+
+									<p:column headerText="Código Items" styleClass="centerColum">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText id="txtItemcodeOut"
+													value="#{promociones.itemCodePrincipalA}" />
+											</f:facet>
+											<f:facet name="input">
+												<div class="input-group">
+													<p:inputText id="txtItemcodeIn" styleClass="form-control"
+														value="#{promociones.itemCodePrincipalA}">
+														<p:ajax event="change"
+															listener="#{promoDescuentoMb.consultaDatosItemsDet(promociones.itemCodePrincipalA,rowIndex,'A')}" />
+													</p:inputText>
+													<div class="input-group-btn">
+														<p:commandButton icon="ui-icon-search" id="cmbSearchItem"
+															oncomplete="PF('tblItems').filter()" process="@this"
+															actionListener="#{promoDescuentoMb.consultaListaItems(rowIndex,0)}" />
+													</div>
+												</div>
+											</f:facet>
+										</p:cellEditor>
+									</p:column>
+
+									<p:column headerText="Descripción Items"
+										styleClass="centerColum">
+										<h:outputText value="#{promociones.itemNamePrincipalA}"
+											id="txtDescrpItem" />
+									</p:column>
+
+									<p:column headerText="% de Descuento" styleClass="centerColum">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{promociones.porcentajeDesc}"
+													disabled="#{promoDescuentoMb.esPromocion2x1 eq false ? promoDescuentoMb.esCompraAB : promoDescuentoMb.esPromocion2x1}"
+													id="txtPorcDesc" />
+											</f:facet>
+											<f:facet name="input">
+												<h:inputText id="txtPorcDescsIn"
+													styleClass="centerColum form-control" style="width:70%"
+													value="#{promociones.porcentajeDesc}" hf:type="number"
+													hf:step="0.01"
+													disabled="#{promoDescuentoMb.esPromocion2x1 eq false ? promoDescuentoMb.esCompraAB : promoDescuentoMb.esPromocion2x1}">
+												</h:inputText>
+											</f:facet>
+										</p:cellEditor>
+									</p:column>
+
+									<p:column headerText="Cantidad Pagada" styleClass="centerColum">											
+											<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{promociones.cantidadPagada}"
+													disabled="#{!promoDescuentoMb.esPromocion2x1}"
+													id="txtCantPg" />
+											</f:facet>
+											<f:facet name="input">
+												<h:inputText id="txtCantPgIn"
+													styleClass="centerColum form-control" style="width:70%"
+													value="#{promociones.cantidadPagada}" hf:type="number" hf:min="1"
+													disabled="#{!promoDescuentoMb.esPromocion2x1}">
+												</h:inputText>
+											</f:facet>
+										</p:cellEditor>
+									</p:column>
+
+									<p:column headerText="Cantidad a Llevar"
+										styleClass="centerColum">											
+											<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{promociones.cantidadLLevar}"
+													disabled="#{!promoDescuentoMb.esPromocion2x1}"
+													id="txtCantLL" />
+											</f:facet>
+											<f:facet name="input">
+												<h:inputText id="txtCantLLIn"
+													styleClass="centerColum form-control" style="width:70%"
+													value="#{promociones.cantidadLLevar}" hf:type="number" hf:min="1"
+													disabled="#{!promoDescuentoMb.esPromocion2x1}">
+												</h:inputText>
+											</f:facet>
+										</p:cellEditor>
+									</p:column>
+
+									<p:column headerText="Código Items B" styleClass="centerColum">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{promociones.itemCodeSecundarioB}"
+													disabled="#{promoDescuentoMb.esPromocion2x1 eq false ? promoDescuentoMb.esServDesc : promoDescuentoMb.esPromocion2x1}"
+													id="txtItemB" />
+											</f:facet>
+											<f:facet name="input">
+												<div class="input-group">
+													<p:inputText id="txtItemBIn" styleClass="form-control"
+														value="#{promociones.itemCodeSecundarioB}"
+														disabled="#{promoDescuentoMb.esPromocion2x1 eq false ? promoDescuentoMb.esServDesc : promoDescuentoMb.esPromocion2x1}">
+														<p:ajax event="change"
+															listener="#{promoDescuentoMb.consultaDatosItemsDet(promociones.itemCodeSecundarioB,rowIndex,'B')}" />
+													</p:inputText>
+													<div class="input-group-btn">
+														<p:commandButton icon="ui-icon-search" id="cmbSearchItemB"
+															oncomplete="PF('tblItems').filter()" process="@this"
+															disabled="#{promoDescuentoMb.esPromocion2x1 eq false ? promoDescuentoMb.esServDesc : promoDescuentoMb.esPromocion2x1}"
+															actionListener="#{promoDescuentoMb.consultaListaItems('B', rowIndex)}" />
+													</div>
+												</div>
+											</f:facet>
+										</p:cellEditor>
+									</p:column>
+
+									<p:column headerText="Descripción Items B"
+										styleClass="centerColum">
+										<h:outputText value="#{promociones.itemNameSecundarioB}"
+											id="txtItemNmB" />
+									</p:column>
+									
+									<p:column headerText="% de Descuento B" styleClass="centerColum">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{promociones.porcentajeDescB}"
+													disabled="#{promoDescuentoMb.esPromocion2x1 eq false ? promoDescuentoMb.esServDesc : promoDescuentoMb.esPromocion2x1}"
+													id="txtPorcDescB" />
+											</f:facet>
+											<f:facet name="input">
+												<h:inputText id="txtPorcDescsBIn"
+													styleClass="centerColum form-control" style="width:70%"
+													value="#{promociones.porcentajeDescB}" hf:type="number"
+													hf:step="0.01"
+													disabled="#{promoDescuentoMb.esPromocion2x1 eq false ? promoDescuentoMb.esServDesc : promoDescuentoMb.esPromocion2x1}">
+												</h:inputText>
+											</f:facet>
+										</p:cellEditor>
+									</p:column>
+
+									<p:column style="width:35px">
+										<p:rowEditor />
+									</p:column>
+								</p:dataTable>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+		</h:form>
+
+		<h:form id="formBuscaItems">
+			<p:dialog header="Artículos: Condiciones de selección"
+				widgetVar="dlgBuscaItems" hideEffect="clip" resizable="false"
+				closeOnEscape="true" modal="true" responsive="true"
+				showEffect="clip" width="30%">
+				<p:panel>
+					<div class="box-body ui-fluid">
+						<div class="form-group">
+							<div class="row">
+								<h:outputLabel style="color:#000000" value="Código Desde: "
+									styleClass="col-lg-5 col-md-6 col-sm-6" />
+								<div class="col-lg-6 col-md-6 col-sm-6">
+									<div class="input-group">
+										<p:inputText id="txtItemD"
+											value="#{promoDescuentoMb.itemConsultaDesd}" />
+										<div class="input-group-btn">
+											<p:commandButton icon="ui-icon-contact"
+												style="border:none;  background:transparent;"
+												actionListener="#{promoDescuentoMb.consultaListaItems('D', 0)}"
+												oncomplete="PF('tblItems').clearFilters()" />
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="row">
+								<h:outputLabel style="color:#000000" value="Código Hasta: "
+									styleClass="col-lg-5 col-md-6 col-sm-6" />
+								<div class="col-lg-6 col-md-6 col-sm-6">
+									<div class="input-group">
+										<p:inputText id="txtItemH"
+											value="#{promoDescuentoMb.itemConsultaHast}" />
+										<div class="input-group-btn">
+											<p:commandButton icon="ui-icon-contact"
+												style="border:none;  background:transparent;"
+												actionListener="#{promoDescuentoMb.consultaListaItems('H',0)}"
+												oncomplete="PF('tblItems').clearFilters()" />
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="box-footer">
+						<div align="center">
+							<p:commandButton value="OK" update=":form:tblPromociones"
+								actionListener="#{promoDescuentoMb.llenaListaPromo}" />
+						</div>
+					</div>
+				</p:panel>
+			</p:dialog>
+		</h:form>
+
+		<h:form id="formListaArt">
+			<p:dialog header="Lista de artículos" widgetVar="dlgItems"
+				responsive="true" showEffect="clip" width="45%" height="400"
+				resizable="false">
+
+				<p:dataTable var="items" id="tblItems" widgetVar="tblItems"
+					value="#{promoDescuentoMb.listaItems}" selectionMode="single"
+					filteredValue="#{promoDescuentoMb.listaFiltroItems}"
+					paginator="true" rows="9"
+					selection="#{promoDescuentoMb.selectdItems}"
+					rowKey="#{items.codigoItems}">
+
+					<p:ajax event="rowSelect"
+						listener="#{promoDescuentoMb.onRowSelectItem}"
+						update="#{p:component('txtItemD')},#{p:component('txtItemH')}" />
+
+					<p:column headerText="Código Articulo" filterStyle="width: 50%"
+						filterBy="#{items.codigoItems}" filterMatchMode="contains"
+						styleClass="centerColum">
+						<h:outputText value="#{items.codigoItems}" />
+					</p:column>
+					<p:column headerText="Descripción/Articulo"
+						styleClass="centerColum" filterStyle="width: 80%"
+						filterBy="#{items.descripcionItems}"
+						filterFunction="#{promoDescuentoMb.filterByName}">
+						<h:outputText value="#{items.descripcionItems}" />
+					</p:column>
+					<p:column headerText="Precio" style="width:15%"
+						styleClass="centerColum">
+						<h:outputText value="$ #{items.precio}"/>
+					</p:column>
+				</p:dataTable>
+
+			</p:dialog>
+		</h:form>
+
+		<h:form id="formConfDeltItems">
+			<p:dialog header="Confirmación para eliminar items" responsive="true"
+				widgetVar="dlgConfDelItems" hideEffect="clip" resizable="false"
+				modal="true" showEffect="clip" width="350">
+				<h:outputText style="color:red"
+					value="Desea eliminar el items #{promoDescuentoMb.itemNameDelete}" />
+				<f:facet name="footer">
+					<p:commandButton value="Si" styleClass="ui-confirmdialog-yes"
+						actionListener="#{promoDescuentoMb.eliminarFilaMateriales(promoDescuentoMb.detallePromocion)}"
+						update=":form:tblPromociones" />
+					<p:commandButton value="No" onclick="PF('dlgConfDelItems').hide()"
+						styleClass="ui-confirmdialog-no" />
+				</f:facet>
+			</p:dialog>
+		</h:form>
+
+		<h:form id="formPromocionesAct">
+			<p:dialog header="Lista de promociones/descuentos"
+				widgetVar="dlgPromAct" responsive="true" showEffect="clip"
+				width="45%" height="400" resizable="false">
+
+				<p:dataTable var="promoAct" id="tblPromoAct" widgetVar="tblPromoAct"
+					value="#{promoDescuentoMb.listadatosPromociones}"
+					selectionMode="single" paginator="true" rows="9"
+					selection="#{promoDescuentoMb.selectdItemPromo}"
+					rowKey="#{promoAct.idPromocion}">
+
+					<p:ajax event="rowSelect"
+						listener="#{promoDescuentoMb.seleccionaPromoExistente()}"
+						update=":form:fechInicio,:form:tblPromociones, :form:fechFin, :form:txtDescripcion, :form:oneMnTipDesc, :form:cmbConsulta" />
+
+					<p:column headerText="Fecha Inicio" styleClass="centerColum">
+						<h:outputText value="#{promoAct.fechaIniStr}" />
+					</p:column>
+					<p:column headerText="Fecha Fin" styleClass="centerColum">
+						<h:outputText value="#{promoAct.fechaFinStr}" />
+					</p:column>
+					<p:column headerText="Descripción" styleClass="centerColum">
+						<h:outputText value="#{promoAct.descripcionPromo}" />
+					</p:column>
+					<p:column headerText="Tipo Promoción" styleClass="centerColum">
+						<h:outputText value="#{promoAct.tipoDescuento eq 'A' ? 'Promo 2X1' : promoAct.tipoDescuento eq 'B' ? 'Compra A lleva B' : promoAct.tipoDescuento eq 'C' ? 'Servicios con Descuentos' : 'Descuento por Temporada'}" />
+					</p:column>
+				</p:dataTable>
+
+			</p:dialog>
+		</h:form>
+	</ui:define>
+</ui:composition>

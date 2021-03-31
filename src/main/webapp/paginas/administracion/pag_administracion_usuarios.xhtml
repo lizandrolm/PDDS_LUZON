@@ -1,0 +1,255 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:pm="http://primefaces.org/mobile"
+	xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml">
+
+
+	<ui:define name="head">
+		<style type="text/css">
+td.centerColum {
+	text-align: center;
+}
+</style>
+	</ui:define>
+
+	<ui:define name="content">
+
+		<h:form id="formPrincipal">
+			<p:ajaxStatus onstart="PF('statusDialog').show()"
+				onsuccess="PF('statusDialog').hide()" />
+			<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+				closable="false" resizable="false" showHeader="false">
+				<p:graphicImage name="/imagenes/barra_ajax.gif" />
+			</p:dialog>
+			<p:messages globalOnly="false" id="msjGeneral" showDetail="false" />
+
+			<section class="content">
+				<div class="row">
+					<div class="col-md-5">
+						<div class="box box-info">
+							<div class="box-header with-border"
+								style="width: 100%; height: 400px;">
+								<div class="box-header with-border">
+									<h:outputText value="Registro de Usuarios"
+										styleClass="FontBold Fs18 hardblue" />
+								</div>
+								<div class="box-body">
+									<p:outputLabel value="Nombre:" styleClass="Container20" />
+									<p:inputText id="txtNombre" maxlength="100"
+										style="text-transform:uppercase;" value="#{usuarioMb.nombre}"
+										styleClass="Container90" />
+									<p:outputLabel value="Apellido:" styleClass="Container20" />
+									<p:inputText id="txtApellido" maxlength="100"
+										style="text-transform:uppercase;"
+										value="#{usuarioMb.apellido}" styleClass="Container90">
+									</p:inputText>
+									<p:outputLabel value="Usuario:" styleClass="Container20" />
+									<p:inputText id="txtUsuario" value="#{usuarioMb.usuario}"
+										style="text-transform:uppercase;" maxlength="25" disabled="#{usuarioMb.crear}"
+										styleClass="Container85"></p:inputText>
+									<p:commandButton actionListener="#{usuarioMb.generarUsuario}"
+										icon="ui-icon-search" styleClass="Container5" disabled="#{usuarioMb.crear}"
+										update="#{p:component('txtUsuario')}"></p:commandButton>
+									<p:outputLabel value="Email:" styleClass="Container20" />
+									<p:inputText id="txtCorreo" value="#{usuarioMb.correo}"
+										style="text-transform:uppercase;" maxlength="200"
+										styleClass="Container90"></p:inputText>
+								</div>
+								<div class="box-footer">
+									<div class="row" align="center">
+
+										<h:commandButton value="Crear"
+											actionListener="#{usuarioMb.crearUsuario}"
+											title="Opcion para generar nuevos usuarios" update="@form"
+											disabled="#{usuarioMb.crear}" styleClass="btn btn-primary" />
+
+										<h:outputText value="&#160;&#160;" />
+										<h:commandButton value="Modificar" icon="ui-icon-alert"
+											update="@form" actionListener="#{usuarioMb.modificarUsuario}"
+											disabled="#{usuarioMb.modificar}"
+											styleClass="btn btn-primary" />
+										<h:outputText value="&#160;&#160;" />
+										<h:commandButton value="Cancelar" icon="ui-icon-cancel"
+											actionListener="#{usuarioMb.cancelarModificacionUsuario}"
+											update="@form" disabled="#{usuarioMb.modificar}"
+											styleClass="btn btn-primary" />
+
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-7">
+						<div class="box box-info">
+							<div class="box-header with-border"
+								style="width: 100%; height: 400px;">
+
+								<div class="col-md-6">
+									<div class="ContainerIndent">
+										<h:outputText value="Roles"
+											styleClass="FontBold Fs18 hardblue"></h:outputText>
+									</div>
+									<p:dataTable var="aplroles" id="tblRoles" scrollable="true"
+										scrollHeight="305"
+										emptyMessage="Debe seleccionar una aplicación"
+										value="#{usuarioMb.listaRoles}" reflow="true">
+										<p:column headerText="" style="width:45px;">
+											<div align="center">
+												<p:selectBooleanCheckbox value="#{aplroles.seleccion}" />
+											</div>
+										</p:column>
+										<p:column headerText="Rol" style="width:90px;">
+											<div align="center">
+												<h:outputText value="#{aplroles.rol}" />
+											</div>
+										</p:column>
+										<p:column headerText="Roles Usuarios">
+											<h:outputText value="#{aplroles.descripcion}" />
+										</p:column>
+									</p:dataTable>
+
+									<div class="ContainerIndent">
+										<h:outputText value=" " styleClass="FontBold Fs18 hardblue"></h:outputText>
+									</div>
+
+								</div>
+								<div class="col-md-6">
+									<div class="ContainerIndent">
+										<h:outputText value="Sucursales"
+											styleClass="FontBold Fs18 hardblue"></h:outputText>
+									</div>
+									<p:dataTable var="aplsucursales" id="tblSucursales"
+										scrollable="true" scrollHeight="110"
+										emptyMessage="Debe seleccionar una Sucursal"
+										value="#{usuarioMb.listaSucursales}" reflow="true">
+										<p:column headerText="" style="width:50px;">
+											<div align="center">
+												<p:selectBooleanCheckbox
+													value="#{aplsucursales.seleccionada}">
+													<p:ajax event="change"
+														update="#{p:component('tblPtoEmision')},#{p:component('formEstablicimiento')}"
+														listener="#{usuarioMb.obtienePuntosEmisionPorSucursal(aplsucursales)}" />
+												</p:selectBooleanCheckbox>
+											</div>
+										</p:column>
+										<p:column headerText="Sucursales">
+											<div align="center">
+												<h:outputText value="#{aplsucursales.nombreSucursal}" />
+											</div>
+										</p:column>
+
+									</p:dataTable>
+
+									<div class="ContainerIndent">
+										<h:outputText value="Punto de Emisión"
+											styleClass="FontBold Fs18 hardblue"></h:outputText>
+									</div>
+									<p:dataTable var="puntoEmision" id="tblPtoEmision"
+										scrollable="true" scrollHeight="120"
+										emptyMessage="Debe seleccionar una Sucursal"
+										value="#{usuarioMb.listaPuntoEmision}" reflow="true">
+										<p:column headerText="" style="width:50px;">
+											<p:selectBooleanCheckbox value="#{puntoEmision.seleccionada}">
+												<p:ajax event="change"
+													listener="#{usuarioMb.seleccionaPuntoEmision(puntoEmision)}" />
+											</p:selectBooleanCheckbox>
+										</p:column>
+										<p:column headerText="#{usuarioMb.nombreSucurPtoEmision}">
+											<div align="center">
+												<h:outputText value="#{puntoEmision.puntoEmision}" />
+											</div>
+										</p:column>
+
+									</p:dataTable>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-12">
+						<div class="box box-info">
+							<div class="box-header with-border">
+								<p:dataTable var="usr" id="tblUsuarios"
+									value="#{usuarioMb.listaUsuarios}" reflow="true" rows="10"
+									paginator="true">
+									<p:column headerText="Usuario" filterBy="#{usr.usuario}"
+										filterMatchMode="contains" style="width:120px;">
+										<h:outputText value="#{usr.usuario}" />
+									</p:column>
+									<p:column headerText="Nombre">
+										<h:outputText value="#{usr.name} #{usr.apellido}" />
+									</p:column>
+									<p:column headerText="Email">
+										<h:outputText value="#{usr.correo}" />
+									</p:column>
+									<p:column headerText="Estado"
+										style="align: center; width:60px;">
+										<center>
+											<p:graphicImage name="#{usr.imagenBloqueo}"
+												id="grpEstadoUsuario" height="15px" />
+										</center>
+									</p:column>
+									<p:column headerText="Acciones">
+
+										<div align="center">
+											<h:commandButton icon="ui-icon-pencil" value="Editar"
+												styleClass="btn btn-primary"
+												title="Permite editar los datos del usuario" update="@form"
+												actionListener="#{usuarioMb.seleccionarUsuario(usr)}"></h:commandButton>
+											<h:outputText value="&#160;&#160;" />
+											<h:commandButton icon="ui-icon-arrowrefresh-1-n"
+												styleClass="btn btn-primary"
+												actionListener="#{usuarioMb.resetearClave(usr)}"
+												value="Resetear"
+												title="Permite resetear la clave del usuario"
+												update="#{p:component('tblUsuarios')} , #{p:component('msjGeneral')}"
+												disabled="#{usr.primerIngreso}"></h:commandButton>
+											<h:outputText value="&#160;&#160;" />
+											<h:commandButton icon="ui-icon-cancel" id="btnBloquear"
+												styleClass="btn btn-primary"
+												actionListener="#{usuarioMb.bloquearUsuario(usr)}"
+												value="Bloquear"
+												title="Permite realizar el bloqueo del usuario"
+												update="#{p:component('tblUsuarios')} , #{p:component('msjGeneral')},  #{p:component('btnDesbloquear')}"
+												rendered="#{usr.usuarioHabilitado}"></h:commandButton>
+											<h:outputText value="&#160;&#160;" />
+											<h:commandButton icon="ui-icon-check" id="btnDesbloquear"
+												styleClass="btn btn-primary"
+												actionListener="#{usuarioMb.desbloquearUsuario(usr)}"
+												value="Desbloquear"
+												title="Permite realizar el desbloqueo del usuario"
+												update="#{p:component('tblUsuarios')} , #{p:component('msjGeneral')}, #{p:component('btnBloquear')} , #{p:component('grpEstadoUsuario')}"
+												rendered="#{usr.usuarioBloqueado}"></h:commandButton>
+										</div>
+									</p:column>
+								</p:dataTable>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+		</h:form>
+
+		<h:form id="formEstablicimiento">
+			<p:dialog header="#{usuarioMb.msjEstablecimiento}"
+				widgetVar="dlgEstablicimiento" resizable="false" hideEffect="clip"
+				modal="true" showEffect="clip" width="300">
+				<p:dataTable var="datEstablecimiento" id="tblEstablecimientos"
+					value="#{usuarioMb.listaEstablecimientos}" selectionMode="single"
+					selection="#{usuarioMb.selectEstablecimiento}"
+					rowKey="#{datEstablecimiento.establecimiento}">
+
+					<p:ajax event="rowSelect" update=":formPrincipal:tblPtoEmision"
+						listener="#{usuarioMb.onRowSelectEstablecimiento}" />
+
+					<p:column headerText="Establecimientos" styleClass="centerColum">
+						<h:outputText value="#{datEstablecimiento.establecimiento}" />
+					</p:column>
+
+				</p:dataTable>
+			</p:dialog>
+		</h:form>
+	</ui:define>
+</ui:composition>
